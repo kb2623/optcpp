@@ -9,6 +9,7 @@
 #include "cec17_test_func.hpp"
 #include "jso.hpp"
 #include "jsop.hpp"
+#include "de.hpp"
 
 class Bar : public SearchAlgorithm {
 public:
@@ -26,7 +27,7 @@ public:
     };
 
     virtual std::string info() override {
-        return "Testtni algo";
+        return "Testni algo";
     };
 
     virtual std::tuple<double, std::vector<double>> run(TestFuncBounds* ifun) override {
@@ -66,7 +67,7 @@ int main() {
     const auto no_workers = 10;
     for (int i = 0; i < 30; i++) try {
         std::cout << "Function " << i + 1 << std::endl;
-        int g_problem_size = 10;
+        int g_problem_size = 30;
         int g_max_num_evaluations = g_problem_size * 10000;
         int g_pop_size = int(round(sqrt(g_problem_size)) * log(g_problem_size) * 25);
         int g_memory_size = 5;
@@ -78,10 +79,18 @@ int main() {
         //std::cout << std::get<0>(r1) << " < - > ";
         //for (auto e : std::get<1>(r1)) std::cout << e << ' ';
         //std::cout << std::endl;
+        /*
         auto jsop = jSOp(g_pop_size, g_arc_rate, g_p_best_rate, g_memory_size, 10);
         auto r2 = jsop.run(&func);
         std::cout << std::get<0>(r2) << " < - > ";
         for (auto e : std::get<1>(r2)) std::cout << e << ' ';
+        std::cout << std::endl;
+        */
+        auto de = DE();
+        auto r4 = de.run(&func);
+        std::cout << std::get<0>(r4) << " < - > ";
+        for (auto e : std::get<1>(r4)) std::cout << e << ' ';
+        std::cout << " < - > " << de.eval(std::get<1>(r4).data());
         std::cout << std::endl;
         //auto work = Bar(no_workers, 50);
         //auto r3 = work.run(&func);

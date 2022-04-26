@@ -9,6 +9,7 @@
 #include <tuple>
 #include <string>
 #include <atomic>
+#include <mutex>
 
 class SearchAlgorithm {
 public:
@@ -21,14 +22,16 @@ public:
 
     virtual std::string info() = 0;
     virtual std::tuple<double, std::vector<double>> run(TestFuncBounds*) = 0;
+    double eval(double* x);
 
     std::vector<double> x_best;
     double  f_best;
 
+    std::mutex best_lock;
+
 protected:
     void initRun(TestFuncBounds* func);
     double* makeNewIndividual();
-    double eval(double* x);
     void setBestSolution(double*, double);
 
     //Return random value with uniform distribution [0, 1)

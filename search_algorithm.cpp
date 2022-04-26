@@ -8,7 +8,9 @@
   Written by Ryoji Tanabe (rt.ryoji.tanabe [at] gmail.com)
 */
 
-#include"jso.hpp"
+#include <limits>
+
+#include"search_algorithm.hpp"
 
 // make new individual randomly
 double* SearchAlgorithm::makeNewIndividual() {
@@ -18,23 +20,25 @@ double* SearchAlgorithm::makeNewIndividual() {
 }
 
 void SearchAlgorithm::setBestSolution(double *x, double f) {
+    best_lock.lock();
     if (f_best > f) {
         f_best = f;
         for (int i = 0; i < func->dim; i++) x_best[i] = x[i];
     }
+    best_lock.unlock();
 }
 
 void SearchAlgorithm::initRun(TestFuncBounds *func) {
     nfes = 0;
     this->func = func;
-    x_best = vector<double>(func->dim);
-    f_best = numeric_limits<double>::max();
+    x_best = std::vector<double>(func->dim);
+    f_best = std::numeric_limits<double>::max();
 }
 
 double SearchAlgorithm::eval(double *x) {
+    nfes++;
     double f;
     func->test_func(x, &f, 1);
     setBestSolution(x, f);
-    nfes++;
     return f;
 }

@@ -134,6 +134,7 @@ CEC17::CEC17(int nx, int func_num, int g_max_eval): TestFuncBounds(nx, g_max_eva
 }
 
 void CEC17::test_func(double *x, double *f, int mx) {
+    func_lock.lock();
     int i;
     for (i = 0; i < mx; i++) {
         switch(func_flag) {
@@ -263,6 +264,7 @@ void CEC17::test_func(double *x, double *f, int mx) {
 			break;
 		}
     }
+    func_lock.unlock();
 }
 
 void CEC17::sphere_func (double *x, double *f, int nx, double *Os, double *Mr, int s_flag, int r_flag) /* Sphere */ {

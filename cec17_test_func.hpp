@@ -3,12 +3,15 @@
 
 #include "testfunc.hpp"
 
+#include <mutex>
+
 class CEC17: public TestFuncBounds {
 private:
      double *OShift = nullptr, *M = nullptr, *y = nullptr, *z = nullptr;
      double *w = nullptr, *tmpx = nullptr;
      int *SS = nullptr;
      int ini_flag, n_flag, func_flag;
+     std::mutex func_lock;
 
      void sphere_func (double *, double *, int , double *,double *, int, int); /* Sphere */
      void ellips_func(double *, double *, int , double *,double *, int, int); /* Ellipsoidal */
