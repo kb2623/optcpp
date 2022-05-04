@@ -3,15 +3,13 @@
 
 #include "testfunc.hpp"
 
-#include <mutex>
+#include <vector>
 
 class CEC17: public TestFuncBounds {
 private:
-     double *OShift = nullptr, *M = nullptr, *y = nullptr, *z = nullptr;
-     double *w = nullptr, *tmpx = nullptr;
+     double *OShift = nullptr, *M = nullptr;
      int *SS = nullptr;
      int ini_flag, n_flag, func_flag;
-     std::mutex func_lock;
 
      void sphere_func (double *, double *, int , double *,double *, int, int); /* Sphere */
      void ellips_func(double *, double *, int , double *,double *, int, int); /* Ellipsoidal */
@@ -61,14 +59,17 @@ private:
      void cf09 (double *, double *, int , double *,double *, int *, int); /* Composition Function 9 */
      void cf10 (double *, double *, int , double *,double *, int *, int); /* Composition Function 10 */
 
-     void sr_func (double *, double *, int, double*, double*, double, int, int); /* shift and rotate */
-     void cf_cal(double *, double *, int, double *,double *,double *,double *,int);
+     void sr_func (double *, double *, double *, int, double*, double*, double, int, int); /* shift and rotate */
+     void cf_cal (double *, double *, double *,int, double *,double *,double *,double *,int);
 
 public:
      CEC17(int, int, int);
      ~CEC17();
 
-     void test_func(double*, double*, int);
+     void test_func (double*, double*, int);
 };
+
+void shiftfunc (double *, double *, int, double *);
+void rotatefunc (double *, double *, int, double *);
 
 #endif

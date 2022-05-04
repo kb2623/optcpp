@@ -1,7 +1,9 @@
 #include"de.hpp"
 
 std::string DE::info() {
-    return "TODO";
+    std::string r = "Differential Evolution (DE)";
+    if (no_thr > 1) r = "Parallel " + r;
+    return r;
 }
 
 void DE::initRun(TestFuncBounds *ifunc) {
@@ -12,21 +14,17 @@ void DE::initRun(TestFuncBounds *ifunc) {
     }
 }
 
-std::tuple<double, std::vector<double>> DE::run(TestFuncBounds* func) {
-    initRun(func);
-    sync_point = new std::barrier(no_thr);
-    auto threads = std::vector<std::thread>();
-    for (int i = 0; i < no_thr - 1; i++) threads.emplace_back(std::thread(&DE::evolve, this, i + 1));
-    evolve(0);
-    for (int i = 0; i < no_thr - 1; i++) threads[i].join();
-    for (int i = 0; i < np; i++) delete [] pop[i];
+std::tuple<double, std::vector<double>> DE::run(TestFuncBounds *ifunc) {
+    initRun(ifunc);
+    auto r = ParallelSearchAlgorithm::run(ifunc);
+    for (auto e : pop) delete [] e;
     pop.clear();
     popf.clear();
-    return std::make_tuple(f_best, x_best);
+    return r;
 }
 
-void DE::evolve(int id) {
-    auto s = np / no_thr;
+void DE::run_thread(int id) {
+    auto s = ceil(np / double(no_thr));
     auto y = new double[func->dim];
     while (nfes < func->max_num_evaluations) {
         for (int i = s * id; i < np && i < s * (id + 1); i++) {

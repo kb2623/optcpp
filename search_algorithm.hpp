@@ -30,7 +30,7 @@ public:
     std::mutex best_lock;
 
 protected:
-    void initRun(TestFuncBounds* func);
+    virtual void initRun(TestFuncBounds* func);
     double* makeNewIndividual();
     void setBestSolution(double*, double);
 
