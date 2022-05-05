@@ -8,8 +8,8 @@ using namespace std;
 class DE: public ParallelSearchAlgorithm {
 public:
     size_t np;
-    std::vector<double *> pop;
-    std::vector<double> popf;
+    vector<double*> pop;
+    vector<double> popf;
 
     double F;
     double CR;
@@ -35,10 +35,10 @@ public:
         popf.clear();
     };
 
-    virtual std::string info() override;
-    virtual std::tuple<double, std::vector<double>> run(TestFuncBounds*);
+    virtual string info() override;
+    virtual tuple<double, vector<double>> run(TestFuncBounds*) override;
     virtual void run_thread(int) override;
-    void initRun(TestFuncBounds*);
+    void initRun(TestFuncBounds*) override;
 
 };
 

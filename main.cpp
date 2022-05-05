@@ -15,22 +15,22 @@
 void runAlgo(SearchAlgorithm *algo, TestFuncBounds &func) {
     std::cout << algo->info() << " : ";
     auto r = algo->run(&func);
-    std::cout << std::get<0>(r) << " : ";
     for (auto e : std::get<1>(r)) std::cout << e << ' ';
     auto val = algo->eval(std::get<1>(r).data());
     std::cout << ": ";
+    std::cout << std::get<0>(r) << " : ";
     if (val == std::get<0>(r)) std::cout << "OK";
     else std::cout << "ERROR >> " << val;
 }
 
 int main() {
-    const auto no_workers = 6;
+    const auto no_workers = 10;
     SearchAlgorithm *algs[] = {
         new DE(50, .9, .5, no_workers),
+        new jSO(50, 0.5, 0.5, 150),
         new jSOp(50, 0.5, 0.5, 150, no_workers),
-        new Bar(50, no_workers),
-        new DE(50, .9, .5, 1),
-        new jSO(50, 0.5, 0.5, 150)
+        //new Bar(50, no_workers),
+        //new DE(50, .9, .5, 1),
     };
     for (int i = 0; i < 30; i++) try {
         int g_problem_size = 30;

@@ -8,8 +8,8 @@
 class Bar : public ParallelSearchAlgorithm {
 public:
     size_t np;
-    std::vector<std::vector<double>> x;
-    std::vector<double> xf;
+    vector<vector<double>> x;
+    vector<double> xf;
 
     Bar() : ParallelSearchAlgorithm() {
         np = 10;
@@ -19,10 +19,10 @@ public:
         this->np = inp;
     };
 
-    virtual std::string info() override;
-    virtual std::tuple<double, std::vector<double>> run(TestFuncBounds*) override;
+    virtual string info() override;
+    virtual tuple<double, vector<double>> run(TestFuncBounds*) override;
     virtual void run_thread(int) override;
-    void initRun(TestFuncBounds*);
+    void initRun(TestFuncBounds*) override;
     void start(int);
 };
 

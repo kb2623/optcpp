@@ -21,12 +21,15 @@ public:
     virtual void run_thread(int) override;
     virtual void initRun(TestFuncBounds*) override;
     void modifySolutionWithParentMedium(double*, const double*);
-    void evaluatePopulation(vector<vector<double>>&, vector<double>&);
+    void evaluatePopulation(vector<double*>&, vector<double>&);
     void setSHADEParameters(double, double, int);
-    void reducePopulationWithSort(vector<vector<double>>&, vector<double>&);
-    void operateCurrentToPBest1BinWithArchive(const vector<vector<double>>&, double*, int&, int&, double&, double&, const vector<vector<double>>&, int);
+    void reducePopulationWithSort(vector<double*>&, vector<double>&);
+    void operateCurrentToPBest1BinWithArchive(vector<double*>, double*, int&, int&, double&, double&, vector<double*>, int);
 
 private:
+    std::mutex success_lock;
+    std::mutex archive_lock;
+
     void clean();
 
 protected:
@@ -39,16 +42,16 @@ protected:
     size_t memory_size;
     size_t memory_pos;
     size_t min_pop_size, max_pop_size, p_num, arc_ind_count, num_success_params, old_num_success_params;
-    std::vector<std::vector<double>> pop;
-    std::vector<double> fitness;
-    std::vector<std::vector<double>> children;
-    std::vector<double> children_fitness;
-    std::vector<std::vector<double>> archive;
-    std::vector<double> success_sf;
-    std::vector<double> success_cr;
-    std::vector<double> memory_sf;
-    std::vector<double> memory_cr;
-    std::vector<double> dif_fitness;
+    vector<double*> pop;
+    vector<double> fitness;
+    vector<double*> children;
+    vector<double> children_fitness;
+    vector<double*> archive;
+    vector<double> success_sf;
+    vector<double> success_cr;
+    vector<double> memory_sf;
+    vector<double> memory_cr;
+    vector<double> dif_fitness;
     double* pop_sf;
     double* pop_cr;
     double* temp_fit;

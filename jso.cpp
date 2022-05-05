@@ -97,8 +97,9 @@ std::tuple<double, std::vector<double>> jSO::run(TestFuncBounds* func) {
             if (pop_sf[target] > 1) pop_sf[target] = 1.0;
             if (nfes< 0.6 * func->max_num_evaluations && pop_sf[target] > 0.7) pop_sf[target] = 0.7;    // jSO
             //p-best individual is randomly selected from the top pop_size *  p_i members
+            if (p_num == 0) p_num = ceil(pop_size *  p_best_rate) + 1;
             do {
-                auto ind = p_num == 0 ? 0 : rand() % p_num;
+                auto ind = rand() % p_num;
                 p_best_ind = sorted_array[ind];
             } while (nfes < 0.50 * func->max_num_evaluations && p_best_ind == target);                   // iL-SHADE
             operateCurrentToPBest1BinWithArchive(pop, &children[target][0], target, p_best_ind, pop_sf[target], pop_cr[target], archive, arc_ind_count);

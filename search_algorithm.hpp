@@ -11,6 +11,10 @@
 #include <atomic>
 #include <mutex>
 
+using std::tuple;
+using std::vector;
+using std::string;
+
 class SearchAlgorithm {
 public:
     SearchAlgorithm() {
@@ -20,11 +24,11 @@ public:
     }
     ~SearchAlgorithm() {}
 
-    virtual std::string info() = 0;
-    virtual std::tuple<double, std::vector<double>> run(TestFuncBounds*) = 0;
+    virtual string info() = 0;
+    virtual tuple<double, vector<double>> run(TestFuncBounds*) = 0;
     double eval(double* x);
 
-    std::vector<double> x_best;
+    vector<double> x_best;
     double  f_best;
 
     std::mutex best_lock;

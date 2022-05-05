@@ -1,7 +1,7 @@
 #include"de.hpp"
 
-std::string DE::info() {
-    std::string r = "Differential Evolution (DE)";
+string DE::info() {
+    string r = "Differential Evolution (DE)";
     if (no_thr > 1) r = "Parallel " + r;
     return r;
 }
@@ -14,7 +14,7 @@ void DE::initRun(TestFuncBounds *ifunc) {
     }
 }
 
-std::tuple<double, std::vector<double>> DE::run(TestFuncBounds *ifunc) {
+tuple<double, vector<double>> DE::run(TestFuncBounds *ifunc) {
     initRun(ifunc);
     auto r = ParallelSearchAlgorithm::run(ifunc);
     for (auto e : pop) delete [] e;
