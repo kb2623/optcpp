@@ -21,6 +21,8 @@ void runAlgo(SearchAlgorithm *algo, TestFuncBounds &func) {
     std::cout << std::get<0>(r) << " : ";
     if (val == std::get<0>(r)) std::cout << "OK";
     else std::cout << "ERROR >> " << val;
+    std::cout << " : " << algo->get_nfes() - 1;
+
 }
 
 int main() {

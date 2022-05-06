@@ -42,3 +42,7 @@ double SearchAlgorithm::eval(double *x) {
     setBestSolution(x, f);
     return f;
 }
+
+size_t SearchAlgorithm::get_nfes() {
+    return nfes;
+}

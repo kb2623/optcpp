@@ -28,6 +28,7 @@ public:
     virtual string sinfo() = 0;
     virtual tuple<double, vector<double>> run(TestFuncBounds*) = 0;
     double eval(double* x);
+    size_t get_nfes();
 
     vector<double> x_best;
     double  f_best;
