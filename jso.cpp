@@ -36,6 +36,7 @@ void jSO::modifySolutionWithParentMedium(double* child, double* parent) {
 
 std::tuple<double, std::vector<double>> jSO::run(TestFuncBounds* func) {
     initRun(func);
+    double p_best_rate_l = p_best_rate;
     vector <double*> pop;
     vector <double> fitness(pop_size, 0);
     vector <double*> children;
@@ -65,7 +66,7 @@ std::tuple<double, std::vector<double>> jSO::run(TestFuncBounds* func) {
     double* pop_sf = new double[pop_size];
     double* pop_cr = new double[pop_size];
     //for current-to-pbest/1
-    int p_best_ind, p_num = round(pop_size *  p_best_rate);
+    int p_best_ind, p_num = round(pop_size *  p_best_rate_l);
     int* sorted_array = new int[pop_size];
     double* temp_fit = new double[pop_size];
     // for linear population size reduction
@@ -101,7 +102,7 @@ std::tuple<double, std::vector<double>> jSO::run(TestFuncBounds* func) {
             if (pop_sf[target] > 1) pop_sf[target] = 1.0;
             if (nfes< 0.6 * func->max_num_evaluations && pop_sf[target] > 0.7) pop_sf[target] = 0.7;    // jSO
             //p-best individual is randomly selected from the top pop_size *  p_i members
-            if (p_num == 0) p_num = ceil(pop.size() *  p_best_rate) + 1;
+            if (p_num == 0) p_num = ceil(pop.size() *  p_best_rate_l) + 1;
             do {
                 auto ind = rand() % p_num;
                 p_best_ind = sorted_array[ind];
@@ -179,8 +180,8 @@ std::tuple<double, std::vector<double>> jSO::run(TestFuncBounds* func) {
             arc_size = pop.size() * arc_rate;
             if (arc_ind_count > arc_size) arc_ind_count = arc_size;
             // resize the number of p-best individuals
-            p_best_rate = p_best_rate * (1.0 - 0.5 * nfes /  double(func->max_num_evaluations));   // JANEZ
-            p_num = round(pop.size() *  p_best_rate);
+            p_best_rate_l = p_best_rate_l * (1.0 - 0.5 * nfes /  double(func->max_num_evaluations));   // JANEZ
+            p_num = round(pop.size() *  p_best_rate_l);
             if (p_num <= 1)  p_num = 2;
         }
     }

@@ -26,9 +26,9 @@ void runAlgo(SearchAlgorithm *algo, TestFuncBounds &func) {
 int main() {
     const auto no_workers = 5;
     SearchAlgorithm *algs[] = {
-        //new DE(50, .9, .5, 1),
-        //new DE(50, .9, .5, no_workers),
-        //new jSO(50, 0.5, 0.5, 150),
+        new DE(50, .9, .5, 1),
+        new DE(50, .9, .5, no_workers),
+        new jSO(50, 0.5, 0.5, 150),
         new jSOp(50, 0.5, 0.5, 150, no_workers),
         //new Bar(50, no_workers),
     };

@@ -105,7 +105,7 @@ void jSOp::initRun(TestFuncBounds *ifunc) {
 void jSOp::run_thread(int id) {
     auto s = ceil(pop_size / double(no_thr));
     int p_best_ind, random_selected_arc_ind;
-    double mu_sf, mu_cr;
+    double mu_sf, mu_cr, p_best_rate_l = p_best_rate;
     while (nfes < func->max_num_evaluations) {
         for (int i = s * id; i < pop.size() && i < s * (id + 1); i++) sorted_array[i] = i;
         for (int i = s * id; i < pop.size() && i < s * (id + 1); i++) temp_fit[i] = fitness[i];
@@ -138,7 +138,7 @@ void jSOp::run_thread(int id) {
             if (pop_sf[target] > 1) pop_sf[target] = 1.0;
             if (nfes< 0.6 * func->max_num_evaluations && pop_sf[target] > 0.7) pop_sf[target] = 0.7;    // jSO
             //p-best individual is randomly selected from the top pop_size *  p_i members
-            if (p_num == 0) p_num = ceil(pop.size() * p_best_rate) + 1;
+            if (p_num == 0) p_num = ceil(pop.size() * p_best_rate_l) + 1;
             do {
                 auto ind = p_num == 0 ? 0 : rand() % p_num;
                 p_best_ind = sorted_array[ind];
@@ -222,8 +222,8 @@ void jSOp::run_thread(int id) {
                 arc_size = pop.size() * arc_rate;
                 if (arc_ind_count > arc_size) arc_ind_count = arc_size;
                 // resize the number of p-best individuals
-                p_best_rate = p_best_rate * (1.0 - 0.5 * nfes /  double(func->max_num_evaluations));   // JANEZ
-                p_num = round(pop.size() *  p_best_rate);
+                p_best_rate_l = p_best_rate_l * (1.0 - 0.5 * nfes /  double(func->max_num_evaluations));   // JANEZ
+                p_num = round(pop.size() *  p_best_rate_l);
                 if (p_num <= 1)  p_num = 2;
             }
         }
