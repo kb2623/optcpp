@@ -13,7 +13,7 @@
 #include "de.hpp"
 
 void runAlgo(SearchAlgorithm *algo, TestFuncBounds &func) {
-    std::cout << algo->info() << " : ";
+    std::cout << algo->sinfo() << " : ";
     auto r = algo->run(&func);
     for (auto e : std::get<1>(r)) std::cout << e << ' ';
     auto val = algo->eval(std::get<1>(r).data());
@@ -24,16 +24,16 @@ void runAlgo(SearchAlgorithm *algo, TestFuncBounds &func) {
 }
 
 int main() {
-    const auto no_workers = 10;
+    const auto no_workers = 5;
     SearchAlgorithm *algs[] = {
-        new DE(50, .9, .5, no_workers),
-        new jSO(50, 0.5, 0.5, 150),
+        //new DE(50, .9, .5, 1),
+        //new DE(50, .9, .5, no_workers),
+        //new jSO(50, 0.5, 0.5, 150),
         new jSOp(50, 0.5, 0.5, 150, no_workers),
         //new Bar(50, no_workers),
-        //new DE(50, .9, .5, 1),
     };
     for (int i = 0; i < 30; i++) try {
-        int g_problem_size = 30;
+        int g_problem_size = 10;
         int g_max_num_evaluations = g_problem_size * 10000;
         for (int j = 0; j < std::ssize(algs); j++) {
             auto func = CEC17(g_problem_size, i, g_max_num_evaluations);

@@ -20,6 +20,7 @@ public:
     };
 
     virtual string info() override;
+    virtual string sinfo() override;
     virtual tuple<double, vector<double>> run(TestFuncBounds*) override;
     virtual void run_thread(int) override;
     void initRun(TestFuncBounds*) override;

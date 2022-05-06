@@ -18,8 +18,9 @@ public:
     }
     ~jSO() {};
 
-    virtual std::string info();
-    virtual std::tuple<double, std::vector<double>> run(TestFuncBounds*);
+    virtual string info();
+    virtual string sinfo();
+    virtual tuple<double, vector<double>> run(TestFuncBounds*);
     void modifySolutionWithParentMedium(double*, double*);
     void evaluatePopulation(vector<double*>&, vector<double>&);
     void setSHADEParameters(double, double, int);

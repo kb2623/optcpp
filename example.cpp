@@ -1,7 +1,11 @@
 #include "example.hpp"
 
-std::string Bar::info() {
+string Bar::info() {
     return "Testni algorithm";
+}
+
+string Bar::sinfo() {
+    return "Bar";
 }
 
 void Bar::initRun(TestFuncBounds *ifunc) {
@@ -12,7 +16,7 @@ void Bar::initRun(TestFuncBounds *ifunc) {
     for (int i = 0; i < np; i++) xf[i] = eval(x[i].data());
 }
 
-std::tuple<double, std::vector<double>> Bar::run(TestFuncBounds *ifunc) {
+tuple<double, vector<double>> Bar::run(TestFuncBounds *ifunc) {
     initRun(ifunc);
     auto r = ParallelSearchAlgorithm::run(ifunc);
     x.clear();

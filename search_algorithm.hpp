@@ -25,6 +25,7 @@ public:
     ~SearchAlgorithm() {}
 
     virtual string info() = 0;
+    virtual string sinfo() = 0;
     virtual tuple<double, vector<double>> run(TestFuncBounds*) = 0;
     double eval(double* x);
 

@@ -16,12 +16,12 @@ public:
 
     jSOp(int g_pop_size, double g_arc_rate, double g_p_best_rate, int g_memory_size) : jSOp(g_pop_size, g_arc_rate, g_p_best_rate, g_memory_size, 1) {}
 
-    virtual std::string info() override;
-    virtual std::tuple<double, std::vector<double>> run(TestFuncBounds*) override;
+    virtual string info() override;
+    virtual string sinfo() override;
+    virtual tuple<double, vector<double>> run(TestFuncBounds*) override;
     virtual void run_thread(int) override;
     virtual void initRun(TestFuncBounds*) override;
     void modifySolutionWithParentMedium(double*, const double*);
-    void evaluatePopulation(vector<double*>&, vector<double>&);
     void setSHADEParameters(double, double, int);
     void reducePopulationWithSort(vector<double*>&, vector<double>&);
     void operateCurrentToPBest1BinWithArchive(vector<double*>, double*, int&, int&, double&, double&, vector<double*>, int);

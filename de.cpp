@@ -6,6 +6,12 @@ string DE::info() {
     return r;
 }
 
+string DE::sinfo() {
+    string r = "DE";
+    if (no_thr > 1) r = r + 'p';
+    return r;
+}
+
 void DE::initRun(TestFuncBounds *ifunc) {
     SearchAlgorithm::initRun(ifunc);
     for (int i = 0; i < np; i++) {
