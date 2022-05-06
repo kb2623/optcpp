@@ -35,12 +35,14 @@ void DE::run_thread(int id) {
     while (nfes < func->max_num_evaluations) {
         for (int i = s * id; i < np && i < s * (id + 1); i++) {
             int a, b, c;
-            do a = rand() % np; while (a != i);
-            do b = rand() % np; while (b != i && b != a);
-            do c = rand() % np; while (c != i && c != b && c != a);
-            int r = rand() % func->dim;
+            do {
+                a = rand(id) % np;
+            } while (a != i);
+            do b = rand(id) % np; while (b != i && b != a);
+            do c = rand(id) % np; while (c != i && c != b && c != a);
+            int r = rand(id) % func->dim;
             for (int j = 0; j < func->dim; j++) {
-                if (randDouble() < CR || j == r) {
+                if (randDouble(id) < CR || j == r) {
                     y[j] = pop[a][j] + F * (pop[b][j] - pop[c][j]);
                 } else {
                     y[j] = pop[i][j];

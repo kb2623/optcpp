@@ -26,8 +26,16 @@ public:
         this->CR = CR;
     };
 
-    DE(size_t np, double F, double CR, size_t no_thr) : DE(np, F, CR) {
-        this->no_thr = no_thr;
+    DE(size_t np, double F, double CR, size_t no_thr) : ParallelSearchAlgorithm(no_thr) {
+        this->np = np;
+        this->F = F;
+        this->CR = CR;
+    };
+
+    DE(size_t np, double F, double CR, size_t no_thr, size_t seed) : ParallelSearchAlgorithm(no_thr, seed) {
+        this->np = np;
+        this->F = F;
+        this->CR = CR;
     };
 
     ~DE() {

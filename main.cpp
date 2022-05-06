@@ -33,7 +33,7 @@ int main() {
         //new Bar(50, no_workers),
     };
     for (int i = 0; i < 30; i++) try {
-        int g_problem_size = 10;
+        int g_problem_size = 100;
         int g_max_num_evaluations = g_problem_size * 10000;
         for (int j = 0; j < std::ssize(algs); j++) {
             auto func = CEC17(g_problem_size, i, g_max_num_evaluations);

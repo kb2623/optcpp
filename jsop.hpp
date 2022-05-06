@@ -24,7 +24,7 @@ public:
     void modifySolutionWithParentMedium(double*, const double*);
     void setSHADEParameters(double, double, int);
     void reducePopulationWithSort(vector<double*>&, vector<double>&);
-    void operateCurrentToPBest1BinWithArchive(vector<double*>, double*, int&, int&, double&, double&, vector<double*>, int);
+    void operateCurrentToPBest1BinWithArchive(int, vector<double*>, double*, int&, int&, double&, double&, vector<double*>, int);
 
 private:
     std::mutex success_lock;
