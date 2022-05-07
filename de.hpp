@@ -50,6 +50,10 @@ protected:
     vector<double*> pop;
     vector<double> popf;
 
+    double rand_1(int, int, double*);
+    double best_2(int, int, double*);
+    double rand_to_best_1(int, int, double*);
+
 };
 
 #endif

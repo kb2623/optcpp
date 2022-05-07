@@ -39,7 +39,6 @@ double SearchAlgorithm::eval(double *x) {
     nfes++;
     double f;
     func->test_func(x, &f, 1);
-    setBestSolution(x, f);
     return f;
 }
 

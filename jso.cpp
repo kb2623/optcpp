@@ -37,14 +37,15 @@ void jSO::modifySolutionWithParentMedium(double* child, double* parent) {
 std::tuple<double, std::vector<double>> jSO::run(TestFuncBounds* func) {
     initRun(func);
     double p_best_rate_l = p_best_rate;
-    vector <double*> pop;
-    vector <double> fitness(pop_size, 0);
-    vector <double*> children;
-    vector <double> children_fitness(pop_size, 0);
+    vector <double*> pop(pop_size);
+    vector <double> fitness(pop_size);
+    vector <double*> children(pop_size);
+    vector <double> children_fitness(pop_size, std::numeric_limits<double>::max());
     //initialize population
     for (int i = 0; i < pop_size; i++) {
-        pop.push_back(makeNewIndividual());
-        children.push_back(new double[func->dim]);
+        pop[i] = makeNewIndividual();
+        fitness[i] = eval(pop[i]);
+        children[i] = new double[func->dim];
     }
     //for external archive
     int arc_ind_count = 0, random_selected_arc_ind;
@@ -117,6 +118,7 @@ std::tuple<double, std::vector<double>> jSO::run(TestFuncBounds* func) {
                 fitness[i] = children_fitness[i];
                 for (int j = 0; j < func->dim; j ++) pop[i][j] = children[i][j];
             } else if (children_fitness[i] < fitness[i]) {
+                setBestSolution(children[i], children_fitness[i]);
                 dif_fitness.push_back(fabs(fitness[i] - children_fitness[i]));
                 fitness[i] = children_fitness[i];
                 //successful parameters are preserved in S_F and S_CR

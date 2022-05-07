@@ -11,10 +11,8 @@ string jDE::sinfo() {
 }
 
 void jDE::initRun(TestFuncBounds *ifunc) {
-    SearchAlgorithm::initRun(ifunc);
+    DE::initRun(ifunc);
     for (int i = 0; i < np; i++) {
-        pop.push_back(makeNewIndividual());
-        popf.push_back(eval(pop[i]));
         Fs.push_back(F_s);
         CRs.push_back(CR_s);
     }
@@ -22,10 +20,8 @@ void jDE::initRun(TestFuncBounds *ifunc) {
 
 tuple<double, vector<double>> jDE::run(TestFuncBounds *ifunc) {
     initRun(ifunc);
-    auto r = ParallelSearchAlgorithm::run(ifunc);
+    auto r = DE::run(ifunc);
     for (auto e : pop) delete [] e;
-    pop.clear();
-    popf.clear();
     Fs.clear();
     CRs.clear();
     return r;
@@ -40,28 +36,15 @@ void jDE::run_thread(int id) {
             Fs[i] = (rand(id) < tao_1) ? F_n : Fs[i];
             double CR_n = rand(id);
             CRs[i] = (rand(id) < tao_2) ? CR_n : CRs[i];
-            int a, b, c;
-            do a = rand(id) % np; while (a != i);
-            do b = rand(id) % np; while (b != i && b != a);
-            do c = rand(id) % np; while (c != i && c != b && c != a);
-            int r = rand(id) % func->dim;
-            for (int j = 0; j < func->dim; j++) {
-                if (randDouble(id) < CRs[i] || j == r) {
-                    y[j] = pop[a][j] + Fs[i] * (pop[b][j] - pop[c][j]);
-                } else {
-                    y[j] = pop[i][j];
-                }
-            }
-            auto f = eval(y);
+            auto f = rand_1(id, i, y);
             sync_point->arrive_and_wait();
             if (f < popf[i]) {
                 for (int j = 0; j < func->dim; j++) pop[i][j] = y[j];
                 popf[i] = f;
+                setBestSolution(y, f);
             }
             sync_point->arrive_and_wait();
         }
     }
     delete [] y;
 }
-
-

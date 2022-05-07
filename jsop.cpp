@@ -153,6 +153,7 @@ void jSOp::run_thread(int id) {
                 fitness[i] = children_fitness[i];
                 for (int j = 0; j < func->dim; j ++) pop[i][j] = children[i][j];
             } else if (children_fitness[i] < fitness[i]) {
+                setBestSolution(children[i], children_fitness[i]);
                 fitness[i] = children_fitness[i];
                 success_lock.lock();
                 dif_fitness.push_back(fabs(fitness[i] - children_fitness[i]));
