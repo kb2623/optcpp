@@ -4,7 +4,8 @@
 #include "search_algorithm.hpp"
 
 #include <random>
-#include <barrier>
+#include <thread>
+#include "barrier.hpp"
 
 class ParallelSearchAlgorithm: public SearchAlgorithm {
 public:
@@ -38,7 +39,7 @@ public:
 
 protected:
     size_t no_thr;
-    std::barrier<> *sync_point;
+    Barrier *sync;
     vector<std::default_random_engine> prand;
     vector<std::uniform_int_distribution<size_t>> dists;
 

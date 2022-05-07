@@ -27,9 +27,10 @@ tuple<double, vector<double>> Bar::run(TestFuncBounds *ifunc) {
 void Bar::run_thread(int id) {
     int s = ceil(np / double(no_thr));
     while (nfes < func->max_num_evaluations) {
-        for (int i = s * id; i < np && i < (id + 1) * s; i++) for (int j = 0; j < func->dim; j++) x[i][j] = func->x_bound_max[j] - func->x_bound_min[j] * randDouble(id) + func->x_bound_min[j];
-        for (int i = s * id; i < np && i < (id + 1) * s; i++) xf[i] = eval(x[i].data());
-        sync_point->arrive_and_wait();
+        for (int i = s * id; i < np && i < (id + 1) * s; i++) {
+            for (int j = 0; j < func->dim; j++) x[i][j] = func->x_bound_max[j] - func->x_bound_min[j] * randDouble(id) + func->x_bound_min[j];
+            xf[i] = eval(x[i].data());
+        }
+        sync->wait();
     }
-    sync_point->arrive_and_wait();
 };

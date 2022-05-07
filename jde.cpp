@@ -37,13 +37,13 @@ void jDE::run_thread(int id) {
             double CR_n = rand(id);
             CRs[i] = (rand(id) < tao_2) ? CR_n : CRs[i];
             auto f = opt(*this, id, i, y);
-            sync_point->arrive_and_wait();
+            sync->wait();
             if (f < popf[i]) {
                 for (int j = 0; j < func->dim; j++) pop[i][j] = y[j];
                 popf[i] = f;
                 setBestSolution(y, f);
             }
-            sync_point->arrive_and_wait();
+            sync->wait();
         }
     }
     delete [] y;
