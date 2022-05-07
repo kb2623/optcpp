@@ -1,8 +1,6 @@
 #ifndef _EXAMPLE_H_
 #define _EXAMPLE_H_
 
-#include <barrier>
-
 #include "parallel_search_algorithm.hpp"
 
 class Bar : public ParallelSearchAlgorithm {
