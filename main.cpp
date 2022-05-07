@@ -28,7 +28,7 @@ void runAlgo(SearchAlgorithm *algo, TestFuncBounds &func) {
 
 void runCEC(vector<SearchAlgorithm*> &algs) {
     size_t no_runs = 10;
-    size_t g_problem_size = 10;
+    size_t g_problem_size = 20;
     for (int i = 0; i < 30; i++) try {
         size_t g_max_num_evaluations = g_problem_size * 10000;
         for (auto a : algs) {
@@ -47,20 +47,18 @@ void runCEC(vector<SearchAlgorithm*> &algs) {
 
 void runSphere(vector<SearchAlgorithm*> &algs) {
     size_t no_runs = 10;
-    size_t g_problem_size = 5;
+    size_t g_problem_size = 100;
     size_t g_max_num_evaluations = g_problem_size * 10000;
-    for (auto a : algs) {
+    for (int i = 0; i < no_runs; i++) for (auto a : algs) {
         auto func = Sphere(g_problem_size, g_max_num_evaluations);
-        for (int i = 0; i < no_runs; i++) {
-            runAlgo(a, func);
-            std::cout << std::endl;
-        }
+        runAlgo(a, func);
+        std::cout << std::endl;
     }
     std::cout << std::endl;
 }
 
 int main() {
-    const auto no_workers = 5;
+    const auto no_workers = 10;
     vector<SearchAlgorithm*> algs = {
         new DE(50, .9, .9, 1),
         new DE(50, .9, .9, no_workers),

@@ -36,7 +36,7 @@ void DE::run_thread(int id) {
     auto y = new double[func->dim];
     while (nfes < func->max_num_evaluations) {
         for (int i = s * id; i < np && i < s * (id + 1); i++) {
-            auto f = rand_1(id, i, y);
+            auto f = opt(*this, id, i, y);
             sync_point->arrive_and_wait();
             if (f < popf[i]) {
                 for (int j = 0; j < func->dim; j++) pop[i][j] = y[j];

@@ -3,6 +3,8 @@
 
 #include "parallel_search_algorithm.hpp"
 
+#include <functional>
+
 using namespace std;
 
 class DE: public ParallelSearchAlgorithm {
@@ -49,6 +51,8 @@ public:
 protected:
     vector<double*> pop;
     vector<double> popf;
+
+    std::function<double(DE&, int, int, double*)> opt = &DE::rand_1;
 
     double rand_1(int, int, double*);
     double best_2(int, int, double*);

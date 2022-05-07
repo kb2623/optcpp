@@ -36,7 +36,7 @@ void jDE::run_thread(int id) {
             Fs[i] = (rand(id) < tao_1) ? F_n : Fs[i];
             double CR_n = rand(id);
             CRs[i] = (rand(id) < tao_2) ? CR_n : CRs[i];
-            auto f = rand_1(id, i, y);
+            auto f = opt(*this, id, i, y);
             sync_point->arrive_and_wait();
             if (f < popf[i]) {
                 for (int j = 0; j < func->dim; j++) pop[i][j] = y[j];
