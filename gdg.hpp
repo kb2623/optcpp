@@ -12,6 +12,9 @@ public:
     virtual string info() override;
     virtual string sinfo() override;
 
+protected:
+    void graph_connected_components();
+
 };
 
 #endif
