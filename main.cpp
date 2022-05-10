@@ -24,6 +24,7 @@
 #include "ddgv1.hpp"
 #include "ddgv2.hpp"
 #include "dg.hpp"
+#include "gdg.hpp"
 
 void runAnal(AnalizeAlgorithm *algo, TestFuncBounds *func) {
      auto ret = algo->run(func);
@@ -127,6 +128,7 @@ int main() {
         new DDG(),
         new DDGv1(),
         new DDGv2(),
+        new GDG(),
     };
     //runCEC(anals);
     runSphere(anals);
