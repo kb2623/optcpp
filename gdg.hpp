@@ -5,8 +5,12 @@
 
 class GDG: public AnalizeAlgorithm {
 public:
-    GDG() {}
-    ~GDG() {}
+    double epsilon;
+    size_t np;
+
+    GDG() : GDG(10) {};
+    GDG(size_t np) : np(np) {};
+    ~GDG() {};
 
     virtual tuple<vector<unsigned int>, vector<vector<unsigned int>>> run(TestFuncBounds*) override;
     virtual string info() override;
@@ -14,6 +18,7 @@ public:
 
 protected:
     void graph_connected_components();
+    double calc_treshold();
 
 };
 
