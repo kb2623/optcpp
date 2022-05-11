@@ -2,14 +2,19 @@ cmake_minimum_required(VERSION 3.5)
 
 project(OptCpp LANGUAGES CXX)
 
+# Set project to standard C++17
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Build flags based on release type
 set(CMAKE_CXX_FLAGS_DEBUG "-g")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
+# FIXME: Better support for threads
+# Support for threads in linux
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 
+# Copy needed input files for running bechmarks
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/input_data DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 # Common target
