@@ -29,8 +29,8 @@ add_library(Benchmarks ${BENCMARK_SRC} ${BENCMARK_HDR})
 target_link_libraries(Benchmarks PUBLIC Common)
 
 # Analize algorithm target
-set(ANA_ALGS_SRC analize_algorithm.cpp xdg.cpp xdgv1.cpp xdgv2.cpp rdg.cpp rdgv2.cpp rdgv3.cpp dg.cpp ddg.cpp ddgv1.cpp ddgv2.cpp gdg.cpp)
-set(ANA_ALGS_HDR analize_algorithm.hpp xdg.hpp xdgv1.hpp xdgv2.hpp rdg.hpp rdgv2.hpp rdgv3.hpp dg.hpp ddg.hpp ddgv1.hpp ddgv2.hpp gdg.hpp)
+set(ANA_ALGS_SRC analize_algorithm.cpp xdg.cpp xdgv1.cpp xdgv2.cpp rdg.cpp rdgv2.cpp rdgv3.cpp dg.cpp ddg.cpp ddgv1.cpp ddgv2.cpp gdg.cpp gdgv1.cpp gdgv2.cpp)
+set(ANA_ALGS_HDR analize_algorithm.hpp xdg.hpp xdgv1.hpp xdgv2.hpp rdg.hpp rdgv2.hpp rdgv3.hpp dg.hpp ddg.hpp ddgv1.hpp ddgv2.hpp gdg.hpp gdgv1.hpp gdgv2.hpp)
 add_library(AnaAlgs ${ANA_ALGS_SRC} ${ANA_ALGS_HDR})
 target_link_libraries(AnaAlgs PUBLIC Benchmarks)
 

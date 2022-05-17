@@ -19,8 +19,8 @@ public:
 
 protected:
     tuple<vector<int>, vector<int>> graph_connected_components(vector<vector<double>>&, double);
-    double calc_treshold();
-    vector<size_t> find_tresh(vector<double> &, double);
+    double calc_treshold(vector<vector<double>>&);
+    vector<size_t> find_tresh(vector<double>&, double);
 
     template<typename T, typename R>
     vector<R> find(vector<T> &vec, T val) {
