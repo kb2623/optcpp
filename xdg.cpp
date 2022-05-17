@@ -33,7 +33,7 @@ tuple<vector<unsigned int>, vector<vector<unsigned int>>> XDG::run(TestFuncBound
         for (uint j = i + 1; j < func->dim; j++) {
             if (DG[i][j] == 0) {
                 for (uint k = 0; k < func->dim; k++) p3[k] = p1[k], p4[k] = p2[k];
-                p3[j] = p4[j] = (func->x_bound_min[j] + func->x_bound_max[j]) / 2;
+                p3[j] = p4[j] = func->x_bound_min[j] + (func->x_bound_max[j] - func->x_bound_min[j]) / 2;
                 f3 = eval(p3), f4 = eval(p4);
                 auto delta2 = f3 - f4;
                 if (abs(delta1 - delta2) > epsilon(f1, f2, f3, f4)) {

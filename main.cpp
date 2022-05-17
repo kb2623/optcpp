@@ -121,19 +121,19 @@ void runSphere(vector<AnalizeAlgorithm*> &algs) {
 
 int main() {
     vector<AnalizeAlgorithm*> anals = {
-        new XDG(),
-        new XDGv1(),
-        new XDGv2(),
+        //new XDG(),
+        //new XDGv1(),
+        //new XDGv2(),
         new RDG(),
         new RDGv2(),
         new RDGv3(),
-        new DG(),
-        new DDG(),
-        new DDGv1(),
-        new DDGv2(),
-        new GDG(),
-        new GDGv1(),
-        new GDGv2(),
+        //new DG(),
+        //new DDG(),
+        //new DDGv1(),
+        //new DDGv2(),
+        //new GDG(),
+        //new GDGv1(),
+        //new GDGv2(),
     };
     runCEC(anals);
     //runSphere(anals);

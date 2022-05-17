@@ -76,7 +76,7 @@ vector<unsigned int> RDG::interact(double *a, double af, double epsilon, vector<
     auto bf = eval(b);
     auto delta1 = af - bf;
     for (int i = 0; i < func->dim; i++) d[i] = b[i];
-    for (int i = 0; i < sub2.size(); i++) c[sub2[i]] = d[sub2[i]] = (func->x_bound_max[sub2[i]] + func->x_bound_min[sub2[i]]) / 2;
+    for (int i = 0; i < sub2.size(); i++) c[sub2[i]] = d[sub2[i]] = func->x_bound_min[sub2[i]] + (func->x_bound_max[sub2[i]] - func->x_bound_min[sub2[i]]) / 2;
     auto cf = eval(c), df = eval(d);
     auto delta2 = cf - df;
     delete[] b, delete[] c, delete[] d;

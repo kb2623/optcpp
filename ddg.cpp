@@ -31,10 +31,10 @@ tuple<vector<uint>, vector<vector<uint>>> DDG::run(TestFuncBounds* ifunc) {
         y2 = eval(x2);
         for (auto j : dims) if (i != j) {
             for (uint k = 0; k < func->dim; k++) x3[k] = x1[k];
-            x3[j] = (func->x_bound_min[j] + func->x_bound_max[j]) / 2;
+            x3[j] = func->x_bound_min[j] + (func->x_bound_max[j] - func->x_bound_min[j]) / 2;
             y3 = eval(x3);
             for(uint k = 0; k < func->dim; k++) x4[k] = x2[k];
-            x4[j] = (func->x_bound_min[j] + func->x_bound_max[j]) / 2;
+            x4[j] = func->x_bound_min[j] + (func->x_bound_max[j] - func->x_bound_min[j]) / 2;
             y4 = eval(x4);
             delta_addi = abs((y1 - y2) - (y3 - y4));
             if (y1 > 0 && y2 > 0 && y3 > 0 && y4 > 0) {

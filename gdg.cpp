@@ -35,7 +35,7 @@ tuple<vector<unsigned int>, vector<vector<unsigned int>>> GDG::run(TestFuncBound
         for (int j = 0; j < func->dim; j++) {
             for (int k = 0; k < func->dim; k++) p4[k] = p1[k];
             p4[i] = func->x_bound_max[i];
-            p4[j] = (func->x_bound_max[i] + func->x_bound_min[i]) / 2;
+            p4[j] = func->x_bound_min[j] + (func->x_bound_max[i] - func->x_bound_min[i]) / 2;
             auto p4f = eval(p4);
             auto d_1 = p1f - p2_vec[i];
             auto d_2 = p3_vec[j] - p4f;
