@@ -24,13 +24,11 @@ tuple<double, vector<double>> Bar::run(TestFuncBounds *ifunc) {
     return r;
 }
 
-void Bar::run_thread(int id) {
+void Bar::run_iteration(int id) {
     int s = ceil(np / double(no_thr));
-    while (nfes < func->max_num_evaluations) {
-        for (int i = s * id; i < np && i < (id + 1) * s; i++) {
-            for (int j = 0; j < func->dim; j++) x[i][j] = func->x_bound_max[j] - func->x_bound_min[j] * randDouble(id) + func->x_bound_min[j];
-            xf[i] = eval(x[i].data());
-        }
-        sync->wait();
+    for (int i = s * id; i < np && i < (id + 1) * s; i++) {
+        for (int j = 0; j < func->dim; j++) x[i][j] = func->x_bound_max[j] - func->x_bound_min[j] * randDouble(id) + func->x_bound_min[j];
+        xf[i] = eval(x[i].data());
     }
+    sync->wait();
 };

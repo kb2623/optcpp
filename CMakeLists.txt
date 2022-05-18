@@ -35,8 +35,8 @@ add_library(AnaAlgs ${ANA_ALGS_SRC} ${ANA_ALGS_HDR})
 target_link_libraries(AnaAlgs PUBLIC Benchmarks)
 
 # Optimization algorithm target
-set(OPT_ALGS_SRC search_algorithm.cpp parallel_search_algorithm.cpp example.cpp jso.cpp jsop.cpp de.cpp jde.cpp)
-set(OPT_ALGS_HDR search_algorithm.hpp parallel_search_algorithm.hpp example.hpp jso.hpp jsop.hpp de.hpp jde.hpp)
+set(OPT_ALGS_SRC search_algorithm.cpp parallel_search_algorithm.cpp cc_search_algorithm.cpp example.cpp jso.cpp jsop.cpp de.cpp jde.cpp)
+set(OPT_ALGS_HDR search_algorithm.hpp parallel_search_algorithm.hpp cc_search_algorithm.hpp example.hpp de_mutations.hpp jso.hpp jsop.hpp de.hpp jde.hpp)
 add_library(OptAlgs ${OPT_ALGS_SRC} ${OPT_ALGS_HDR})
 target_link_libraries(OptAlgs PUBLIC AnaAlgs)
 

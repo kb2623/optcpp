@@ -27,24 +27,74 @@ tuple<double, vector<double>> jDE::run(TestFuncBounds *ifunc) {
     return r;
 }
 
-void jDE::run_thread(int id) {
+void jDE::run_iteration(int id) {
     auto s = ceil(np / double(no_thr));
     auto y = new double[func->dim];
-    while (nfes < func->max_num_evaluations) {
-        for (int i = s * id; i < np && i < s * (id + 1); i++) {
-            double F_n = F_l + rand(id) * F_u;
-            Fs[i] = (rand(id) < tao_1) ? F_n : Fs[i];
-            double CR_n = rand(id);
-            CRs[i] = (rand(id) < tao_2) ? CR_n : CRs[i];
-            auto f = opt(*this, id, i, y);
-            sync->wait();
-            if (f < popf[i]) {
-                for (int j = 0; j < func->dim; j++) pop[i][j] = y[j];
-                popf[i] = f;
-                setBestSolution(y, f);
-            }
-            sync->wait();
+    for (int i = s * id; i < np && i < s * (id + 1); i++) {
+        double F_n = F_l + rand(id) * F_u;
+        Fs[i] = (rand(id) < tao_1) ? F_n : Fs[i];
+        double CR_n = rand(id);
+        CRs[i] = (rand(id) < tao_2) ? CR_n : CRs[i];
+        auto f = opt(*this, id, i, y);
+        sync->wait();
+        if (f < popf[i]) {
+            for (int j = 0; j < func->dim; j++) pop[i][j] = y[j];
+            popf[i] = f;
+            setBestSolution(y, f);
         }
+        sync->wait();
     }
     delete [] y;
+}
+
+double jDE::rand_1(int id, int i, double* y) {
+    size_t a, b, c;
+    do a = rand(id) % np; while (a == i);
+    do b = rand(id) % np; while (b == i || b == a);
+    do c = rand(id) % np; while (c == i || c == b || c == a);
+    int r = rand(id) % func->dim;
+    for (int j = 0; j < func->dim; j++) {
+        if (randDouble(id) < CRs[i] || j == r) {
+            y[j] = pop[a][j] + Fs[i] * (pop[b][j] - pop[c][j]);
+        } else {
+            y[j] = pop[i][j];
+        }
+    }
+    fix_solution(y, id);
+    return eval(y);
+}
+
+double jDE::best_2(int id, int i, double *y) {
+    int a, b, c, d;
+    do a = rand(id) % np; while (a == i);
+    do b = rand(id) % np; while (b == i || b == a);
+    do c = rand(id) % np; while (c == i || c == b || c == a);
+    do d = rand(id) % np; while (d == i || d == b || d == a || d == c);
+    int r = rand(id) % func->dim;
+    for (int j = 0; j < func->dim; j++) {
+        if (randDouble(id) < CRs[i] || j == r) {
+            y[j] = x_best[j] + Fs[i] * (pop[a][j] - pop[b][j]) + F * (pop[c][j] - pop[d][j]);
+        } else {
+            y[j] = pop[i][j];
+        }
+    }
+    fix_solution(y, id);
+    return eval(y);
+}
+
+double jDE::rand_to_best_1(int id, int i, double *y) {
+    int a, b, c;
+    do a = rand(id) % np; while (a == i);
+    do b = rand(id) % np; while (b == i || b == a);
+    do c = rand(id) % np; while (c == i || c == b || c == a);
+    int r = rand(id) % func->dim;
+    for (int j = 0; j < func->dim; j++) {
+        if (randDouble(id) < CRs[i] || j == r) {
+            y[j] = pop[a][j] + Fs[i] * (x_best[j] - pop[i][j]) + F * (pop[b][j] - pop[c][j]);
+        } else {
+            y[j] = pop[i][j];
+        }
+    }
+    fix_solution(y, id);
+    return eval(y);
 }

@@ -58,8 +58,8 @@ void runAlgo(SearchAlgorithm *algo, TestFuncBounds *func) {
 }
 
 void runCEC(vector<SearchAlgorithm*> &algs) {
-    size_t no_runs = 10;
-    size_t g_problem_size = 20;
+    size_t no_runs = 100;
+    size_t g_problem_size = 100;
     for (int i = 0; i < 30; i++) try {
         size_t g_max_num_evaluations = g_problem_size * 10000;
         for (auto a : algs) {
@@ -135,7 +135,7 @@ int main() {
         //new GDGv1(),
         //new GDGv2(),
     };
-    runCEC(anals);
+    //runCEC(anals);
     //runSphere(anals);
     const auto no_workers = 10;
     vector<SearchAlgorithm*> algs = {
@@ -147,7 +147,7 @@ int main() {
         new jSOp(50, 0.5, 0.5, 150, no_workers),
         //new Bar(50, no_workers),
     };
-    //runCEC(algs);
+    runCEC(algs);
     //runSphere(algs);
     return 0;
 }

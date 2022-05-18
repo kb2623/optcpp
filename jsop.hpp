@@ -19,12 +19,17 @@ public:
     virtual string info() override;
     virtual string sinfo() override;
     virtual tuple<double, vector<double>> run(TestFuncBounds*) override;
-    virtual void run_thread(int) override;
+    virtual void run_iteration(int) override;
     virtual void initRun(TestFuncBounds*) override;
+
+    void run_thread(int);
+
+protected:
     void modifySolutionWithParentMedium(double*, const double*);
     void setSHADEParameters(double, double, int);
     void reducePopulationWithSort(vector<double*>&, vector<double>&);
     void operateCurrentToPBest1BinWithArchive(int, vector<double*>, double*, int&, int&, double&, double&, vector<double*>, int);
+
 
 private:
     std::mutex success_lock;

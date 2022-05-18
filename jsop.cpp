@@ -106,7 +106,7 @@ void jSOp::run_thread(int id) {
     auto s = ceil(pop_size / double(no_thr));
     int p_best_ind, random_selected_arc_ind;
     double mu_sf, mu_cr, p_best_rate_l = p_best_rate;
-    while (nfes < func->max_num_evaluations) {
+    while (!stop_cond(*this)) {
         for (int i = s * id; i < pop.size() && i < s * (id + 1); i++) sorted_array[i] = i;
         for (int i = s * id; i < pop.size() && i < s * (id + 1); i++) temp_fit[i] = fitness[i];
         sync->wait();
@@ -230,6 +230,10 @@ void jSOp::run_thread(int id) {
         }
         sync->wait();
     }
+}
+
+void jSOp::run_iteration(int id) {
+
 }
 
 void jSOp::clean() {

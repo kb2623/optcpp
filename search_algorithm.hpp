@@ -10,6 +10,7 @@
 #include <string>
 #include <atomic>
 #include <mutex>
+#include <functional>
 
 using std::tuple;
 using std::vector;
@@ -21,14 +22,20 @@ public:
         nfes = 0;
         f_best = std::numeric_limits<double>::max();
         x_best = std::vector<double>();
+        stop_cond = &SearchAlgorithm::nfes_stop_cond;
     }
     ~SearchAlgorithm() {}
 
     virtual string info() = 0;
     virtual string sinfo() = 0;
-    virtual tuple<double, vector<double>> run(TestFuncBounds*) = 0;
+    virtual tuple<double, vector<double>> run(TestFuncBounds*);
+    virtual void run_iteration() = 0;
+
+    virtual void fix_solution(double*);
+
     double eval(double*);
     size_t get_nfes();
+    bool nfes_stop_cond();
 
     vector<double> x_best;
     double  f_best;
@@ -62,6 +69,7 @@ protected:
     }
 
     std::atomic<unsigned int> nfes;
+    std::function<bool(SearchAlgorithm&)> stop_cond;
     TestFuncBounds* func;
 };
 

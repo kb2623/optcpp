@@ -18,9 +18,10 @@ public:
     }
     ~jSO() {};
 
-    virtual string info();
-    virtual string sinfo();
-    virtual tuple<double, vector<double>> run(TestFuncBounds*);
+    virtual string info() override;
+    virtual string sinfo() override;
+    virtual tuple<double, vector<double>> run(TestFuncBounds*) override;
+    virtual void run_iteration() override;
     void modifySolutionWithParentMedium(double*, double*);
     void evaluatePopulation(vector<double*>&, vector<double>&);
     void setSHADEParameters(double, double, int);

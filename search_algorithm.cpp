@@ -45,3 +45,18 @@ double SearchAlgorithm::eval(double *x) {
 size_t SearchAlgorithm::get_nfes() {
     return nfes;
 }
+
+void SearchAlgorithm::fix_solution(double *x) {
+    for (int i = 0; i < func->dim; i++) if (x[i] < func->x_bound_min[i] || x[i] > func->x_bound_max[i]) x[i] = func->x_bound_min[i] + (func->x_bound_max[i] - func->x_bound_min[i]) * randDouble();
+
+}
+
+bool SearchAlgorithm::nfes_stop_cond() {
+    return nfes >= func->max_num_evaluations;
+}
+
+tuple<double, vector<double>> SearchAlgorithm::run(TestFuncBounds *ifunc) {
+   initRun(ifunc);
+   while (!stop_cond(*this)) run_iteration();
+   return std::make_tuple(f_best, x_best);
+}

@@ -34,7 +34,11 @@ void jSO::modifySolutionWithParentMedium(double* child, double* parent) {
     }
 }
 
-std::tuple<double, std::vector<double>> jSO::run(TestFuncBounds* func) {
+void jSO::run_iteration() {
+
+}
+
+tuple<double, vector<double>> jSO::run(TestFuncBounds* func) {
     initRun(func);
     double p_best_rate_l = p_best_rate;
     vector <double*> pop(pop_size);
@@ -73,7 +77,7 @@ std::tuple<double, std::vector<double>> jSO::run(TestFuncBounds* func) {
     // for linear population size reduction
     int min_pop_size = 4, plan_pop_size;
     //main loop
-    while (nfes < func->max_num_evaluations) {
+    while (!stop_cond(*this)) {
         for (int i = 0; i < pop.size(); i++) sorted_array[i] = i;
         for (int i = 0; i < pop.size(); i++) temp_fit[i] = fitness[i];
         sortIndexWithQuickSort(&temp_fit[0], 0, pop.size() - 1, sorted_array);

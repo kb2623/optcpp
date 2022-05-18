@@ -9,21 +9,9 @@
 
 class ParallelSearchAlgorithm: public SearchAlgorithm {
 public:
-    ParallelSearchAlgorithm() : SearchAlgorithm() {
-        no_thr = 2;
-        prand = vector<std::default_random_engine>();
-        for (int i = 0; i < no_thr; i++) prand.push_back(std::default_random_engine(std::rand()));
-        dists = vector<std::uniform_int_distribution<size_t>>();
-        for (int i = 0; i < no_thr; i++) dists.push_back(std::uniform_int_distribution<size_t>(0, std::numeric_limits<size_t>::max()));
-    };
+    ParallelSearchAlgorithm() : ParallelSearchAlgorithm(2, 1) {};
 
-    ParallelSearchAlgorithm(size_t no_thr) : SearchAlgorithm() {
-        this->no_thr = no_thr;
-        prand = vector<std::default_random_engine>();
-        for (int i = 0; i < no_thr; i++) prand.push_back(std::default_random_engine(std::rand()));
-        dists = vector<std::uniform_int_distribution<size_t>>();
-        for (int i = 0; i < no_thr; i++) dists.push_back(std::uniform_int_distribution<size_t>(0, std::numeric_limits<size_t>::max()));
-    };
+    ParallelSearchAlgorithm(size_t no_thr) : ParallelSearchAlgorithm(no_thr, 1) {};
 
     ParallelSearchAlgorithm(size_t no_thr, size_t seed) : SearchAlgorithm() {
         this->no_thr = no_thr;
@@ -34,8 +22,14 @@ public:
 
     };
 
+    virtual void run_iteration(int) = 0;
+    virtual void run_thread(int);
+
     virtual std::tuple<double, std::vector<double>> run(TestFuncBounds *) override;
-    virtual void run_thread(int id) = 0;
+    virtual void run_iteration() override;
+
+    virtual void fix_solution(double*, int);
+    virtual void fix_solution(double*) override;
 
 protected:
     size_t no_thr;
