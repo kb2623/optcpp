@@ -1,5 +1,15 @@
 #include "example.hpp"
 
+Bar::Bar() : ParallelSearchAlgorithm() {
+     np = 10;
+}
+
+Bar::Bar(size_t inp, size_t ino_thr = 10) : ParallelSearchAlgorithm(ino_thr) {
+    this->np = inp;
+}
+
+Bar::~Bar() {}
+
 string Bar::info() {
     return "Testni algorithm";
 }
@@ -31,4 +41,8 @@ void Bar::run_iteration(int id) {
         xf[i] = eval(x[i].data());
     }
     sync->wait();
-};
+}
+
+void Bar::setParameters(AlgParams &params) {
+    // TODO implementation
+}

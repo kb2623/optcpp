@@ -1,11 +1,27 @@
 #include"jso.hpp"
 
+jSO::jSO() {
+    // TODO implementations
+}
+
+jSO::jSO(int g_pop_size, double g_arc_rate, double g_p_best_rate, int g_memory_size) {
+    pop_size = g_pop_size;
+    epsilon = pow(10.0, -8);
+    setSHADEParameters(g_arc_rate, g_p_best_rate, g_memory_size);
+}
+
+jSO::~jSO() {}
+
 string jSO::info() {
     return "Janez Brest, Mirjam Sepesy Maucec, Borko Boskovic. Single Objective Real-Parameter Optimization: Algorithm jSO, Proc. IEEE Congress on Evolutionary Computation (CEC-2017), Donostia - San Sebastián, Spain, June 2017.";
 }
 
 string jSO::sinfo() {
     return "jSO";
+}
+
+void jSO::setParameters(AlgParams &params) {
+    // TODO
 }
 
 void jSO::evaluatePopulation(vector<double*> &pop, vector<double> &fitness) {
@@ -34,9 +50,7 @@ void jSO::modifySolutionWithParentMedium(double* child, double* parent) {
     }
 }
 
-void jSO::run_iteration() {
-
-}
+void jSO::run_iteration() {}
 
 tuple<double, vector<double>> jSO::run(TestFuncBounds* func) {
     initRun(func);

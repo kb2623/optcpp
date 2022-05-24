@@ -8,38 +8,18 @@
 
 class XDG: public AnalizeAlgorithm {
 public:
-    XDG() {}
-    ~XDG() {}
+    XDG();
+    ~XDG();
 
-    virtual tuple<vector<unsigned int>, vector<vector<unsigned int>>> run(TestFuncBounds*) override;
     virtual string info() override;
     virtual string sinfo() override;
+    virtual void setParameters(AlgParams&) override;
+    virtual tuple<vector<unsigned int>, vector<vector<unsigned int>>> run(TestFuncBounds*) override;
 
 protected:
     double epsilon(double, double, double, double);
 
+    double _epsilon;
 };
-
-template <typename T>
-T sum(vector<T> x) {
-    T s = 0;
-    for (auto e : x) s += e;
-    return s;
-};
-
-template <typename T>
-inline bool have_intersection(vector<T> a, vector<T> b) {
-    for (auto e : a) for (auto ee : b) if (e == ee) return true;
-    return false;
-};
-
-template <typename T>
-inline vector<T> vunion(vector<T> a, vector<T> b) {
-    sort(a.begin(), a.end());
-    sort(b.begin(), b.end());
-    auto c = vector<T>();
-    std::set_union(a.begin(), a.end(), b.begin(), b.end(), std::back_inserter(c));
-    return c;
-}
 
 #endif

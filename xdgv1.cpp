@@ -2,6 +2,10 @@
 
 using std::abs;
 
+XDGv1::XDGv1() {}
+
+XDGv1::~XDGv1() {}
+
 string XDGv1::info() {
     return "Extended Differential Grouping version 1 (" + sinfo() + ")";
 }

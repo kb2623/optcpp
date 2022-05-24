@@ -6,6 +6,10 @@ using std::abs;
 using std::find;
 using std::make_tuple;
 
+DG::DG() {}
+
+DG::~DG() {}
+
 string DG::info() {
    return "Differential Grouping (" + sinfo() + ")";
 }
@@ -50,4 +54,8 @@ tuple<vector<unsigned int>, vector<vector<unsigned int>>> DG::run(TestFuncBounds
 
 double DG::epsilon(double a, double b, double c, double d) {
     return 1e-12;
+}
+
+void DG::setParameters(AlgParams &params) {
+    // TODO implementation
 }

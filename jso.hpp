@@ -11,15 +11,13 @@ using namespace std;
 
 class jSO: public SearchAlgorithm {
 public:
-    jSO(int g_pop_size, double g_arc_rate, double g_p_best_rate, int g_memory_size) {
-        pop_size = g_pop_size;
-        epsilon = pow(10.0, -8);
-        setSHADEParameters(g_arc_rate, g_p_best_rate, g_memory_size);
-    }
-    ~jSO() {};
+    jSO();
+    jSO(int, double, double, int);
+    ~jSO();
 
     virtual string info() override;
     virtual string sinfo() override;
+    virtual void setParameters(AlgParams&) override;
     virtual tuple<double, vector<double>> run(TestFuncBounds*) override;
     virtual void run_iteration() override;
     void modifySolutionWithParentMedium(double*, double*);

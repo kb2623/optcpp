@@ -1,5 +1,9 @@
 #include"ddgv2.hpp"
 
+DDGv2::DDGv2() {}
+
+DDGv2::~DDGv2() {}
+
 string DDGv2::info() {
     return "Dual Differential Grouping version 2 (" + sinfo() + ")";
 }

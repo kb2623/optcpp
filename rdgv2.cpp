@@ -1,4 +1,6 @@
-#include"rdgv2.hpp"
+#include "rdgv2.hpp"
+
+#include "common_funcs.hpp"
 
 #include <algorithm>
 #include <limits>
@@ -6,6 +8,10 @@
 using std::abs;
 using std::pow;
 using std::make_tuple;
+
+RDGv2::RDGv2() {}
+
+RDGv2::~RDGv2() {}
 
 string RDGv2::info() {
     return "Recursive Differential Grouping version 2 (" + sinfo() + ")";

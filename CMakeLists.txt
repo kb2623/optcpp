@@ -18,28 +18,34 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/input_data DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 # Common target
-set(COMMON_SRC barrier.cpp)
-set(COMMON_HDR barrier.hpp)
+set(COMMON_SRC barrier.cpp common_funcs.cpp)
+set(COMMON_HDR barrier.hpp common_funcs.hpp)
 add_library(Common ${COMMON_SRC} ${COMMON_HDR})
 
-# Benchmark target
-set(BENCMARK_SRC cec17_test_func.cpp sphere.cpp)
-set(BENCMARK_HDR testfunc.hpp cec17_test_func.hpp sphere.hpp)
-add_library(Benchmarks ${BENCMARK_SRC} ${BENCMARK_HDR})
-target_link_libraries(Benchmarks PUBLIC Common)
+# Interfaces
+set(INTERFACES_SRC testfunc.cpp algorithm_parameters.cpp analize_algorithm.cpp search_algorithm.cpp parallel_search_algorithm.cpp cc_search_algorithm.cpp)
+set(INTERFACES_HDR testfunc.hpp algorithm_parameters.hpp analize_algorithm.hpp search_algorithm.hpp parallel_search_algorithm.hpp cc_search_algorithm.hpp)
+add_library(Interfaces ${INTERFACES_HDR} ${INTERFACES_SRC})
+target_link_libraries(Interfaces PUBLIC Common)
 
-# Analize algorithm target
-set(ANA_ALGS_SRC analize_algorithm.cpp xdg.cpp xdgv1.cpp xdgv2.cpp rdg.cpp rdgv2.cpp rdgv3.cpp dg.cpp ddg.cpp ddgv1.cpp ddgv2.cpp gdg.cpp gdgv1.cpp gdgv2.cpp)
-set(ANA_ALGS_HDR analize_algorithm.hpp xdg.hpp xdgv1.hpp xdgv2.hpp rdg.hpp rdgv2.hpp rdgv3.hpp dg.hpp ddg.hpp ddgv1.hpp ddgv2.hpp gdg.hpp gdgv1.hpp gdgv2.hpp)
-add_library(AnaAlgs ${ANA_ALGS_SRC} ${ANA_ALGS_HDR})
-target_link_libraries(AnaAlgs PUBLIC Benchmarks)
+# Benchmarks
+set(BENCHMARK_SRC cec17_test_func.cpp sphere.cpp)
+set(BENCHMARK_HDR cec17_test_func.hpp sphere.hpp)
+add_library(Benchmarks ${BENCHMARK_HDR} ${BENCHMARK_SRC})
+target_link_libraries(Benchmarks PUBLIC Interfaces)
 
-# Optimization algorithm target
-set(OPT_ALGS_SRC search_algorithm.cpp parallel_search_algorithm.cpp cc_search_algorithm.cpp example.cpp jso.cpp jsop.cpp de.cpp jde.cpp)
-set(OPT_ALGS_HDR search_algorithm.hpp parallel_search_algorithm.hpp cc_search_algorithm.hpp example.hpp de_mutations.hpp jso.hpp jsop.hpp de.hpp jde.hpp)
-add_library(OptAlgs ${OPT_ALGS_SRC} ${OPT_ALGS_HDR})
-target_link_libraries(OptAlgs PUBLIC AnaAlgs)
+# Implemented analyze algorithms
+set(ANA_ALGS_SRC xdg.cpp xdgv1.cpp xdgv2.cpp rdg.cpp rdgv2.cpp rdgv3.cpp dg.cpp ddg.cpp ddgv1.cpp ddgv2.cpp gdg.cpp gdgv1.cpp gdgv2.cpp)
+set(ANA_ALGS_HDR xdg.hpp xdgv1.hpp xdgv2.hpp rdg.hpp rdgv2.hpp rdgv3.hpp dg.hpp ddg.hpp ddgv1.hpp ddgv2.hpp gdg.hpp gdgv1.hpp gdgv2.hpp)
+add_library(AlgsAnalyse ${ANA_ALGS_SRC} ${ANA_ALGS_HDR})
+target_link_libraries(AlgsAnalyse PUBLIC Benchmarks)
+
+# Implemented search Algorithms
+set(OPT_ALGS_SRC example.cpp jso.cpp jsop.cpp de.cpp jde.cpp)
+set(OPT_ALGS_HDR example.hpp jso.hpp jsop.hpp de.hpp jde.hpp de_mutations.hpp)
+add_library(AlgsOptimization ${OPT_ALGS_SRC} ${OPT_ALGS_HDR})
+target_link_libraries(AlgsOptimization PUBLIC AlgsAnalyse)
 
 # Main target
 add_executable(OptCpp main.cpp)
-target_link_libraries(OptCpp OptAlgs)
+target_link_libraries(OptCpp AlgsOptimization)

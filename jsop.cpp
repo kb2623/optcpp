@@ -8,6 +8,10 @@ string jSOp::sinfo() {
     return "jSOp";
 }
 
+void jSOp::setParameters(AlgParams &params) {
+    // TODO
+}
+
 /*
   For each dimension j, if the mutant vector element v_j is outside the boundaries [x_min , x_max], we applied this bound handling method
   If you'd like to know that precisely, please read:

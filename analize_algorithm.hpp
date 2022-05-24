@@ -2,8 +2,10 @@
 #define _ANALIZE_ALGORITHM_H_
 
 #include "testfunc.hpp"
+#include "algorithm_parameters.hpp"
 
 #include <limits>
+#include <atomic>
 #include <cmath>
 #include <vector>
 #include <tuple>
@@ -15,14 +17,15 @@ using std::vector;
 
 class AnalizeAlgorithm {
 public:
-    AnalizeAlgorithm() {
-        nfes = 0;
-    }
-    ~AnalizeAlgorithm() {}
+    AnalizeAlgorithm(AlgParams);
+    AnalizeAlgorithm();
+    ~AnalizeAlgorithm();
 
-    virtual tuple<vector<unsigned int>, vector<vector<unsigned int>>> run(TestFuncBounds*) = 0;
     virtual string info() = 0;
     virtual string sinfo() = 0;
+    virtual tuple<vector<unsigned int>, vector<vector<unsigned int>>> run(TestFuncBounds*) = 0;
+
+    virtual void setParameters(AlgParams&);
 
 protected:
     void initRun(TestFuncBounds* func);
@@ -49,7 +52,7 @@ protected:
         return mu + sigma * sqrt(-2.0 * log(randDouble())) * sin(2.0 * M_PI * randDouble());
     }
 
-    unsigned int nfes;
+    std::atomic<unsigned int> nfes;
     TestFuncBounds* func;
 };
 

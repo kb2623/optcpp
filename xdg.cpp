@@ -1,10 +1,16 @@
-#include"xdg.hpp"
+#include "xdg.hpp"
+
+#include "common_funcs.hpp"
 
 #include <algorithm>
 #include <limits>
 
 using std::abs;
 using std::make_tuple;
+
+XDG::XDG() {}
+
+XDG::~XDG() {}
 
 string XDG::info() {
     return "Extended Differential Grouping (" + sinfo() + ")";
@@ -79,5 +85,9 @@ tuple<vector<unsigned int>, vector<vector<unsigned int>>> XDG::run(TestFuncBound
 }
 
 double XDG::epsilon(double y1, double y2, double y3, double y4) {
-    return 1e-6;
+    return _epsilon;
+}
+
+void XDG::setParameters(AlgParams &params) {
+    this->_epsilon = params.has("epsilon") ? params.at<double>("epsilon") : 10e-12;
 }

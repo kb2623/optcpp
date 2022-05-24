@@ -1,20 +1,25 @@
-#include"rdg.hpp"
+#include "rdg.hpp"
 
-#include <algorithm>
+#include "common_funcs.hpp"
 
 using std::abs;
-using std::sort;
-using std::set_union;
 using std::make_tuple;
-using std::back_inserter;
+
+RDG::RDG() : AnalizeAlgorithm() {}
+
+RDG::~RDG() {}
 
 string RDG::info() {
    return "Recursive Differential Grouping (" + sinfo() + ")";
 }
 
-
 string RDG::sinfo() {
     return "RDG";
+}
+
+void RDG::setParameters(AlgParams &params) {
+    this->np    = params.has("np")    ? params.at<size_t>("np")    : 10;
+    this->alpha = params.has("alpha") ? params.at<double>("alpha") : 10e-12;
 }
 
 double RDG::calc_epsilon(TestFuncBounds* func) {
@@ -24,7 +29,6 @@ double RDG::calc_epsilon(TestFuncBounds* func) {
     for (int i = 0; i < np; i++) xf[i] = eval(x[i].data());
     auto minf = abs(xf[0]);
     for (int i = 1; i < np; i++) if (minf > abs(xf[i])) minf = abs(xf[i]);
-    auto epsilon = alpha * minf;
     return alpha * minf;
 }
 
@@ -99,10 +103,4 @@ vector<unsigned int> RDG::interact(double *a, double af, double epsilon, vector<
     return sub1;
 }
 
-vector<unsigned int> vunion(vector<unsigned int> s1, vector<unsigned int> s2) {
-    vector<unsigned int> tmp;
-    sort(s1.begin(), s1.end());
-    sort(s2.begin(), s2.end());
-    set_union(s1.begin(), s1.end(), s2.begin(), s2.end(), back_inserter(tmp));
-    return tmp;
-}
+

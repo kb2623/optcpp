@@ -5,10 +5,8 @@
 
 class DDGv2: public DDG {
 public:
-    double eps = 10e-12;
-
-    DDGv2() {}
-    ~DDGv2() {}
+    DDGv2();
+    ~DDGv2();
 
     virtual string info() override;
     virtual string sinfo() override;
@@ -16,6 +14,8 @@ public:
 protected:
     double get_epsilon_addi(double, double, double, double);
     double gamma(double);
+
+    double eps = 10e-12;
 };
 
 #endif

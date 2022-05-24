@@ -2,6 +2,9 @@
 
 using std::abs;
 
+DDGv1::DDGv1() {}
+
+DDGv1::~DDGv1() {}
 
 string DDGv1::sinfo() {
     return "DDGv1";

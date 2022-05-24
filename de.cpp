@@ -2,6 +2,21 @@
 
 #include <iostream>
 
+DE::DE(size_t np, double F, double CR, size_t no_thr, size_t seed) : ParallelSearchAlgorithm(no_thr, seed) {
+    // TODO
+}
+
+DE::DE() : DE(50, 0.9, 0.65, 2, std::rand() % RAND_MAX) {}
+
+DE::DE(size_t np, double F, double CR) : DE(np, F, CR, 2, std::rand() % RAND_MAX) {}
+
+DE::DE(size_t np, double F, double CR, size_t no_thr) : DE(np, F, CR, no_thr, std::rand() % RAND_MAX) {}
+
+DE::~DE() {
+    pop.clear();
+    popf.clear();
+}
+
 string DE::info() {
     string r = "Differential Evolution (DE)";
     if (no_thr > 1) r = "Parallel " + r;
@@ -12,6 +27,12 @@ string DE::sinfo() {
     string r = "DE";
     if (no_thr > 1) r = r + 'p';
     return r;
+}
+
+void DE::setParameters(AlgParams &params) {
+    np = params.has("np") ? params.at<size_t>("np") : 50;
+    F  = params.has("F")  ? params.at<double>("F")  : 0.9;
+    CR = params.has("CR") ? params.at<double>("CR") : 0.9;
 }
 
 void DE::initRun(TestFuncBounds *ifunc) {

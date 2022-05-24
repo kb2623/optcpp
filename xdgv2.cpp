@@ -1,5 +1,9 @@
 #include"xdgv2.hpp"
 
+XDGv2::XDGv2() {}
+
+XDGv2::~XDGv2() {}
+
 string XDGv2::info() {
     return "Extended Differential Grouping version 2 (" + sinfo() + ")";
 }

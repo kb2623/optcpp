@@ -8,41 +8,15 @@ using namespace std;
 
 class DE: public ParallelSearchAlgorithm, public DeMutations {
 public:
-    size_t np;
-    double F;
-    double CR;
-
-    DE() : ParallelSearchAlgorithm() {
-        np = 50;
-        F = 0.9;
-        CR = 0.65;
-    };
-
-    DE(size_t np, double F, double CR) : DE() {
-        this->np = np;
-        this->F = F;
-        this->CR = CR;
-    };
-
-    DE(size_t np, double F, double CR, size_t no_thr) : ParallelSearchAlgorithm(no_thr) {
-        this->np = np;
-        this->F = F;
-        this->CR = CR;
-    };
-
-    DE(size_t np, double F, double CR, size_t no_thr, size_t seed) : ParallelSearchAlgorithm(no_thr, seed) {
-        this->np = np;
-        this->F = F;
-        this->CR = CR;
-    };
-
-    ~DE() {
-        pop.clear();
-        popf.clear();
-    };
+    DE();
+    DE(size_t, double, double);
+    DE(size_t, double, double, size_t);
+    DE(size_t, double, double, size_t, size_t);
+    ~DE();
 
     virtual string info() override;
     virtual string sinfo() override;
+    virtual void setParameters(AlgParams&) override;
     void initRun(TestFuncBounds*) override;
     virtual tuple<double, vector<double>> run(TestFuncBounds*) override;
     virtual void run_iteration(int) override;
@@ -56,6 +30,9 @@ protected:
     vector<double> popf;
     std::function<double(DE&, int, int, double*)> opt = &DE::rand_1;
 
+    size_t np;
+    double F;
+    double CR;
 };
 
 #endif

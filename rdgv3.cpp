@@ -1,8 +1,14 @@
-#include"rdgv3.hpp"
+#include "rdgv3.hpp"
+
+#include "common_funcs.hpp"
 
 using std::abs;
 using std::pow;
 using std::make_tuple;
+
+RDGv3::RDGv3() {}
+
+RDGv3::~RDGv3() {}
 
 string RDGv3::info() {
     return "Recursive Differential Grouping version 3 (" + sinfo() + ")";

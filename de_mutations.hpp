@@ -9,7 +9,6 @@ public:
     virtual double rand_1(int, int, double*) = 0;
     virtual double best_2(int, int, double*) = 0;
     virtual double rand_to_best_1(int, int, double*) = 0;
-
 };
 
 #endif

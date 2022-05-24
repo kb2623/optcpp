@@ -9,27 +9,17 @@
 
 class ParallelSearchAlgorithm: public SearchAlgorithm {
 public:
-    ParallelSearchAlgorithm() : ParallelSearchAlgorithm(2, 1) {};
-
-    ParallelSearchAlgorithm(size_t no_thr) : ParallelSearchAlgorithm(no_thr, 1) {};
-
-    ParallelSearchAlgorithm(size_t no_thr, size_t seed) : SearchAlgorithm() {
-        this->no_thr = no_thr;
-        prand = vector<std::default_random_engine>();
-        for (int i = 0; i < no_thr; i++) prand.push_back(std::default_random_engine(seed));
-        dists = vector<std::uniform_int_distribution<size_t>>();
-        for (int i = 0; i < no_thr; i++) dists.push_back(std::uniform_int_distribution<size_t>(0, std::numeric_limits<size_t>::max()));
-
-    };
+    ParallelSearchAlgorithm();
+    ParallelSearchAlgorithm(size_t);
+    ParallelSearchAlgorithm(size_t, size_t);
 
     virtual void run_iteration(int) = 0;
     virtual void run_thread(int);
-
-    virtual std::tuple<double, std::vector<double>> run(TestFuncBounds *) override;
-    virtual void run_iteration() override;
-
     virtual void fix_solution(double*, int);
-    virtual void fix_solution(double*) override;
+    virtual std::tuple<double, std::vector<double>> run(TestFuncBounds *) override;
+
+    virtual void run_iteration() final;
+    virtual void fix_solution(double*) final;
 
 protected:
     size_t no_thr;
@@ -37,29 +27,35 @@ protected:
     vector<std::default_random_engine> prand;
     vector<std::uniform_int_distribution<size_t>> dists;
 
-    inline size_t rand(int id) {
-        return dists[id](prand[id]);
-    }
-
-    inline double randDouble(int id) {
-        return double(rand(id)) / double(std::numeric_limits<size_t>::max());
-    }
-
-    /*
-      Return random value from Cauchy distribution with mean "mu" and variance "gamma"
-      http://www.sat.t.u-tokyo.ac.jp/~omi/random_variables_generation.html#Cauchy
-      */
-    inline double cauchy_g(int id, double mu, double gamma) {
-        return mu + gamma * tan(M_PI * (randDouble(id) - 0.5));
-    }
-
-    /*
-      Return random value from normal distribution with mean "mu" and variance "gamma"
-      http://www.sat.t.u-tokyo.ac.jp/~omi/random_variables_generation.html#Gauss
-      */
-    inline double gauss(int id, double mu, double sigma){
-        return mu + sigma * sqrt(-2.0 * log(randDouble(id))) * sin(2.0 * M_PI * randDouble(id));
-    }
+    /**
+     * @brief rand Get random generator for a thread
+     * @param id   ID of a thread
+     * @return     Random geneator
+     */
+    size_t rand(int);
+    /**
+     * @brief randDouble Return random value with uniform distribution [0, 1)
+     * @return [0, 1)
+     */
+    double randDouble(int);
+    /**
+     * @brief cauchy_g Return random value from Cauchy distribution with mean "mu" and variance "gamma"
+     *                 http://www.sat.t.u-tokyo.ac.jp/~omi/random_variables_generation.html#Cauchy
+     * @param id       Id of a thread
+     * @param mu       Parameter mu
+     * @param gamma    Parameter sigma
+     * @return
+     */
+    double cauchy_g(int, double, double);
+    /**
+     * @brief gauss Return random value from normal distribution with mean "mu" and variance "gamma"
+     *              http://www.sat.t.u-tokyo.ac.jp/~omi/random_variables_generation.html#Gauss
+     * @param id    Id of a thread
+     * @param mu    Parameter mu
+     * @param sigma Parameter sigma
+     * @return
+     */
+    double gauss(int, double, double);
 };
 
 #endif

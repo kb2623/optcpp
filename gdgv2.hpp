@@ -5,9 +5,9 @@
 
 class GDGv2: public GDG {
 public:
-    GDGv2() : GDG(10, 10e-10) {};
-    GDGv2(size_t np, double epsilon) : GDG(np, epsilon) {};
-    ~GDGv2() {};
+    GDGv2();
+    GDGv2(size_t, double);
+    ~GDGv2();
 
     virtual string info() override;
     virtual string sinfo() override;

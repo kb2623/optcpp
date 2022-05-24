@@ -5,30 +5,21 @@
 
 class TestFunc {
 public:
-    size_t dim;
-
-    TestFunc(size_t idim) {
-        dim = idim;
-    };
+    TestFunc(size_t);
 
     virtual void test_func(double*, double*, int) = 0;
+
+    size_t dim;
 };
 
 class TestFuncBounds: public TestFunc {
 public:
+    TestFuncBounds(size_t, size_t);
+    ~TestFuncBounds();
+
     double *x_bound_min;
     double *x_bound_max;
     size_t max_num_evaluations;
-
-    TestFuncBounds(size_t dim, size_t g_max_num_evaluations): TestFunc(dim) {
-        x_bound_min = new double[dim];
-        x_bound_max = new double[dim];
-        max_num_evaluations = g_max_num_evaluations;
-    }
-    ~TestFuncBounds() {
-        delete[] x_bound_min;
-        delete[] x_bound_max;
-    }
 };
 
 #endif

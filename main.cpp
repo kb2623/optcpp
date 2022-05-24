@@ -121,21 +121,21 @@ void runSphere(vector<AnalizeAlgorithm*> &algs) {
 
 int main() {
     vector<AnalizeAlgorithm*> anals = {
-        //new XDG(),
-        //new XDGv1(),
-        //new XDGv2(),
+        new XDG(),
+        new XDGv1(),
+        new XDGv2(),
         new RDG(),
         new RDGv2(),
         new RDGv3(),
-        //new DG(),
-        //new DDG(),
-        //new DDGv1(),
-        //new DDGv2(),
-        //new GDG(),
-        //new GDGv1(),
-        //new GDGv2(),
+        new DG(),
+        new DDG(),
+        new DDGv1(),
+        new DDGv2(),
+        new GDG(),
+        new GDGv1(),
+        new GDGv2(),
     };
-    //runCEC(anals);
+    runCEC(anals);
     //runSphere(anals);
     const auto no_workers = 10;
     vector<SearchAlgorithm*> algs = {
@@ -145,7 +145,7 @@ int main() {
         new jDE(50, 0.1, 0.1, no_workers),
         new jSO(50, 0.5, 0.5, 150),
         new jSOp(50, 0.5, 0.5, 150, no_workers),
-        //new Bar(50, no_workers),
+        new Bar(50, no_workers),
     };
     runCEC(algs);
     //runSphere(algs);

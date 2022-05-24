@@ -1,9 +1,15 @@
-#include"ddg.hpp"
+#include "ddg.hpp"
+
+#include "common_funcs.hpp"
 
 using std::log;
 using std::abs;
 using std::find;
 using std::make_tuple;
+
+DDG::DDG() {}
+
+DDG::~DDG() {}
 
 string DDG::info() {
     return "Dual Differential Grouping (" + sinfo() + ")";
@@ -48,7 +54,7 @@ tuple<vector<uint>, vector<vector<uint>>> DDG::run(TestFuncBounds* ifunc) {
             }
         }
         if (tmpgroup.size() == 1) {
-            seps = vuinon(seps, tmpgroup);
+            seps = vunion(seps, tmpgroup);
         } else {
             allgroups.push_back(tmpgroup);
         }
@@ -62,5 +68,10 @@ tuple<vector<uint>, vector<vector<uint>>> DDG::run(TestFuncBounds* ifunc) {
 }
 
 double DDG::get_epsilon_addi(double y1, double y2, double y3, double y4) {
-    return 1e-3;
+    return epsilon_addi;
+}
+
+void DDG::setParameters(AlgParams &params) {
+    this->epsilon_multi = params.has("epsilon_multi") ? params.at<double>("epsilon_multi") : 10e-8;
+    this->epsilon_addi  = params.has("epsilon_addi")  ? params.at<double>("epsilon_addi")  : 1e-3;
 }

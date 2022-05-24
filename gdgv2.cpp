@@ -5,6 +5,12 @@
 using std::abs;
 using std::make_tuple;
 
+GDGv2::GDGv2() : GDG(10, 10e-10) {}
+
+GDGv2::GDGv2(size_t np, double epsilon) : GDG(np, epsilon) {}
+
+GDGv2::~GDGv2() {}
+
 string GDGv2::info() {
    return "Global Differential Grouping version 2 (" + sinfo() + ")";
 }

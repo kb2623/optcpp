@@ -1,16 +1,13 @@
-/*
-  L-SHADE implemented by C++ for Special Session & Competition on Real-Parameter Single Objective Optimization at CEC-2014
-  See the details of L-SHADE in the following paper:
-
-  * Ryoji Tanabe and Alex Fukunaga: Improving the Search Performance of SHADE Using Linear Population Size Reduction,  Proc. IEEE Congress on Evolutionary Computation (CEC-2014), Beijing, July, 2014.
-
-  Version: 1.0   Date: 16/Apr/2014
-  Written by Ryoji Tanabe (rt.ryoji.tanabe [at] gmail.com)
-*/
-
 #include"analize_algorithm.hpp"
 
-#include <limits>
+AnalizeAlgorithm::AnalizeAlgorithm(AlgParams params) {
+    nfes = 0;
+    setParameters(params);
+}
+
+AnalizeAlgorithm::AnalizeAlgorithm() : AnalizeAlgorithm(AlgParams()) {}
+
+AnalizeAlgorithm::~AnalizeAlgorithm() {}
 
 void AnalizeAlgorithm::initRun(TestFuncBounds *func) {
     nfes = 0;
@@ -23,3 +20,9 @@ double AnalizeAlgorithm::eval(double *x) {
     nfes++;
     return f;
 }
+
+/**
+ * @brief AnalizeAlgorithm::setParameters No parameter algorithm.
+ * @param params
+ */
+void AnalizeAlgorithm::setParameters(AlgParams &params) {}

@@ -1,9 +1,17 @@
-#include"gdg.hpp"
+#include "gdg.hpp"
+
+#include "common_funcs.hpp"
 
 #include <algorithm>
 
 using std::abs;
 using std::make_tuple;
+
+GDG::~GDG() {}
+
+GDG::GDG() : GDG(10, 10e-10) {}
+
+GDG::GDG(size_t np, double epsilon) : np(np), epsilon(epsilon) {}
 
 string GDG::info() {
    return "Global Differential Grouping (" + sinfo() + ")";
@@ -108,4 +116,8 @@ vector<size_t> GDG::find_tresh(vector<double> &vec, double tresh) {
     auto r = vector<size_t>();
     for (int i = 0; i < vec.size(); i++) if (vec[i] > tresh) r.push_back(i);
     return r;
+}
+
+void GDG::setParameters(AlgParams &params) {
+    // TODO implementation
 }

@@ -1,16 +1,18 @@
-/*
-  L-SHADE implemented by C++ for Special Session & Competition on Real-Parameter Single Objective Optimization at CEC-2014
-  See the details of L-SHADE in the following paper:
-
-  * Ryoji Tanabe and Alex Fukunaga: Improving the Search Performance of SHADE Using Linear Population Size Reduction,  Proc. IEEE Congress on Evolutionary Computation (CEC-2014), Beijing, July, 2014.
-
-  Version: 1.0   Date: 16/Apr/2014
-  Written by Ryoji Tanabe (rt.ryoji.tanabe [at] gmail.com)
-*/
+#include"search_algorithm.hpp"
 
 #include <limits>
 
-#include"search_algorithm.hpp"
+SearchAlgorithm::SearchAlgorithm(AlgParams params) {
+     nfes = 0;
+     f_best = std::numeric_limits<double>::max();
+     x_best = std::vector<double>();
+     stop_cond = &SearchAlgorithm::nfes_stop_cond;
+     setParameters(params);
+}
+
+SearchAlgorithm::SearchAlgorithm() : SearchAlgorithm(AlgParams()) {}
+
+SearchAlgorithm::~SearchAlgorithm() {}
 
 // make new individual randomly
 double* SearchAlgorithm::makeNewIndividual() {
@@ -48,7 +50,6 @@ size_t SearchAlgorithm::get_nfes() {
 
 void SearchAlgorithm::fix_solution(double *x) {
     for (int i = 0; i < func->dim; i++) if (x[i] < func->x_bound_min[i] || x[i] > func->x_bound_max[i]) x[i] = func->x_bound_min[i] + (func->x_bound_max[i] - func->x_bound_min[i]) * randDouble();
-
 }
 
 bool SearchAlgorithm::nfes_stop_cond() {
@@ -56,7 +57,22 @@ bool SearchAlgorithm::nfes_stop_cond() {
 }
 
 tuple<double, vector<double>> SearchAlgorithm::run(TestFuncBounds *ifunc) {
-   initRun(ifunc);
-   while (!stop_cond(*this)) run_iteration();
-   return std::make_tuple(f_best, x_best);
+    initRun(ifunc);
+    while (!stop_cond(*this)) run_iteration();
+    return std::make_tuple(f_best, x_best);
+}
+
+// No parameter algorithm
+void SearchAlgorithm::setParameters(AlgParams &params) {}
+
+double SearchAlgorithm::randDouble() {
+    return (double)rand() / (double) RAND_MAX;
+}
+
+double SearchAlgorithm::cauchy_g(double mu, double gamma) {
+    return mu + gamma * tan(M_PI * (randDouble() - 0.5));
+}
+
+double SearchAlgorithm::gauss(double mu, double sigma){
+    return mu + sigma * sqrt(-2.0 * log(randDouble())) * sin(2.0 * M_PI * randDouble());
 }
