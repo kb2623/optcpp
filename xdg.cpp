@@ -8,7 +8,7 @@
 using std::abs;
 using std::make_tuple;
 
-XDG::XDG() {}
+XDG::XDG() : AnalizeAlgorithm() {}
 
 XDG::~XDG() {}
 
@@ -88,6 +88,6 @@ double XDG::epsilon(double y1, double y2, double y3, double y4) {
     return _epsilon;
 }
 
-void XDG::setParameters(AlgParams &params) {
-    this->_epsilon = params.has("epsilon") ? params.at<double>("epsilon") : 10e-12;
+void XDG::setParameters(AlgParams *params) {
+    this->_epsilon = params != nullptr && params->has("epsilon") ? params->at<double>("epsilon") : 10e-12;
 }

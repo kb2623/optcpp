@@ -7,7 +7,7 @@ using std::abs;
 using std::find;
 using std::make_tuple;
 
-DDG::DDG() {}
+DDG::DDG() : AnalizeAlgorithm() {}
 
 DDG::~DDG() {}
 
@@ -71,7 +71,7 @@ double DDG::get_epsilon_addi(double y1, double y2, double y3, double y4) {
     return epsilon_addi;
 }
 
-void DDG::setParameters(AlgParams &params) {
-    this->epsilon_multi = params.has("epsilon_multi") ? params.at<double>("epsilon_multi") : 10e-8;
-    this->epsilon_addi  = params.has("epsilon_addi")  ? params.at<double>("epsilon_addi")  : 1e-3;
+void DDG::setParameters(AlgParams *params) {
+    this->epsilon_multi = params != nullptr && params->has("epsilon_multi") ? params->at<double>("epsilon_multi") : 10e-8;
+    this->epsilon_addi  = params != nullptr && params->has("epsilon_addi")  ? params->at<double>("epsilon_addi")  : 1e-3;
 }

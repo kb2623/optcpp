@@ -6,7 +6,6 @@
 class GDGv2: public GDG {
 public:
     GDGv2();
-    GDGv2(size_t, double);
     ~GDGv2();
 
     virtual string info() override;

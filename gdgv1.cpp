@@ -5,9 +5,7 @@
 using std::abs;
 using std::make_tuple;
 
-GDGv1::GDGv1() : GDG(10, 10e-10) {}
-
-GDGv1::GDGv1(size_t np, double epsilon) : GDG(np, epsilon) {}
+GDGv1::GDGv1() : GDG() {}
 
 GDGv1::~GDGv1() {}
 

@@ -2,7 +2,7 @@
 
 using std::abs;
 
-DDGv1::DDGv1() {}
+DDGv1::DDGv1() : DDG() {}
 
 DDGv1::~DDGv1() {}
 
@@ -33,4 +33,10 @@ tuple<vector<uint>, vector<vector<uint>>> DDGv1::run(TestFuncBounds* ifunc) {
 
 double DDGv1::get_epsilon_addi(double a, double b, double c, double d) {
     return epsilon_addi;
+}
+
+void DDGv1::setParameters(AlgParams *params) {
+    this->alpha        = params != nullptr && params->has("alpha") ? params->at<double>("alpha")               : 10e-12;
+    this->np           = params != nullptr && params->has("np") ? params->at<size_t>("np")                     : 50;
+    this->epsilon_addi = params != nullptr && params->has("epsilon_addi") ? params->at<double>("epsilon_addi") : 1e-12;
 }

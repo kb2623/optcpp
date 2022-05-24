@@ -29,6 +29,7 @@
 #include "gdgv2.hpp"
 
 void runAnal(AnalizeAlgorithm *algo, TestFuncBounds *func) {
+    algo->setParameters(nullptr);
      auto ret = algo->run(func);
      auto gs = get<0>(ret);
      cout << "------------------------Seps-------------------------" << endl;
@@ -107,8 +108,8 @@ void runCEC(vector<AnalizeAlgorithm*> &algo) {
 }
 
 void runSphere(vector<AnalizeAlgorithm*> &algs) {
-    size_t no_runs = 10;
-    size_t g_problem_size = 100;
+    size_t no_runs = 1;
+    size_t g_problem_size = 10;
     size_t g_max_num_evaluations = g_problem_size * 10000;
     for (auto a : algs) for (int i = 0; i < no_runs; i++) {
         auto func = Sphere(g_problem_size, g_max_num_evaluations);
@@ -135,8 +136,8 @@ int main() {
         new GDGv1(),
         new GDGv2(),
     };
-    runCEC(anals);
-    //runSphere(anals);
+    //runCEC(anals);
+    runSphere(anals);
     const auto no_workers = 10;
     vector<SearchAlgorithm*> algs = {
         new DE(50, .9, .9, 1),

@@ -7,11 +7,9 @@
 using std::abs;
 using std::make_tuple;
 
+GDG::GDG() : AnalizeAlgorithm() {}
+
 GDG::~GDG() {}
-
-GDG::GDG() : GDG(10, 10e-10) {}
-
-GDG::GDG(size_t np, double epsilon) : np(np), epsilon(epsilon) {}
 
 string GDG::info() {
    return "Global Differential Grouping (" + sinfo() + ")";
@@ -118,6 +116,8 @@ vector<size_t> GDG::find_tresh(vector<double> &vec, double tresh) {
     return r;
 }
 
-void GDG::setParameters(AlgParams &params) {
-    // TODO implementation
+void GDG::setParameters(AlgParams *params) {
+    this->np      = params != nullptr && params->has("np")      ? params->at<size_t>("np")      : 10;
+    this->epsilon = params != nullptr && params->has("epsilon") ? params->at<double>("epsilon") : 1e-7;
+    this->temp    = params != nullptr && params->has("temp")    ? params->at<double>("temp")    : .5;
 }

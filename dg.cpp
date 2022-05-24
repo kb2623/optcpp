@@ -6,7 +6,7 @@ using std::abs;
 using std::find;
 using std::make_tuple;
 
-DG::DG() {}
+DG::DG() : AnalizeAlgorithm() {}
 
 DG::~DG() {}
 
@@ -56,6 +56,6 @@ double DG::epsilon(double a, double b, double c, double d) {
     return 1e-12;
 }
 
-void DG::setParameters(AlgParams &params) {
+void DG::setParameters(AlgParams *params) {
     // TODO implementation
 }

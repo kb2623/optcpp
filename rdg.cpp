@@ -17,9 +17,9 @@ string RDG::sinfo() {
     return "RDG";
 }
 
-void RDG::setParameters(AlgParams &params) {
-    this->np    = params.has("np")    ? params.at<size_t>("np")    : 10;
-    this->alpha = params.has("alpha") ? params.at<double>("alpha") : 10e-12;
+void RDG::setParameters(AlgParams *params) {
+    this->np    = params != nullptr && params->has("np")    ? params->at<size_t>("np")    : 10;
+    this->alpha = params != nullptr && params->has("alpha") ? params->at<double>("alpha") : 10e-12;
 }
 
 double RDG::calc_epsilon(TestFuncBounds* func) {
@@ -102,5 +102,3 @@ vector<unsigned int> RDG::interact(double *a, double af, double epsilon, vector<
     }
     return sub1;
 }
-
-

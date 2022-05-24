@@ -17,15 +17,13 @@ using std::vector;
 
 class AnalizeAlgorithm {
 public:
-    AnalizeAlgorithm(AlgParams);
     AnalizeAlgorithm();
     ~AnalizeAlgorithm();
 
     virtual string info() = 0;
     virtual string sinfo() = 0;
+    virtual void setParameters(AlgParams*) = 0;
     virtual tuple<vector<unsigned int>, vector<vector<unsigned int>>> run(TestFuncBounds*) = 0;
-
-    virtual void setParameters(AlgParams&);
 
 protected:
     void initRun(TestFuncBounds* func);

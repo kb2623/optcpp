@@ -13,7 +13,7 @@ public:
 
     virtual string info() override;
     virtual string sinfo() override;
-    virtual void setParameters(AlgParams&) override;
+    virtual void setParameters(AlgParams*) override;
     virtual tuple<vector<unsigned int>, vector<vector<unsigned int>>> run(TestFuncBounds*) override;
 
 protected:

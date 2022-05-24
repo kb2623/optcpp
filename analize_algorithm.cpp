@@ -1,11 +1,6 @@
 #include"analize_algorithm.hpp"
 
-AnalizeAlgorithm::AnalizeAlgorithm(AlgParams params) {
-    nfes = 0;
-    setParameters(params);
-}
-
-AnalizeAlgorithm::AnalizeAlgorithm() : AnalizeAlgorithm(AlgParams()) {}
+AnalizeAlgorithm::AnalizeAlgorithm() : nfes(0) {}
 
 AnalizeAlgorithm::~AnalizeAlgorithm() {}
 
@@ -21,8 +16,8 @@ double AnalizeAlgorithm::eval(double *x) {
     return f;
 }
 
-/**
- * @brief AnalizeAlgorithm::setParameters No parameter algorithm.
- * @param params
- */
-void AnalizeAlgorithm::setParameters(AlgParams &params) {}
+void AnalizeAlgorithm::setParameters(AlgParams *params) {
+    /**
+     * Parameter free algorithms can use this function.
+     */
+}
