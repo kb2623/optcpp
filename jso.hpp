@@ -12,12 +12,11 @@ using namespace std;
 class jSO: public SearchAlgorithm {
 public:
     jSO();
-    jSO(int, double, double, int);
     ~jSO();
 
     virtual string info() override;
     virtual string sinfo() override;
-    virtual void setParameters(AlgParams&) override;
+    virtual void setParameters(AlgParams*) override;
     virtual tuple<double, vector<double>> run(TestFuncBounds*) override;
     virtual void run_iteration() override;
     void modifySolutionWithParentMedium(double*, double*);
@@ -27,16 +26,17 @@ public:
     void operateCurrentToPBest1BinWithArchive(const vector<double*>&, double*, int&, int&, double&, double&, const vector<double*>&, int);
 
     double epsilon;
-    int arc_size;
-    int pop_size;
     double arc_rate;
     double p_best_rate;
-    int memory_size;
-    int reduction_ind_num;
+    size_t arc_size;
+    size_t np;
+    size_t memory_size;
+    size_t reduction_ind_num;
 };
 
 //Recursive quick sort with index array
-template<class VarType> void sortIndexWithQuickSort(VarType array[], int first, int last, int index[]) {
+template<class VarType>
+void sortIndexWithQuickSort(VarType array[], int first, int last, int index[]) {
     VarType x = array[(first + last) / 2];
     int i = first;
     int j = last;

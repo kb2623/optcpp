@@ -8,13 +8,13 @@ using namespace std;
 class jDE: public DE {
 public:
     jDE();
-    jDE(size_t, double, double, size_t);
-    jDE(size_t, double, double, size_t, size_t);
+    jDE(size_t);
+    jDE(size_t, size_t);
     ~jDE();
 
     virtual string info() override;
     virtual string sinfo() override;
-    virtual void setParameters(AlgParams&) override;
+    virtual void setParameters(AlgParams*) override;
     void initRun(TestFuncBounds*) override;
     virtual tuple<double, vector<double>> run(TestFuncBounds*) override;
     virtual void run_iteration(int) override;

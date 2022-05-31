@@ -41,4 +41,13 @@ protected:
     map<string, any> params;
 };
 
+template<typename T>
+T getParam(AlgParams* params, string key, T dval) {
+    if (params != nullptr && params->has(key)) {
+        return params->at<T>(key);
+    } else {
+        return dval;
+    }
+}
+
 #endif

@@ -117,7 +117,7 @@ vector<size_t> GDG::find_tresh(vector<double> &vec, double tresh) {
 }
 
 void GDG::setParameters(AlgParams *params) {
-    this->np      = params != nullptr && params->has("np")      ? params->at<size_t>("np")      : 10;
-    this->epsilon = params != nullptr && params->has("epsilon") ? params->at<double>("epsilon") : 1e-7;
-    this->temp    = params != nullptr && params->has("temp")    ? params->at<double>("temp")    : .5;
+    this->np      = getParam(params, "np", 10);
+    this->epsilon = getParam(params, "epsilon", 1e-7);
+    this->temp    = getParam(params, "temp", .5);
 }

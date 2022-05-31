@@ -19,7 +19,6 @@ using std::string;
 
 class SearchAlgorithm {
 public:
-    SearchAlgorithm(AlgParams params);
     SearchAlgorithm();
     ~SearchAlgorithm();
 
@@ -27,9 +26,9 @@ public:
     virtual string sinfo() = 0;
     virtual void run_iteration() = 0;
 
-    virtual tuple<double, vector<double>> run(TestFuncBounds*);
     virtual void fix_solution(double*);
-    virtual void setParameters(AlgParams&);
+    virtual void setParameters(AlgParams*);
+    virtual tuple<double, vector<double>> run(TestFuncBounds*);
 
     double eval(double*);
     size_t get_nfes();

@@ -9,14 +9,13 @@ using namespace std;
 class DE: public ParallelSearchAlgorithm, public DeMutations {
 public:
     DE();
-    DE(size_t, double, double);
-    DE(size_t, double, double, size_t);
-    DE(size_t, double, double, size_t, size_t);
+    DE(size_t);
+    DE(size_t, size_t);
     ~DE();
 
     virtual string info() override;
     virtual string sinfo() override;
-    virtual void setParameters(AlgParams&) override;
+    virtual void setParameters(AlgParams*) override;
     void initRun(TestFuncBounds*) override;
     virtual tuple<double, vector<double>> run(TestFuncBounds*) override;
     virtual void run_iteration(int) override;

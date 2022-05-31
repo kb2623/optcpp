@@ -8,16 +8,14 @@ using namespace std;
 
 class jSOp: public ParallelSearchAlgorithm {
 public:
-    jSOp(int g_pop_size, double g_arc_rate, double g_p_best_rate, int g_memory_size, size_t no_thr) : ParallelSearchAlgorithm(no_thr) {
-        pop_size = g_pop_size;
-        epsilon = pow(10.0, -8);
-        setSHADEParameters(g_arc_rate, g_p_best_rate, g_memory_size);
-    }
-    jSOp(int g_pop_size, double g_arc_rate, double g_p_best_rate, int g_memory_size) : jSOp(g_pop_size, g_arc_rate, g_p_best_rate, g_memory_size, 1) {}
+    jSOp();
+    jSOp(size_t);
+    jSOp(size_t, size_t);
+    ~jSOp();
 
     virtual string info() override;
     virtual string sinfo() override;
-    virtual void setParameters(AlgParams&) override;
+    virtual void setParameters(AlgParams*) override;
     virtual tuple<double, vector<double>> run(TestFuncBounds*) override;
     virtual void run_iteration(int) override;
     virtual void initRun(TestFuncBounds*) override;
@@ -28,20 +26,16 @@ protected:
     void setSHADEParameters(double, double, int);
     void reducePopulationWithSort(vector<double*>&, vector<double>&);
     void operateCurrentToPBest1BinWithArchive(int, vector<double*>, double*, int&, int&, double&, double&, vector<double*>, int);
+    void clean();
 
-
-private:
     std::mutex success_lock;
     std::mutex archive_lock;
 
-    void clean();
-
-protected:
     double epsilon;
     double arc_rate;
     double p_best_rate;
-    int reduction_ind_num;
-    size_t pop_size;
+    size_t reduction_ind_num;
+    size_t np;
     size_t arc_size;
     size_t memory_size;
     size_t memory_pos;

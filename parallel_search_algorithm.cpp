@@ -8,9 +8,9 @@ ParallelSearchAlgorithm::ParallelSearchAlgorithm(size_t no_thr, size_t seed) : S
      for (int i = 0; i < no_thr; i++) dists.push_back(std::uniform_int_distribution<size_t>(0, std::numeric_limits<size_t>::max()));
 }
 
-ParallelSearchAlgorithm::ParallelSearchAlgorithm(size_t no_thr) : ParallelSearchAlgorithm(2, std::rand() % RAND_MAX) {}
+ParallelSearchAlgorithm::ParallelSearchAlgorithm(size_t no_thr) : ParallelSearchAlgorithm(no_thr, std::rand() % RAND_MAX) {}
 
-ParallelSearchAlgorithm::ParallelSearchAlgorithm() : ParallelSearchAlgorithm(2, 1) {}
+ParallelSearchAlgorithm::ParallelSearchAlgorithm() : ParallelSearchAlgorithm(1, std::rand() % RAND_MAX) {}
 
 tuple<double, vector<double>> ParallelSearchAlgorithm::run(TestFuncBounds* func) {
     initRun(func);
@@ -32,11 +32,11 @@ void ParallelSearchAlgorithm::fix_solution(double *x, int id) {
 }
 
 void ParallelSearchAlgorithm::run_iteration() {
-    throw "Multithread algorithm need and id for runiing (run_iteration)!!!";
+    throw "Multithread algorithm need an id for running (run_iteration)!!!";
 }
 
 void ParallelSearchAlgorithm::fix_solution(double *x) {
-    throw "Multithread algorithm need and id for runiing (fix_solution)!!!";
+    throw "Multithread algorithm need an id for running (fix_solution)!!!";
 }
 
 size_t ParallelSearchAlgorithm::rand(int id) {

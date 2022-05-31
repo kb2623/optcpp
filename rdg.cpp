@@ -18,8 +18,8 @@ string RDG::sinfo() {
 }
 
 void RDG::setParameters(AlgParams *params) {
-    this->np    = params != nullptr && params->has("np")    ? params->at<size_t>("np")    : 10;
-    this->alpha = params != nullptr && params->has("alpha") ? params->at<double>("alpha") : 10e-12;
+    this->np    = getParam(params, "np", 10);
+    this->alpha = getParam(params, "alpha", 10e-12);
 }
 
 double RDG::calc_epsilon(TestFuncBounds* func) {

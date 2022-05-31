@@ -89,5 +89,5 @@ double XDG::epsilon(double y1, double y2, double y3, double y4) {
 }
 
 void XDG::setParameters(AlgParams *params) {
-    this->_epsilon = params != nullptr && params->has("epsilon") ? params->at<double>("epsilon") : 10e-12;
+    this->_epsilon = getParam(params, "epsilon", 10e-12);
 }

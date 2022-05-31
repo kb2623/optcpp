@@ -2,15 +2,12 @@
 
 #include <limits>
 
-SearchAlgorithm::SearchAlgorithm(AlgParams params) {
+SearchAlgorithm::SearchAlgorithm() {
      nfes = 0;
      f_best = std::numeric_limits<double>::max();
      x_best = std::vector<double>();
      stop_cond = &SearchAlgorithm::nfes_stop_cond;
-     setParameters(params);
 }
-
-SearchAlgorithm::SearchAlgorithm() : SearchAlgorithm(AlgParams()) {}
 
 SearchAlgorithm::~SearchAlgorithm() {}
 
@@ -63,7 +60,7 @@ tuple<double, vector<double>> SearchAlgorithm::run(TestFuncBounds *ifunc) {
 }
 
 // No parameter algorithm
-void SearchAlgorithm::setParameters(AlgParams &params) {}
+void SearchAlgorithm::setParameters(AlgParams *params) {}
 
 double SearchAlgorithm::randDouble() {
     return (double)rand() / (double) RAND_MAX;

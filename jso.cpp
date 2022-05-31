@@ -1,14 +1,6 @@
 #include"jso.hpp"
 
-jSO::jSO() {
-    // TODO implementations
-}
-
-jSO::jSO(int g_pop_size, double g_arc_rate, double g_p_best_rate, int g_memory_size) {
-    pop_size = g_pop_size;
-    epsilon = pow(10.0, -8);
-    setSHADEParameters(g_arc_rate, g_p_best_rate, g_memory_size);
-}
+jSO::jSO() : SearchAlgorithm() {}
 
 jSO::~jSO() {}
 
@@ -20,12 +12,15 @@ string jSO::sinfo() {
     return "jSO";
 }
 
-void jSO::setParameters(AlgParams &params) {
-    // TODO
+void jSO::setParameters(AlgParams *params) {
+    SearchAlgorithm::setParameters(params);
+    this->epsilon = getParam(params, "epsilon", pow(10.0, -8));
+    this->np = getParam(params, "np", 50);
+    setSHADEParameters(getParam(params, "arc_rate", .5), getParam(params, "p_best_rate", .5), getParam(params, "memory_size", 150));
 }
 
 void jSO::evaluatePopulation(vector<double*> &pop, vector<double> &fitness) {
-    for (int i = 0; i < pop_size; i++) {
+    for (int i = 0; i < pop.size(); i++) {
         fitness[i] = eval(pop[i]);
         if (nfes >= func->max_num_evaluations) break;
     }
@@ -55,12 +50,12 @@ void jSO::run_iteration() {}
 tuple<double, vector<double>> jSO::run(TestFuncBounds* func) {
     initRun(func);
     double p_best_rate_l = p_best_rate;
-    vector <double*> pop(pop_size);
-    vector <double> fitness(pop_size);
-    vector <double*> children(pop_size);
-    vector <double> children_fitness(pop_size, std::numeric_limits<double>::max());
+    vector <double*> pop(np);
+    vector <double> fitness(np);
+    vector <double*> children(np);
+    vector <double> children_fitness(np, std::numeric_limits<double>::max());
     //initialize population
-    for (int i = 0; i < pop_size; i++) {
+    for (int i = 0; i < np; i++) {
         pop[i] = makeNewIndividual();
         fitness[i] = eval(pop[i]);
         children[i] = new double[func->dim];
@@ -82,12 +77,12 @@ tuple<double, vector<double>> jSO::run(TestFuncBounds* func) {
     //for new parameters sampling
     double mu_sf, mu_cr;
     int random_selected_period;
-    double* pop_sf = new double[pop_size];
-    double* pop_cr = new double[pop_size];
+    double* pop_sf = new double[np];
+    double* pop_cr = new double[np];
     //for current-to-pbest/1
-    int p_best_ind, p_num = round(pop_size *  p_best_rate_l);
-    int* sorted_array = new int[pop_size];
-    double* temp_fit = new double[pop_size];
+    int p_best_ind, p_num = round(np *  p_best_rate_l);
+    int* sorted_array = new int[np];
+    double* temp_fit = new double[np];
     // for linear population size reduction
     int min_pop_size = 4, plan_pop_size;
     //main loop
@@ -191,7 +186,7 @@ tuple<double, vector<double>> jSO::run(TestFuncBounds* func) {
             dif_fitness.clear();
         }
         // calculate the population size in the next generation
-        plan_pop_size = round((((min_pop_size - pop_size) / double(func->max_num_evaluations)) * nfes) + pop_size);
+        plan_pop_size = round((((min_pop_size - pop.size()) / double(func->max_num_evaluations)) * nfes) + pop.size());
         if (pop.size() > plan_pop_size) {
             reduction_ind_num = pop.size() - plan_pop_size;
             if (pop.size() - reduction_ind_num <  min_pop_size) reduction_ind_num = pop.size() - min_pop_size;
@@ -208,7 +203,7 @@ tuple<double, vector<double>> jSO::run(TestFuncBounds* func) {
     // Clean after run
     delete[] pop_sf;
     delete[] pop_cr;
-    for (int i = 0; i < pop_size; i++) {
+    for (int i = 0; i < np; i++) {
         delete[] pop[i]; //.clear();  // JANEZ
         delete[] children[i]; //.clear();  // JANEZ
     }
@@ -235,14 +230,14 @@ void jSO::operateCurrentToPBest1BinWithArchive(const vector<double*> &pop, doubl
         jF = jF * 1.2;      // jSO
     }
     do {
-        r1 = rand() % pop_size;
+        r1 = rand() % pop.size();
     } while (r1 == target);
     do {
-        r2 = rand() % (pop_size + arc_ind_count);
+        r2 = rand() % (pop.size() + arc_ind_count);
     } while ((r2 == target) || (r2 == r1));
     int random_variable = rand() % func->dim;
-    if (r2 >= pop_size) {
-        r2 -= pop_size;
+    if (r2 >= pop.size()) {
+        r2 -= pop.size();
         for (int i = 0; i < func->dim; i++) {
             if ((randDouble() < cross_rate) || (i == random_variable)) child[i] = pop[target][i] + jF * (pop[p_best_individual][i] - pop[target][i]) + scaling_factor * (pop[r1][i] - archive[r2][i]);  // jSO
             else child[i] = pop[target][i];
@@ -261,18 +256,17 @@ void jSO::reducePopulationWithSort(vector<double*> &pop, vector<double> &fitness
     int worst_ind;
     for (int i = 0; i < reduction_ind_num; i++) {
         worst_ind = 0;
-        for (int j = 1; j < pop_size; j++) {
+        for (int j = 1; j < pop.size(); j++) {
             if (fitness[j] > fitness[worst_ind]) worst_ind = j;
         }
         pop.erase(pop.begin() + worst_ind);
         fitness.erase(fitness.begin() + worst_ind);
-        pop_size--;
     }
 }
 
 void  jSO::setSHADEParameters(double g_arc_rate, double g_p_best_rate, int g_memory_size) {
     arc_rate = g_arc_rate;
-    arc_size = (int)round(pop_size * arc_rate);
+    arc_size = (int)round(np * arc_rate);
     p_best_rate = g_p_best_rate;
     memory_size = g_memory_size;
 }

@@ -1,5 +1,13 @@
 #include"jsop.hpp"
 
+jSOp::jSOp() : ParallelSearchAlgorithm() {}
+
+jSOp::jSOp(size_t no_thr) : ParallelSearchAlgorithm(no_thr) {}
+
+jSOp::jSOp(size_t no_thr, size_t seed) : ParallelSearchAlgorithm(no_thr, seed) {}
+
+jSOp::~jSOp() {}
+
 string jSOp::info() {
     return "jSO parallel";
 }
@@ -8,8 +16,11 @@ string jSOp::sinfo() {
     return "jSOp";
 }
 
-void jSOp::setParameters(AlgParams &params) {
-    // TODO
+void jSOp::setParameters(AlgParams *params) {
+    SearchAlgorithm::setParameters(params);
+    this->epsilon = getParam(params, "epsilon", pow(10.0, -8));
+    this->np = getParam(params, "np", 50);
+    setSHADEParameters(getParam(params, "arc_rate", .5), getParam(params, "p_best_rate", .5), getParam(params, "memory_size", 150));
 }
 
 /*
@@ -72,7 +83,7 @@ void jSOp::reducePopulationWithSort(vector<double*> &pop, vector<double> &fitnes
 
 void  jSOp::setSHADEParameters(double g_arc_rate, double g_p_best_rate, int g_memory_size) {
     arc_rate = g_arc_rate;
-    arc_size = size_t(round(pop_size * arc_rate));
+    arc_size = size_t(round(np * arc_rate));
     p_best_rate = g_p_best_rate;
     memory_size = g_memory_size;
 }
@@ -87,8 +98,8 @@ tuple<double, vector<double>> jSOp::run(TestFuncBounds* ifun) {
 void jSOp::initRun(TestFuncBounds *ifunc) {
     ParallelSearchAlgorithm::initRun(ifunc);
     pop = std::vector<double*>(), children = vector<double*>();
-    fitness = vector<double>(), children_fitness = vector<double>(pop_size, 0);
-    for (int i = 0; i < pop_size; i++) {
+    fitness = vector<double>(), children_fitness = vector<double>(np, 0);
+    for (int i = 0; i < np; i++) {
         pop.push_back(makeNewIndividual());
         fitness.push_back(eval(pop[i]));
         children.push_back(new double[func->dim]);
@@ -97,17 +108,17 @@ void jSOp::initRun(TestFuncBounds *ifunc) {
     for (int i = 0; i < arc_size; i++) archive.push_back(new double[func->dim]);
     success_sf = vector<double>(), success_cr = vector<double>(), dif_fitness = vector<double>();
     memory_sf = std::vector<double>(memory_size, 0.3), memory_cr = vector<double>(memory_size, 0.8);
-    pop_sf = new double[pop_size], pop_cr = new double[pop_size];
-    sorted_array = new int[pop_size];
-    temp_fit = new double[pop_size];
-    p_num = round(pop_size * p_best_rate);
+    pop_sf = new double[np], pop_cr = new double[np];
+    sorted_array = new int[np];
+    temp_fit = new double[np];
+    p_num = round(np * p_best_rate);
     arc_ind_count = 0;
     num_success_params = 0;
     old_num_success_params = 0;
 }
 
 void jSOp::run_thread(int id) {
-    auto s = ceil(pop_size / double(no_thr));
+    auto s = ceil(np / double(no_thr));
     int p_best_ind, random_selected_arc_ind;
     double mu_sf, mu_cr, p_best_rate_l = p_best_rate;
     while (!stop_cond(*this)) {
@@ -218,7 +229,7 @@ void jSOp::run_thread(int id) {
                 dif_fitness.clear();
             }
             // calculate the population size in the next generation
-            size_t plan_pop_size = round((((min_pop_size - pop_size) / double(func->max_num_evaluations)) * nfes) + pop_size);
+            size_t plan_pop_size = round((((min_pop_size - pop.size()) / double(func->max_num_evaluations)) * nfes) + pop.size());
             if (pop.size() > plan_pop_size) {
                 reduction_ind_num = pop.size() - plan_pop_size;
                 if (pop.size() - reduction_ind_num <  min_pop_size) reduction_ind_num = pop.size() - min_pop_size;
@@ -236,9 +247,7 @@ void jSOp::run_thread(int id) {
     }
 }
 
-void jSOp::run_iteration(int id) {
-
-}
+void jSOp::run_iteration(int id) {}
 
 void jSOp::clean() {
     delete[] pop_sf;

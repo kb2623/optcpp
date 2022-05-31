@@ -72,6 +72,6 @@ double DDG::get_epsilon_addi(double y1, double y2, double y3, double y4) {
 }
 
 void DDG::setParameters(AlgParams *params) {
-    this->epsilon_multi = params != nullptr && params->has("epsilon_multi") ? params->at<double>("epsilon_multi") : 10e-8;
-    this->epsilon_addi  = params != nullptr && params->has("epsilon_addi")  ? params->at<double>("epsilon_addi")  : 1e-3;
+    this->epsilon_multi = getParam(params, "epsilon_multi", 10e-8);
+    this->epsilon_addi  = getParam(params, "epsilon_addi",  1e-3);
 }

@@ -59,11 +59,12 @@ void runAlgo(SearchAlgorithm *algo, TestFuncBounds *func) {
 }
 
 void runCEC(vector<SearchAlgorithm*> &algs) {
-    size_t no_runs = 100;
-    size_t g_problem_size = 100;
+    size_t no_runs = 10;
+    size_t g_problem_size = 10;
     for (int i = 0; i < 30; i++) try {
         size_t g_max_num_evaluations = g_problem_size * 10000;
         for (auto a : algs) {
+            a->setParameters(nullptr);
             auto func = CEC17(g_problem_size, i, g_max_num_evaluations);
             for (int j = 0; j < no_runs; j++) {
                 cout << "F" << i + 1 << " : ";
@@ -79,7 +80,7 @@ void runCEC(vector<SearchAlgorithm*> &algs) {
 
 void runSphere(vector<SearchAlgorithm*> &algs) {
     size_t no_runs = 10;
-    size_t g_problem_size = 100;
+    size_t g_problem_size = 10;
     size_t g_max_num_evaluations = g_problem_size * 10000;
     for (int i = 0; i < no_runs; i++) for (auto a : algs) {
         auto func = Sphere(g_problem_size, g_max_num_evaluations);
@@ -140,13 +141,13 @@ int main() {
     runSphere(anals);
     const auto no_workers = 10;
     vector<SearchAlgorithm*> algs = {
-        new DE(50, .9, .9, 1),
-        new DE(50, .9, .9, no_workers),
-        new jDE(50, 0.1, 0.1, 1),
-        new jDE(50, 0.1, 0.1, no_workers),
-        new jSO(50, 0.5, 0.5, 150),
-        new jSOp(50, 0.5, 0.5, 150, no_workers),
-        new Bar(50, no_workers),
+        new DE(),
+        new DE(no_workers),
+        new jDE(),
+        new jDE(no_workers),
+        new jSO(),
+        new jSOp(no_workers),
+        new Bar(no_workers),
     };
     runCEC(algs);
     //runSphere(algs);

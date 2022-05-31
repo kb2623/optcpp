@@ -1,26 +1,15 @@
 #include"jde.hpp"
 
-jDE::jDE() : DE() {
-        tao_1 = 0.1;
-        tao_2 = 0.1;
-        F_s = 0.45;
-        CR_s = rand(0);
-    };
+jDE::jDE() : DE() {}
 
-    jDE::jDE(size_t np, double tao_1, double tao_2, size_t no_thr, size_t seed) : DE(np, 0, 0, no_thr, seed) {
-        this->tao_1 = tao_1;
-        this->tao_2 = tao_2;
-    };
+jDE::jDE(size_t no_thr, size_t seed) : DE(no_thr, seed) {}
 
-    jDE::jDE(size_t np, double tao_1, double tao_2, size_t no_thr) : DE(np, 0, 0, no_thr) {
-        this->tao_1 = tao_1;
-        this->tao_2 = tao_2;
-    };
+jDE::jDE(size_t no_thr) : DE(no_thr) {}
 
-    jDE::~jDE() {
-        Fs.clear();
-        CRs.clear();
-    };
+jDE::~jDE() {
+    Fs.clear();
+    CRs.clear();
+}
 
 string jDE::info() {
     return " Brest, J., Greiner, S., Boskovic, B., Mernik, M. and Zumer, V. (2006) Self-Adapting Control Parameters in Differential Evolution: A Comparative Study on Numerical Benchmark Problems. IEEE Transactions on Evolutionary Computation, 10, 646-657. https://doi.org/10.1109/TEVC.2006.872133 ";
@@ -32,8 +21,12 @@ string jDE::sinfo() {
     return r;
 }
 
-void jDE::setParameters(AlgParams &params) {
-    // TODO
+void jDE::setParameters(AlgParams *params) {
+    DE::setParameters(params);
+    this->tao_1 = getParam(params, "tao_1", 0.1);
+    this->tao_2 = getParam(params, "tao_2", 0.1);
+    this->F_s = getParam(params, "F_s", 0.5);
+    this->CR_s = getParam(params, "CR_s", 0.9);
 }
 
 void jDE::initRun(TestFuncBounds *ifunc) {

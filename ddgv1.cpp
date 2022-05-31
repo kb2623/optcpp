@@ -36,7 +36,7 @@ double DDGv1::get_epsilon_addi(double a, double b, double c, double d) {
 }
 
 void DDGv1::setParameters(AlgParams *params) {
-    this->alpha        = params != nullptr && params->has("alpha") ? params->at<double>("alpha")               : 10e-12;
-    this->np           = params != nullptr && params->has("np") ? params->at<size_t>("np")                     : 50;
-    this->epsilon_addi = params != nullptr && params->has("epsilon_addi") ? params->at<double>("epsilon_addi") : 1e-12;
+    this->alpha        = getParam(params, "alpha",        10e-12);
+    this->np           = getParam(params, "np",           50);
+    this->epsilon_addi = getParam(params, "epsilon_addi", 1e-12);
 }

@@ -1,30 +1,15 @@
-#ifndef _CC_SEARCH_ALGORITHM_
-#define _CC_SEARCH_ALGORITHM_
+#ifndef _CC_SEARCH_ALGORITHM_H_
+#define _CC_SEARCH_ALGORITHM_H_
 
-#include "parallel_search_algorithm.hpp"
-#include "analize_algorithm.hpp"
+#include "search_algorithm.hpp"
 
-#include <random>
-#include <thread>
-#include "barrier.hpp"
-
-class CooperativeCoevolution: public ParallelSearchAlgorithm {
+class CooperativeCoevolution : public SearchAlgorithm {
 public:
-    CooperativeCoevolution() : CooperativeCoevolution(vector<SearchAlgorithm*>(1, nullptr), nullptr, 1, 1) {};
+    CooperativeCoevolution();
+    ~CooperativeCoevolution();
 
-    CooperativeCoevolution(size_t no_thr) : CooperativeCoevolution(vector<SearchAlgorithm*>(1, nullptr), nullptr, no_thr, 1) {};
-
-    CooperativeCoevolution(size_t no_thr, size_t seed) : CooperativeCoevolution(vector<SearchAlgorithm*>(1, nullptr), nullptr, no_thr, seed) {};
-
-    CooperativeCoevolution(vector<SearchAlgorithm*> algs, AnalizeAlgorithm *anal, size_t no_thr, size_t seed) : ParallelSearchAlgorithm(no_thr, seed), algs(algs), anal(anal) {};
-
-    virtual std::tuple<double, std::vector<double>> run(TestFuncBounds *) override;
-    virtual void run_iteration(int) override;
-    virtual void run_thread(int) override;
-
-private:
-    vector<SearchAlgorithm*> algs;
-    AnalizeAlgorithm* anal;
+    virtual void run_iteration() = 0;
+    virtual vector<size_t> getActiveComponents() = 0;
 };
 
 #endif
