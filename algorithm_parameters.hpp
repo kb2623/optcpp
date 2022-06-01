@@ -14,40 +14,40 @@ using std::vector;
 
 class AlgParams {
 public:
-    AlgParams();
-    ~AlgParams();
+	AlgParams();
+	~AlgParams();
 
-    map<string, any>& getParamsVals();
-    void setParamsVals(map<string, any>);
-    void setParamVal(string, any*);
-    void setParamVal(string, any);
-    bool has(string key);
-    any& operator[](string key);
-    template<typename T> T& operator[](string key) {
-        if (params.find(key) != params.end()) return std::any_cast<T>(params[key]);
-        else throw std::invalid_argument("Bad key '" + key + "'.");
-    }
-    any operator()(string key);
-    template<typename T> T operator()(string key) {
-        if (params.find(key) != params.end()) return std::any_cast<T>(params[key]);
-        else throw std::invalid_argument("Bad key '" + key + "'.");
-    }
-    template<typename T> T at(string key) {
-        if (params.find(key) != params.end()) return std::any_cast<T>(params[key]);
-        else throw std::invalid_argument("Bad key '" + key + "'.");
-    }
+	map<string, any>& getParamsVals();
+	void setParamsVals(map<string, any>);
+	void setParamVal(string, any*);
+	void setParamVal(string, any);
+	bool has(string key);
+	any& operator[](string key);
+	template<typename T> T& operator[](string key) {
+		if (params.find(key) != params.end()) return std::any_cast<T>(params[key]);
+		else throw std::invalid_argument("Bad key '" + key + "'.");
+	}
+	any operator()(string key);
+	template<typename T> T operator()(string key) {
+		if (params.find(key) != params.end()) return std::any_cast<T>(params[key]);
+		else throw std::invalid_argument("Bad key '" + key + "'.");
+	}
+	template<typename T> T at(string key) {
+		if (params.find(key) != params.end()) return std::any_cast<T>(params[key]);
+		else throw std::invalid_argument("Bad key '" + key + "'.");
+	}
 
 protected:
-    map<string, any> params;
+	map<string, any> params;
 };
 
 template<typename T>
 T getParam(AlgParams* params, string key, T dval) {
-    if (params != nullptr && params->has(key)) {
-        return params->at<T>(key);
-    } else {
-        return dval;
-    }
+	if (params != nullptr && params->has(key)) {
+		return params->at<T>(key);
+	} else {
+		return dval;
+	}
 }
 
 #endif

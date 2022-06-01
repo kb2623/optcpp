@@ -10,19 +10,19 @@
 
 class ParallelCooperativeCoevolution : public ParallelSearchAlgorithm {
 public:
-    ParallelCooperativeCoevolution();
-    ParallelCooperativeCoevolution(size_t no_thr);
-    ParallelCooperativeCoevolution(size_t no_thr, size_t seed);
-    ~ParallelCooperativeCoevolution();
+	ParallelCooperativeCoevolution();
+	ParallelCooperativeCoevolution(size_t no_thr);
+	ParallelCooperativeCoevolution(size_t no_thr, size_t seed);
+	~ParallelCooperativeCoevolution();
 
-    virtual void run_iteration(int) = 0;
+	virtual void run_iteration(int) = 0;
 
-    virtual void run_thread(int) override;
-    virtual std::tuple<double, std::vector<double>> run(TestFuncBounds *) override;
+	virtual void run_thread(int) override;
+	virtual std::tuple<double, std::vector<double>> run(TestFuncBounds *) override;
 
 private:
-    vector<SearchAlgorithm*> algs;
-    AnalizeAlgorithm* anal;
+	vector<SearchAlgorithm*> algs;
+	AnalizeAlgorithm* anal;
 };
 
 #endif

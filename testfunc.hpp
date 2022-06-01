@@ -5,21 +5,22 @@
 
 class TestFunc {
 public:
-    TestFunc(size_t);
+	TestFunc(size_t);
+	~TestFunc();
 
-    virtual void test_func(double*, double*, int) = 0;
+	virtual void test_func(double*, double*, int) = 0;
 
-    size_t dim;
+	size_t dim;
 };
 
 class TestFuncBounds: public TestFunc {
 public:
-    TestFuncBounds(size_t, size_t);
-    ~TestFuncBounds();
+	TestFuncBounds(size_t, size_t);
+	~TestFuncBounds();
 
-    double *x_bound_min;
-    double *x_bound_max;
-    size_t max_num_evaluations;
+	double *x_bound_min;
+	double *x_bound_max;
+	size_t max_num_evaluations;
 };
 
 #endif

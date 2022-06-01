@@ -5,11 +5,11 @@
 
 class CooperativeCoevolution : public SearchAlgorithm {
 public:
-    CooperativeCoevolution();
-    ~CooperativeCoevolution();
+	CooperativeCoevolution();
+	~CooperativeCoevolution();
 
-    virtual void run_iteration() = 0;
-    virtual vector<size_t> getActiveComponents() = 0;
+	virtual void run_iteration() = 0;
+	virtual vector<size_t> getActiveComponents() = 0;
 };
 
 #endif

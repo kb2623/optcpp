@@ -5,17 +5,17 @@
 
 class DDGv2: public DDG {
 public:
-    DDGv2();
-    ~DDGv2();
+	DDGv2();
+	~DDGv2();
 
-    virtual string info() override;
-    virtual string sinfo() override;
+	virtual string info() override;
+	virtual string sinfo() override;
 
 protected:
-    double get_epsilon_addi(double, double, double, double);
-    double gamma(double);
+	double get_epsilon_addi(double, double, double, double);
+	double gamma(double);
 
-    double eps = 10e-12;
+	double eps = 10e-12;
 };
 
 #endif

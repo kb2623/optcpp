@@ -6,16 +6,16 @@
 
 class Barrier {
 public:
-    Barrier(size_t iCount) : mTreshold(iCount), mCount(iCount), instance(0), mMutex(), mCond() {};
+	Barrier(size_t iCount) : mTreshold(iCount), mCount(iCount), instance(0), mMutex(), mCond() {};
 
-    void wait();
+	void wait();
 
 private:
-    std::mutex mMutex;
-    std::condition_variable mCond;
-    size_t mTreshold;
-    size_t instance;
-    size_t mCount;
+	std::mutex mMutex;
+	std::condition_variable mCond;
+	size_t mTreshold;
+	size_t instance;
+	size_t mCount;
 };
 
 #endif

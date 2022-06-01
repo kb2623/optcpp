@@ -5,22 +5,22 @@
 
 class Bar : public ParallelSearchAlgorithm {
 public:
-    Bar();
-    Bar(size_t);
-    Bar(size_t, size_t);
-    ~Bar();
+	Bar();
+	Bar(size_t);
+	Bar(size_t, size_t);
+	~Bar();
 
-    virtual string info() override;
-    virtual string sinfo() override;
-    virtual void setParameters(AlgParams*) override;
-    void initRun(TestFuncBounds*) override;
-    virtual tuple<double, vector<double>> run(TestFuncBounds*) override;
-    virtual void run_iteration(int) override;
+	virtual string info() override;
+	virtual string sinfo() override;
+	virtual void setParameters(AlgParams*) override;
+	void initRun(TestFuncBounds*) override;
+	virtual tuple<double, vector<double>> run(TestFuncBounds*) override;
+	virtual void run_iteration(int) override;
 
 protected:
-    size_t np;
-    vector<double> xf;
-    vector<vector<double>> x;
+	size_t np;
+	vector<double> xf;
+	vector<vector<double>> x;
 };
 
 #endif

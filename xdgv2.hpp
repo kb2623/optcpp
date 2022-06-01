@@ -8,17 +8,17 @@
 
 class XDGv2: public XDG {
 public:
-    XDGv2();
-    ~XDGv2();
+	XDGv2();
+	~XDGv2();
 
-    virtual string info() override;
-    virtual string sinfo() override;
+	virtual string info() override;
+	virtual string sinfo() override;
 
 protected:
-    double epsilon(double, double, double, double);
-    double gamma(double);
+	double epsilon(double, double, double, double);
+	double gamma(double);
 
-    double eps = 10e-12;
+	double eps = 10e-12;
 };
 
 #endif

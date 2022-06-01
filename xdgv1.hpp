@@ -8,20 +8,20 @@
 
 class XDGv1: public XDG {
 public:
-    XDGv1();
-    ~XDGv1();
+	XDGv1();
+	~XDGv1();
 
-    virtual string info() override;
-    virtual string sinfo() override;
-    virtual tuple<vector<unsigned int>, vector<vector<unsigned int>>> run(TestFuncBounds*) override;
+	virtual string info() override;
+	virtual string sinfo() override;
+	virtual tuple<vector<unsigned int>, vector<vector<unsigned int>>> run(TestFuncBounds*) override;
 
 protected:
-    double epsilon(double, double, double, double);
-    double calc_epsilon();
+	double epsilon(double, double, double, double);
+	double calc_epsilon();
 
-    double alpha = 10e-12;
-    unsigned int np = 50;
-    double _epsilon;
+	double alpha = 10e-12;
+	unsigned int np = 50;
+	double _epsilon;
 };
 
 #endif
