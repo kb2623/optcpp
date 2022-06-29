@@ -3,10 +3,11 @@
 
 #include "parallel_search_algorithm.hpp"
 #include "de_mutations.hpp"
+#include "cc_optimizer.hpp"
 
 using namespace std;
 
-class DE: public ParallelSearchAlgorithm, public DeMutations {
+class DE: public ParallelSearchAlgorithm, public DeMutations, public CooperativeCoevolutionOptimizer {
 public:
 	DE();
 	DE(size_t);

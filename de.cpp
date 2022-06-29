@@ -2,11 +2,11 @@
 
 #include <iostream>
 
-DE::DE() : ParallelSearchAlgorithm(1) {}
+DE::DE() : ParallelSearchAlgorithm(1), DeMutations(), CooperativeCoevolutionOptimizer() {}
 
-DE::DE(size_t no_thr) : ParallelSearchAlgorithm(no_thr) {}
+DE::DE(size_t no_thr) : ParallelSearchAlgorithm(no_thr), DeMutations(), CooperativeCoevolutionOptimizer() {}
 
-DE::DE(size_t no_thr, size_t seed) : ParallelSearchAlgorithm(no_thr, seed) {}
+DE::DE(size_t no_thr, size_t seed) : ParallelSearchAlgorithm(no_thr, seed), DeMutations(), CooperativeCoevolutionOptimizer() {}
 
 DE::~DE() {
 	pop.clear();

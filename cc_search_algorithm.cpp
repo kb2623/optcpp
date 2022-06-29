@@ -1,5 +1,5 @@
 #include "cc_search_algorithm.hpp"
 
-CooperativeCoevolution::CooperativeCoevolution() : SearchAlgorithm() {}
+CooperativeCoevolutionAlgorithm::CooperativeCoevolutionAlgorithm() : SearchAlgorithm() {}
 
-CooperativeCoevolution::~CooperativeCoevolution() {}
+CooperativeCoevolutionAlgorithm::~CooperativeCoevolutionAlgorithm() {}

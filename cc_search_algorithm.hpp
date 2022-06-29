@@ -2,14 +2,17 @@
 #define _CC_SEARCH_ALGORITHM_H_
 
 #include "search_algorithm.hpp"
+#include "analize_algorithm.hpp"
 
-class CooperativeCoevolution : public SearchAlgorithm {
+class CooperativeCoevolutionAlgorithm : public SearchAlgorithm {
 public:
-	CooperativeCoevolution();
-	~CooperativeCoevolution();
+	CooperativeCoevolutionAlgorithm();
+	~CooperativeCoevolutionAlgorithm();
 
-	virtual void run_iteration() = 0;
-	virtual vector<size_t> getActiveComponents() = 0;
+private:
+	vector<SearchAlgorithm*> algs;
+	AnalizeAlgorithm* anal;
+
 };
 
 #endif
