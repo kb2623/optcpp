@@ -27,6 +27,7 @@
 #include "gdg.hpp"
 #include "gdgv1.hpp"
 #include "gdgv2.hpp"
+#include "fii.hpp"
 
 void runAnal(AnalizeAlgorithm *algo, TestFuncBounds *func) {
 	algo->setParameters(nullptr);
@@ -136,10 +137,12 @@ int main() {
 		new GDG(),
 		new GDGv1(),
 		new GDGv2(),
+		new FII(),
 	};
 	//runCEC(anals);
 	runSphere(anals);
 	const auto no_workers = 10;
+	/*
 	vector<SearchAlgorithm*> algs = {
 		new DE(),
 		new DE(no_workers),
@@ -151,5 +154,6 @@ int main() {
 	};
 	runCEC(algs);
 	//runSphere(algs);
+	*/
 	return 0;
 }

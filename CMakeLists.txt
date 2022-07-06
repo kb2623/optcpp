@@ -35,8 +35,8 @@ add_library(Benchmarks ${BENCHMARK_HDR} ${BENCHMARK_SRC})
 target_link_libraries(Benchmarks PUBLIC Interfaces)
 
 # Implemented analyze algorithms
-set(ANA_ALGS_SRC xdg.cpp xdgv1.cpp xdgv2.cpp rdg.cpp rdgv2.cpp rdgv3.cpp dg.cpp ddg.cpp ddgv1.cpp ddgv2.cpp gdg.cpp gdgv1.cpp gdgv2.cpp)
-set(ANA_ALGS_HDR xdg.hpp xdgv1.hpp xdgv2.hpp rdg.hpp rdgv2.hpp rdgv3.hpp dg.hpp ddg.hpp ddgv1.hpp ddgv2.hpp gdg.hpp gdgv1.hpp gdgv2.hpp)
+set(ANA_ALGS_SRC xdg.cpp xdgv1.cpp xdgv2.cpp rdg.cpp rdgv2.cpp rdgv3.cpp dg.cpp ddg.cpp ddgv1.cpp ddgv2.cpp gdg.cpp gdgv1.cpp gdgv2.cpp fii.cpp)
+set(ANA_ALGS_HDR xdg.hpp xdgv1.hpp xdgv2.hpp rdg.hpp rdgv2.hpp rdgv3.hpp dg.hpp ddg.hpp ddgv1.hpp ddgv2.hpp gdg.hpp gdgv1.hpp gdgv2.hpp fii.hpp)
 add_library(AlgsAnalyse ${ANA_ALGS_SRC} ${ANA_ALGS_HDR})
 target_link_libraries(AlgsAnalyse PUBLIC Benchmarks)
 
