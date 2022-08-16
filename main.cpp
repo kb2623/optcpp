@@ -137,7 +137,7 @@ int main() {
 		new GDG(),
 		new GDGv1(),
 		new GDGv2(),
-		new FII(),
+		//new FII(),
 	};
 	//runCEC(anals);
 	runSphere(anals);

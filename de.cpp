@@ -53,13 +53,13 @@ void DE::run_iteration(int id) {
 	auto y = new double[func->dim];
 	for (int i = s * id; i < np && i < s * (id + 1); i++) {
 		auto f = opt(*this, id, i, y);
-		sync->wait();
+		sync->arrive_and_wait();
 		if (f < popf[i]) {
 			for (int j = 0; j < func->dim; j++) pop[i][j] = y[j];
 			popf[i] = f;
 			setBestSolution(y, f);
 		}
-		sync->wait();
+		sync->arrive_and_wait();
 	}
 	delete [] y;
 }

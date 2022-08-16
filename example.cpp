@@ -48,7 +48,7 @@ void Bar::run_iteration(int id) {
 			best_lock.unlock();
 		}
 	}
-	sync->wait();
+	sync->arrive_and_wait();
 }
 
 void Bar::setParameters(AlgParams *params) {

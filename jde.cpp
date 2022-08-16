@@ -55,13 +55,13 @@ void jDE::run_iteration(int id) {
 		double CR_n = rand(id);
 		CRs[i] = (rand(id) < tao_2) ? CR_n : CRs[i];
 		auto f = opt(*this, id, i, y);
-		sync->wait();
+		sync->arrive_and_wait();
 		if (f < popf[i]) {
 			for (int j = 0; j < func->dim; j++) pop[i][j] = y[j];
 			popf[i] = f;
 			setBestSolution(y, f);
 		}
-		sync->wait();
+		sync->arrive_and_wait();
 	}
 	delete [] y;
 }

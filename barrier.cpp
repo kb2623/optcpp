@@ -1,6 +1,11 @@
 #include "barrier.hpp"
 
-void Barrier::wait() {
+#if __cplusplus >= 202002L
+
+
+#else
+
+void Barrier::arrive_and_wait() {
 	std::unique_lock<std::mutex> lock{mMutex};
 	auto inst = instance;
 	if (!--mCount) {
@@ -11,3 +16,5 @@ void Barrier::wait() {
 		mCond.wait(lock, [this, &inst] { return instance != inst; });
 	}
 }
+
+#endif
