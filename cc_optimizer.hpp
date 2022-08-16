@@ -11,8 +11,11 @@ public:
 	CooperativeCoevolutionOptimizer();
 	~CooperativeCoevolutionOptimizer();
 
-	virtual void run_iteration() = 0;
-	virtual vector<size_t> getActiveComponents() = 0;
+	vector<size_t> getActiveComponents();
+	void setActiveComponents(vector<size_t>);
+
+protected:
+	vector<size_t> activeComponents;
 };
 
 #endif

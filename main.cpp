@@ -142,7 +142,6 @@ int main() {
 	//runCEC(anals);
 	runSphere(anals);
 	const auto no_workers = 10;
-	/*
 	vector<SearchAlgorithm*> algs = {
 		new DE(),
 		new DE(no_workers),
@@ -154,6 +153,5 @@ int main() {
 	};
 	runCEC(algs);
 	//runSphere(algs);
-	*/
 	return 0;
 }
