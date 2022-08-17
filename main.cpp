@@ -62,6 +62,7 @@ void runAlgo(SearchAlgorithm *algo, TestFuncBounds *func) {
 void runCEC(vector<SearchAlgorithm*> &algs) {
 	size_t no_runs = 100;
 	size_t g_problem_size = 50;
+	cout << "Function" << " : " << "Algorithm" << " : " << "Solution" << " : " << "Fitness" << " : " << "Status" << " : " << "No. Evals" << " : " << "No. Run" << endl;
 	for (int j = 0; j < no_runs; j++) {
 		size_t g_max_num_evaluations = g_problem_size * 10000;
 		for (int i = 0; i < 30; i++) try {
@@ -74,6 +75,7 @@ void runCEC(vector<SearchAlgorithm*> &algs) {
 			}
 		} catch (const char* msg) {
 			cerr << msg << endl;
+			cout << endl;
 		}
 	}
 }
