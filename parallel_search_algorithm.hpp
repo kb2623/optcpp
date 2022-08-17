@@ -14,6 +14,7 @@ public:
 	ParallelSearchAlgorithm(size_t, size_t);
 
 	virtual void run_iteration(int) = 0;
+
 	virtual void run_thread(int);
 	virtual void fix_solution(double*, int);
 	virtual std::tuple<double, std::vector<double>> run(TestFuncBounds *) override;

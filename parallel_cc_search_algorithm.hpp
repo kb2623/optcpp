@@ -15,7 +15,6 @@ public:
 	ParallelCooperativeCoevolution(size_t no_thr, size_t seed);
 	~ParallelCooperativeCoevolution();
 
-	virtual void run_iteration(int) = 0;
 
 	virtual void run_thread(int) override;
 	virtual std::tuple<double, std::vector<double>> run(TestFuncBounds *) override;

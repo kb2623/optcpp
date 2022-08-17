@@ -60,22 +60,21 @@ void runAlgo(SearchAlgorithm *algo, TestFuncBounds *func) {
 }
 
 void runCEC(vector<SearchAlgorithm*> &algs) {
-	size_t no_runs = 10;
-	size_t g_problem_size = 10;
-	for (int i = 0; i < 30; i++) try {
+	size_t no_runs = 100;
+	size_t g_problem_size = 50;
+	for (int j = 0; j < no_runs; j++) {
 		size_t g_max_num_evaluations = g_problem_size * 10000;
-		for (auto a : algs) {
-			a->setParameters(nullptr);
+		for (int i = 0; i < 30; i++) try {
 			auto func = CEC17(g_problem_size, i, g_max_num_evaluations);
-			for (int j = 0; j < no_runs; j++) {
+			for (auto a : algs) {
+				a->setParameters(nullptr);
 				cout << "F" << i + 1 << " : ";
 				runAlgo(a, &func);
-				cout << endl;
+				cout << " : " << j << endl;
 			}
+		} catch (const char* msg) {
+			cerr << msg << endl;
 		}
-		cout << endl;
-	} catch (const char* msg) {
-		cerr << msg << endl;
 	}
 }
 
@@ -140,7 +139,7 @@ int main() {
 		//new FII(),
 	};
 	//runCEC(anals);
-	runSphere(anals);
+	//runSphere(anals);
 	const auto no_workers = 10;
 	vector<SearchAlgorithm*> algs = {
 		new DE(),
