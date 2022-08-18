@@ -69,4 +69,17 @@ protected:
 	AlgParams params;
 };
 
+inline void copy_vector(double*, double*, size_t);
+
+class SolutionFix {
+public:
+	SolutionFix();
+	~SolutionFix();
+
+	virtual void to_upper(double*, size_t);
+	virtual void to_lower(double*, size_t);
+	virtual void to_randn(double*, size_t);
+	virtual void to_modus(double*, size_t);
+};
+
 #endif

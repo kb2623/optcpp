@@ -41,8 +41,8 @@ add_library(AlgsAnalyse ${ANA_ALGS_SRC} ${ANA_ALGS_HDR})
 target_link_libraries(AlgsAnalyse PUBLIC Benchmarks)
 
 # Implemented search algorithms
-set(OPT_ALGS_SRC example.cpp jso.cpp jsop.cpp de.cpp jde.cpp)
-set(OPT_ALGS_HDR example.hpp jso.hpp jsop.hpp de.hpp jde.hpp de_mutations.hpp)
+set(OPT_ALGS_SRC example.cpp jso.cpp jsop.cpp de.cpp jde.cpp pso.cpp)
+set(OPT_ALGS_HDR example.hpp jso.hpp jsop.hpp de.hpp jde.hpp de_mutations.hpp pso.hpp)
 add_library(AlgsOptimization ${OPT_ALGS_SRC} ${OPT_ALGS_HDR})
 target_link_libraries(AlgsOptimization PUBLIC AlgsAnalyse)
 

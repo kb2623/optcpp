@@ -35,8 +35,8 @@ void SearchAlgorithm::initRun(TestFuncBounds *func) {
 }
 
 double SearchAlgorithm::eval(double *x) {
-	nfes++;
 	double f;
+	nfes++;
 	func->test_func(x, &f, 1);
 	return f;
 }
@@ -72,4 +72,8 @@ double SearchAlgorithm::cauchy_g(double mu, double gamma) {
 
 double SearchAlgorithm::gauss(double mu, double sigma){
 	return mu + sigma * sqrt(-2.0 * log(randDouble())) * sin(2.0 * M_PI * randDouble());
+}
+
+inline void copy_vector(double* src, double* dst, size_t size) {
+	for (size_t i = 0; i < size; i++) dst[i] = src[i];
 }
