@@ -49,7 +49,7 @@ tuple<double, vector<double>> jDE::run(TestFuncBounds *ifunc) {
 void jDE::run_iteration(int id) {
 	auto s = ceil(np / double(no_thr));
 	auto y = new double[func->dim];
-	for (int i = s * id; i < np && i < s * (id + 1); i++) {
+	for (int i = s * id; i < s * (id + 1); i++) if (i < np) {
 		double F_n = F_l + rand(id) * F_u;
 		Fs[i] = (rand(id) < tao_1) ? F_n : Fs[i];
 		double CR_n = rand(id);
@@ -61,6 +61,9 @@ void jDE::run_iteration(int id) {
 			popf[i] = f;
 			setBestSolution(y, f);
 		}
+		sync->arrive_and_wait();
+	} else {
+		sync->arrive_and_wait();
 		sync->arrive_and_wait();
 	}
 	delete [] y;

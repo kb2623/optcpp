@@ -142,7 +142,7 @@ int main() {
 	};
 	//runCEC(anals);
 	//runSphere(anals);
-	const auto no_workers = 10;
+	const auto no_workers = 20;
 	vector<SearchAlgorithm*> algs = {
 		new DE(),
 		new DE(no_workers),

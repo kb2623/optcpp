@@ -40,7 +40,6 @@ void DE::initRun(TestFuncBounds *ifunc) {
 }
 
 tuple<double, vector<double>> DE::run(TestFuncBounds *ifunc) {
-	initRun(ifunc);
 	auto r = ParallelSearchAlgorithm::run(ifunc);
 	for (auto e : pop) delete [] e;
 	pop.clear();
@@ -51,7 +50,7 @@ tuple<double, vector<double>> DE::run(TestFuncBounds *ifunc) {
 void DE::run_iteration(int id) {
 	auto s = ceil(np / double(no_thr));
 	auto y = new double[func->dim];
-	for (int i = s * id; i < np && i < s * (id + 1); i++) {
+	for (int i = s * id; i < s * (id + 1); i++) if (i < np) {
 		auto f = opt(*this, id, i, y);
 		sync->arrive_and_wait();
 		if (f < popf[i]) {
@@ -59,6 +58,9 @@ void DE::run_iteration(int id) {
 			popf[i] = f;
 			setBestSolution(y, f);
 		}
+		sync->arrive_and_wait();
+	} else {
+		sync->arrive_and_wait();
 		sync->arrive_and_wait();
 	}
 	delete [] y;
