@@ -29,7 +29,7 @@
 #include "gdgv2.hpp"
 #include "fii.hpp"
 
-void runAnal(AnalizeAlgorithm *algo, TestFuncBounds *func) {
+void runAnal(AnalizeAlgorithm<double>* algo, TestFuncBounds<double>* func) {
 	algo->setParameters(nullptr);
 	auto ret = algo->run(func);
 	auto gs = get<0>(ret);
@@ -47,7 +47,7 @@ void runAnal(AnalizeAlgorithm *algo, TestFuncBounds *func) {
 	cout << "-----------------------------------------------------" << endl;
 }
 
-void runAlgo(SearchAlgorithm *algo, TestFuncBounds *func) {
+void runAlgo(SearchAlgorithm<double>* algo, TestFuncBounds<double>* func) {
 	cout << algo->sinfo() << " : ";
 	auto r = algo->run(func);
 	for (auto e : get<1>(r)) cout << e << ' ';
@@ -59,7 +59,7 @@ void runAlgo(SearchAlgorithm *algo, TestFuncBounds *func) {
 	cout << " : " << algo->get_nfes() - 1;
 }
 
-void runCEC(vector<SearchAlgorithm*> &algs) {
+void runCEC(vector<SearchAlgorithm<double>*>& algs) {
 	size_t no_runs = 100;
 	size_t g_problem_size = 50;
 	cout << "Function" << " : " << "Algorithm" << " : " << "Solution" << " : " << "Fitness" << " : " << "Status" << " : " << "No. Evals" << " : " << "No. Run" << endl;
@@ -80,7 +80,7 @@ void runCEC(vector<SearchAlgorithm*> &algs) {
 	}
 }
 
-void runSphere(vector<SearchAlgorithm*> &algs) {
+void runSphere(vector<SearchAlgorithm<double>*>& algs) {
 	size_t no_runs = 10;
 	size_t g_problem_size = 10;
 	size_t g_max_num_evaluations = g_problem_size * 10000;
@@ -92,7 +92,7 @@ void runSphere(vector<SearchAlgorithm*> &algs) {
 	cout << endl;
 }
 
-void runCEC(vector<AnalizeAlgorithm*> &algo) {
+void runCEC(vector<AnalizeAlgorithm<double>*>& algo) {
 	int num_runs = 1;
 	vector<int> problem_size = {10, 20, 30, 50, 100};
 	for (auto it : problem_size) {
@@ -110,7 +110,7 @@ void runCEC(vector<AnalizeAlgorithm*> &algo) {
 	}
 }
 
-void runSphere(vector<AnalizeAlgorithm*> &algs) {
+void runSphere(vector<AnalizeAlgorithm<double>*> &algs) {
 	size_t no_runs = 1;
 	size_t g_problem_size = 10;
 	size_t g_max_num_evaluations = g_problem_size * 10000;
@@ -124,7 +124,7 @@ void runSphere(vector<AnalizeAlgorithm*> &algs) {
 }
 
 int main() {
-	vector<AnalizeAlgorithm*> anals = {
+	vector<AnalizeAlgorithm<double>*> anals = {
 		new XDG(),
 		new XDGv1(),
 		new XDGv2(),
@@ -143,7 +143,7 @@ int main() {
 	//runCEC(anals);
 	//runSphere(anals);
 	const auto no_workers = 20;
-	vector<SearchAlgorithm*> algs = {
+	vector<SearchAlgorithm<double>*> algs = {
 		new DE(),
 		new DE(no_workers),
 		new jDE(),

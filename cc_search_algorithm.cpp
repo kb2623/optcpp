@@ -1,5 +1,7 @@
 #include "cc_search_algorithm.hpp"
 
-CooperativeCoevolutionAlgorithm::CooperativeCoevolutionAlgorithm() : SearchAlgorithm() {}
+template<typename T>
+CooperativeCoevolutionAlgorithm<T>::CooperativeCoevolutionAlgorithm() : SearchAlgorithm<T>() {}
 
-CooperativeCoevolutionAlgorithm::~CooperativeCoevolutionAlgorithm() {}
+template<typename T>
+CooperativeCoevolutionAlgorithm<T>::~CooperativeCoevolutionAlgorithm() {}

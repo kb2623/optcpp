@@ -23,8 +23,8 @@ set(COMMON_HDR barrier.hpp common_funcs.hpp)
 add_library(Common ${COMMON_SRC} ${COMMON_HDR})
 
 # Interfaces
-set(INTERFACES_SRC testfunc.cpp algorithm_parameters.cpp analize_algorithm.cpp search_algorithm.cpp parallel_search_algorithm.cpp cc_optimizer.cpp cc_search_algorithm.cpp parallel_cc_search_algorithm.cpp)
-set(INTERFACES_HDR testfunc.hpp algorithm_parameters.hpp analize_algorithm.hpp search_algorithm.hpp parallel_search_algorithm.hpp cc_optimizer.hpp cc_search_algorithm.hpp parallel_cc_search_algorithm.hpp)
+set(INTERFACES_SRC objective_function.cpp algorithm_parameters.cpp analize_algorithm.cpp search_algorithm.cpp parallel_search_algorithm.cpp stopping_condition.cpp cc_optimizer.cpp cc_search_algorithm.cpp parallel_cc_search_algorithm.cpp repair_solution.cpp)
+set(INTERFACES_HDR objective_function.hpp algorithm_parameters.hpp analize_algorithm.hpp search_algorithm.hpp parallel_search_algorithm.hpp stopping_condition.hpp cc_optimizer.hpp cc_search_algorithm.hpp parallel_cc_search_algorithm.hpp repair_solution.hpp)
 add_library(Interfaces ${INTERFACES_HDR} ${INTERFACES_SRC})
 target_link_libraries(Interfaces PUBLIC Common)
 

@@ -3,7 +3,7 @@
 
 #include "analize_algorithm.hpp"
 
-class GDG: public AnalizeAlgorithm {
+class GDG: public AnalizeAlgorithm<double> {
 public:
 	GDG();
 	~GDG();
@@ -11,7 +11,7 @@ public:
 	virtual string info() override;
 	virtual string sinfo() override;
 	virtual void setParameters(AlgParams*) override;
-	virtual tuple<vector<unsigned int>, vector<vector<unsigned int>>> run(TestFuncBounds*) override;
+	virtual tuple<vector<unsigned int>, vector<vector<unsigned int>>> run(BoundedObjectiveFunction<double>*) override;
 
 protected:
 	tuple<vector<int>, vector<int>> graph_connected_components(vector<vector<double>>&, double);

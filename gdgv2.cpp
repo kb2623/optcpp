@@ -20,6 +20,6 @@ string GDGv2::sinfo() {
 double GDGv2::calc_treshold(vector<vector<double>> &deltaMtx) {
 	auto min_e = std::numeric_limits<double>::max();
 	for (auto vv : deltaMtx) for (auto v : vv) min_e = std::min(min_e, v);
-	double mu = (pow(func->dim, 0.5) * min_e) * epsilon;
+	double mu = (pow(fitf.dim(), 0.5) * min_e) * epsilon;
 	return mu / (1 - mu);
 }

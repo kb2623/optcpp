@@ -18,5 +18,5 @@ double XDGv2::gamma(double n) {
 }
 
 double XDGv2::epsilon(double y1, double y2, double y3, double y4) {
-	return gamma(pow(func->dim, 0.5)) * (y1 + y2 + y3 + y4);
+	return gamma(pow(fitf.dim(), 0.5)) * (y1 + y2 + y3 + y4);
 }

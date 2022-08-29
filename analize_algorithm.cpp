@@ -1,23 +1,30 @@
 #include"analize_algorithm.hpp"
 
-AnalizeAlgorithm::AnalizeAlgorithm() : nfes(0) {}
+template <typename T>
+AnalizeAlgorithm<T>::AnalizeAlgorithm() : prand(), dists() {
+	prand.push_back(std::default_random_engine());
+	dists.push_back(std::uniform_int_distribution<size_t>(0, std::numeric_limits<size_t>::max()));
+}
 
-AnalizeAlgorithm::~AnalizeAlgorithm() {}
+template <typename T>
+AnalizeAlgorithm<T>::~AnalizeAlgorithm() {}
 
-void AnalizeAlgorithm::initRun(TestFuncBounds *func) {
-	nfes = 0;
+template <typename T>
+void AnalizeAlgorithm<T>::initRun(BoundedObjectiveFunction<T>* func) {
 	this->func = func;
 }
 
-double AnalizeAlgorithm::eval(double *x) {
-	double f;
-	func->test_func(x, &f, 1);
-	nfes++;
-	return f;
+template <typename T>
+void AnalizeAlgorithm<T>::setParameters(AlgParams *params) {}
+
+template <typename T>
+size_t AnalizeAlgorithm<T>::rand() {
+	return dists[0](prand[0]);
 }
 
-void AnalizeAlgorithm::setParameters(AlgParams *params) {
-	/**
-	  * Parameter free algorithms can use this function.
-	  */
+template <typename T>
+double AnalizeAlgorithm<T>::randDouble() {
+	double r = rand();
+	if (r == 0) return 0;
+	else return rand() / std::numeric_limits<size_t>::max();
 }

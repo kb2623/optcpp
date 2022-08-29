@@ -1,11 +1,11 @@
 #ifndef _CEC17_TEST_FUNC_H_
 #define _CEC17_TEST_FUNC_H_
 
-#include "testfunc.hpp"
+#include "objective_function.hpp"
 
 #include <vector>
 
-class CEC17: public TestFuncBounds {
+class CEC17: public BoundedObjectiveFunction<double> {
 private:
 	double *OShift = nullptr, *M = nullptr;
 	int *SS = nullptr;
@@ -66,7 +66,8 @@ public:
 	CEC17(int, int, int);
 	~CEC17();
 
-	void test_func (double*, double*, int);
+	virtual double func (double*, int) override;
+	virtual double operator[] (size_t i) override;
 };
 
 void shiftfunc (double *, double *, int, double *);

@@ -4,14 +4,15 @@
 #include "search_algorithm.hpp"
 #include "analize_algorithm.hpp"
 
-class CooperativeCoevolutionAlgorithm : public SearchAlgorithm {
+template<typename T>
+class CooperativeCoevolutionAlgorithm : public SearchAlgorithm<T> {
 public:
 	CooperativeCoevolutionAlgorithm();
 	~CooperativeCoevolutionAlgorithm();
 
 private:
-	vector<SearchAlgorithm*> algs;
-	AnalizeAlgorithm* anal;
+	vector<SearchAlgorithm<T>*> algs;
+	AnalizeAlgorithm<T>* anal;
 
 };
 

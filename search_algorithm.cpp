@@ -1,79 +1,78 @@
 #include"search_algorithm.hpp"
 
 #include <limits>
+#include <cstdlib>
 
-SearchAlgorithm::SearchAlgorithm() {
-	nfes = 0;
+template <typename T>
+SearchAlgorithm<T>::SearchAlgorithm() : prand(), dists(), _no_gen(0) {
 	f_best = std::numeric_limits<double>::max();
 	x_best = std::vector<double>();
-	stop_cond = &SearchAlgorithm::nfes_stop_cond;
+	prand.push_back(std::default_random_engine());
+	dists.push_back(std::uniform_int_distribution<size_t>(0, std::numeric_limits<size_t>::max()));
+	// FIXME do something with stopping condition
 }
 
-SearchAlgorithm::~SearchAlgorithm() {}
+template <typename T>
+SearchAlgorithm<T>::~SearchAlgorithm() {}
 
-// make new individual randomly
-double* SearchAlgorithm::makeNewIndividual() {
-	double* individual = new double[func->dim];
-	for (int i = 0; i < func->dim; i++) individual[i] = ((func->x_bound_max[i] - func->x_bound_min[i]) * randDouble()) + func->x_bound_min[i];
-	return individual;
+template <typename T>
+T* SearchAlgorithm<T>::makeNewArrayIndividual() {
+	double* x = new T[fitf->dim];
+	for (int i = 0; i < fitf->dim; i++) x[i] = (*fitf)[i];
+	return x;
 }
 
-void SearchAlgorithm::setBestSolution(double *x, double f) {
+template <typename T>
+vector<T> SearchAlgorithm<T>::makeNewVectorIndividual() {
+	vector<T> x;
+	for (int i = 0; i < fitf->dim; i++) x.push_back((*fitf)[i]);
+	return x;
+}
+
+template <typename T>
+void SearchAlgorithm<T>::setBestSolution(T* x, double f) {
 	best_lock.lock();
 	if (f_best > f) {
 		f_best = f;
-		for (int i = 0; i < func->dim; i++) x_best[i] = x[i];
+		for (int i = 0; i < fitf->dim; i++) x_best[i] = x[i];
 	}
 	best_lock.unlock();
 }
 
-void SearchAlgorithm::initRun(TestFuncBounds *func) {
-	nfes = 0;
-	this->func = func;
-	x_best = std::vector<double>(func->dim);
+template <typename T>
+void SearchAlgorithm<T>::initRun(BoundedObjectiveFunction<T>* func) {
+	this->fitf = func;
+	this->_no_gen = 0;
+	x_best = std::vector<double>(fitf->dim);
 	f_best = std::numeric_limits<double>::max();
 }
 
-double SearchAlgorithm::eval(double *x) {
-	double f;
-	nfes++;
-	func->test_func(x, &f, 1);
-	return f;
-}
-
-size_t SearchAlgorithm::get_nfes() {
-	return nfes;
-}
-
-void SearchAlgorithm::fix_solution(double *x) {
-	for (int i = 0; i < func->dim; i++) if (x[i] < func->x_bound_min[i] || x[i] > func->x_bound_max[i]) x[i] = func->x_bound_min[i] + (func->x_bound_max[i] - func->x_bound_min[i]) * randDouble();
-}
-
-bool SearchAlgorithm::nfes_stop_cond() {
-	return nfes >= func->max_num_evaluations;
-}
-
-tuple<double, vector<double>> SearchAlgorithm::run(TestFuncBounds *ifunc) {
-	initRun(ifunc);
-	while (!stop_cond(*this)) run_iteration();
+template <typename T>
+tuple<double, vector<T>> SearchAlgorithm<T>::run(BoundedObjectiveFunction<T>* func) {
+	initRun(func);
+	while (!stop_cond(*this)) {
+		run_iteration();
+		_no_gen++;
+	}
 	return std::make_tuple(f_best, x_best);
 }
 
-// No parameter algorithm
-void SearchAlgorithm::setParameters(AlgParams *params) {}
+template <typename T>
+void SearchAlgorithm<T>::setParameters(AlgParams* params) {}
 
-double SearchAlgorithm::randDouble() {
-	return (double)rand() / (double) RAND_MAX;
+template <typename T>
+size_t SearchAlgorithm<T>::rand() {
+	return dists[0](prand[0]);
 }
 
-double SearchAlgorithm::cauchy_g(double mu, double gamma) {
-	return mu + gamma * tan(M_PI * (randDouble() - 0.5));
+template <typename T>
+double SearchAlgorithm<T>::randDouble() {
+	double r = rand();
+	if (r == 0) return 0;
+	else return rand() / std::numeric_limits<size_t>::max();
 }
 
-double SearchAlgorithm::gauss(double mu, double sigma){
-	return mu + sigma * sqrt(-2.0 * log(randDouble())) * sin(2.0 * M_PI * randDouble());
-}
-
-inline void copy_vector(double* src, double* dst, size_t size) {
-	for (size_t i = 0; i < size; i++) dst[i] = src[i];
+template <typename T>
+inline unsigned long long int SearchAlgorithm<T>::no_gen() const {
+	return _no_gen;
 }

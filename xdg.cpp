@@ -20,27 +20,27 @@ string XDG::sinfo() {
 	return "XDG";
 }
 
-tuple<vector<unsigned int>, vector<vector<unsigned int>>> XDG::run(TestFuncBounds* ifunc) {
+tuple<vector<unsigned int>, vector<vector<unsigned int>>> XDG::run(BoundedObjectiveFunction<double>* ifunc) {
 	initRun(ifunc);
 	auto allgroups = vector<vector<uint>>();
 	auto seps = vector<uint>();
-	auto DG = vector<vector<uint>>(func->dim, vector<uint>(func->dim, 0));
-	auto group = vector<vector<uint>>(func->dim, vector<uint>(func->dim, 0));
-	auto Num = vector<int>(func->dim, 1);
-	for (uint i = 0; i < func->dim; i++) group[i][0] = i;
-	auto p1 = new double[func->dim], p2 = new double[func->dim], p3 = new double[func->dim], p4 = new double[func->dim];
+	auto DG = vector<vector<uint>>(fitf.dim(), vector<uint>(fitf.dim(), 0));
+	auto group = vector<vector<uint>>(fitf.dim(), vector<uint>(fitf.dim(), 0));
+	auto Num = vector<int>(fitf.dim(), 1);
+	for (uint i = 0; i < fitf.dim(); i++) group[i][0] = i;
+	auto p1 = new double[fitf.dim()], p2 = new double[fitf.dim()], p3 = new double[fitf.dim()], p4 = new double[fitf.dim()];
 	double f1 = 0.0, f2 = 0.0, f3 = 0.0, f4 = 0.0;
 	// Direct Interaction Learning
-	for (uint i = 0; i < func->dim; i++) {
-		for (uint k = 0; k < func->dim; k++) p1[k] = p2[k] = func->x_bound_min[k];
-		p2[i] = func->x_bound_max[i];
-		f1 = eval(p1), f2 = eval(p2);
+	for (uint i = 0; i < fitf.dim(); i++) {
+		for (uint k = 0; k < fitf.dim(); k++) p1[k] = p2[k] = fitf.x_bound_min()[k];
+		p2[i] = fitf.x_bound_max()[i];
+		f1 = fitf(p1), f2 = fitf(p2);
 		auto delta1 = f1 - f2;
-		for (uint j = i + 1; j < func->dim; j++) {
+		for (uint j = i + 1; j < fitf.dim(); j++) {
 			if (DG[i][j] == 0) {
-				for (uint k = 0; k < func->dim; k++) p3[k] = p1[k], p4[k] = p2[k];
-				p3[j] = p4[j] = func->x_bound_min[j] + (func->x_bound_max[j] - func->x_bound_min[j]) / 2;
-				f3 = eval(p3), f4 = eval(p4);
+				for (uint k = 0; k < fitf.dim(); k++) p3[k] = p1[k], p4[k] = p2[k];
+				p3[j] = p4[j] = fitf.x_bound_min()[j] + (fitf.x_bound_max()[j] - fitf.x_bound_min()[j]) / 2;
+				f3 = fitf(p3), f4 = fitf(p4);
 				auto delta2 = f3 - f4;
 				if (abs(delta1 - delta2) > epsilon(f1, f2, f3, f4)) {
 					DG[i][j] = 1;
@@ -55,7 +55,7 @@ tuple<vector<unsigned int>, vector<vector<unsigned int>>> XDG::run(TestFuncBound
 		if (Num[i] > 2) for (int p = 1; p < Num[i] - 1; p++) for (int q = p + 1; q < Num[i]; q++) DG[group[i][p]][group[i][q]] = 1;
 	}
 	// Indirect Interaction Learning
-	while (sum(Num) > func->dim) {
+	while (sum(Num) > fitf.dim()) {
 		int Num_groups = group.size();
 		for (int i = 0; i < Num_groups - 1; i++) {
 			for (int j = i + 1; j < Num_groups;) {

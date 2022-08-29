@@ -1,56 +1,55 @@
 #include "parallel_search_algorithm.hpp"
 
-ParallelSearchAlgorithm::ParallelSearchAlgorithm(size_t no_thr, size_t seed) : SearchAlgorithm() {
+template <typename T>
+ParallelSearchAlgorithm<T>::ParallelSearchAlgorithm(size_t no_thr, size_t seed) : SearchAlgorithm<T>() {
 	this->no_thr = no_thr;
-	prand = vector<std::default_random_engine>();
-	for (int i = 0; i < no_thr; i++) prand.push_back(std::default_random_engine(seed));
-	dists = vector<std::uniform_int_distribution<size_t>>();
-	for (int i = 0; i < no_thr; i++) dists.push_back(std::uniform_int_distribution<size_t>(0, std::numeric_limits<size_t>::max()));
+	for (int i = 0; i < no_thr - 1; i++) this->prand.push_back(std::default_random_engine(seed));
+	for (int i = 0; i < no_thr - 1; i++) this->dists.push_back(std::uniform_int_distribution<size_t>(0, std::numeric_limits<size_t>::max()));
 }
 
-ParallelSearchAlgorithm::ParallelSearchAlgorithm(size_t no_thr) : ParallelSearchAlgorithm(no_thr, std::rand() % RAND_MAX) {}
+template <typename T>
+ParallelSearchAlgorithm<T>::ParallelSearchAlgorithm(size_t no_thr) : ParallelSearchAlgorithm(no_thr, std::rand() % RAND_MAX) {}
 
-ParallelSearchAlgorithm::ParallelSearchAlgorithm() : ParallelSearchAlgorithm(1, std::rand() % RAND_MAX) {}
+template <typename T>
+ParallelSearchAlgorithm<T>::ParallelSearchAlgorithm() : ParallelSearchAlgorithm(1, std::rand() % RAND_MAX) {}
 
-tuple<double, vector<double>> ParallelSearchAlgorithm::run(TestFuncBounds* func) {
+template <typename T>
+void ParallelSearchAlgorithm<T>::setParameters(AlgParams* params) {
+	SearchAlgorithm<T>::setParameters(params);
+	this->no_thr = getParam(params, "no_thr", 1);
+}
+
+template <typename T>
+tuple<double, vector<T>> ParallelSearchAlgorithm<T>::run(BoundedObjectiveFunction<T>* func) {
 	initRun(func);
 	sync = new Barrier(no_thr);
-	auto workers = std::vector<std::thread>();
-	for (int i = 1; i < no_thr; i++) workers.emplace_back(std::thread(&ParallelSearchAlgorithm::run_thread, this, i));
-	run_thread(0);
+	auto workers = vector<std::thread>();
+	for (int i = 1; i < no_thr; i++) workers.emplace_back(std::thread(&ParallelSearchAlgorithm::run_thread, this));
+	run_thread();
 	for (int i = 0; i < workers.size(); i++) workers[i].join();
 	delete sync;
-	return std::make_tuple(f_best, x_best);
+	return make_tuple(this->f_best, this->x_best);
 }
 
-void ParallelSearchAlgorithm::run_thread(int id) {
-	while (!stop_cond(*this)) run_iteration(id);
+template<typename T>
+void ParallelSearchAlgorithm<T>::run_thread() {
+	int tid = thread_index();
+	if (tid == -1) optcpp::tid = 0;
+	else optcpp::tid = tid + 1;
+	while (!stop_cond(*this)) {
+		SearchAlgorithm<T>::run_iteration();
+		if (optcpp::tid == 0) this->_no_gen++;
+	}
 }
 
-void ParallelSearchAlgorithm::fix_solution(double *x, int id) {
-	for (int i = 0; i < func->dim; i++) if (x[i] < func->x_bound_min[i] || x[i] > func->x_bound_max[i]) x[i] = func->x_bound_min[i] + (func->x_bound_max[i] - func->x_bound_min[i]) * randDouble(id);
+template<typename T>
+int ParallelSearchAlgorithm<T>::thread_index() {
+	std::thread::id tid = std::this_thread::get_id();
+	for (size_t i = 0; i < threads.size(); i++) if (tid == threads[i].get_id()) return i;
+	return -1;
 }
 
-void ParallelSearchAlgorithm::run_iteration() {
-	throw "Multithread algorithm need an id for running (run_iteration)!!!";
-}
-
-void ParallelSearchAlgorithm::fix_solution(double *x) {
-	throw "Multithread algorithm need an id for running (fix_solution)!!!";
-}
-
-size_t ParallelSearchAlgorithm::rand(int id) {
-	return dists[id](prand[id]);
-}
-
-double ParallelSearchAlgorithm::randDouble(int id) {
-	return double(rand(id)) / double(std::numeric_limits<size_t>::max());
-}
-
-double ParallelSearchAlgorithm::cauchy_g(int id, double mu, double gamma) {
-	return mu + gamma * tan(M_PI * (randDouble(id) - 0.5));
-}
-
-double ParallelSearchAlgorithm::gauss(int id, double mu, double sigma){
-	return mu + sigma * sqrt(-2.0 * log(randDouble(id))) * sin(2.0 * M_PI * randDouble(id));
+template<typename T>
+size_t ParallelSearchAlgorithm<T>::rand() {
+	return this->dists[optcpp::tid](this->prand[optcpp::tid]);
 }

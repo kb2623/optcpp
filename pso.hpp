@@ -1,12 +1,12 @@
 #ifndef _PSO_H_
 #define _PSO_H_
 
-#include "parallel_search_algorithm.hpp"
+#include "continuous_parallel_search_algorithm.hpp"
 #include "cc_optimizer.hpp"
 
 using namespace std;
 
-class PSO: public ParallelSearchAlgorithm, public CooperativeCoevolutionOptimizer {
+class PSO: public ContinuousParallelSearchAlgorithm, public CooperativeCoevolutionOptimizer {
 public:
 	PSO();
 	PSO(size_t);
@@ -16,9 +16,9 @@ public:
 	virtual string info() override;
 	virtual string sinfo() override;
 	virtual void setParameters(AlgParams*) override;
-	void initRun(TestFuncBounds*) override;
-	virtual tuple<double, vector<double>> run(TestFuncBounds*) override;
-	virtual void run_iteration(int) override;
+	void initRun(TestFuncBounds<double>*) override;
+	virtual tuple<double, vector<double>> run(TestFuncBounds<double>*) override;
+	virtual void run_iteration() override;
 
 protected:
 	vector<double*> pop;

@@ -29,3 +29,12 @@ any AlgParams::operator()(string key) {
 	if (params.find(key) != params.end()) return params[key];
 	else return any();
 }
+
+template <typename T>
+T getParam(AlgParams* params, string key, T dval) {
+	if (params != nullptr && params->has(key)) {
+		return params->at<T>(key);
+	} else {
+		return dval;
+	}
+}

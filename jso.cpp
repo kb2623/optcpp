@@ -1,6 +1,8 @@
 #include"jso.hpp"
 
-jSO::jSO() : SearchAlgorithm() {}
+#include "common_funcs.hpp"
+
+jSO::jSO() : SearchAlgorithm<double>() {}
 
 jSO::~jSO() {}
 
@@ -21,8 +23,8 @@ void jSO::setParameters(AlgParams *params) {
 
 void jSO::evaluatePopulation(vector<double*> &pop, vector<double> &fitness) {
 	for (int i = 0; i < pop.size(); i++) {
-		fitness[i] = eval(pop[i]);
-		if (nfes >= func->max_num_evaluations) break;
+		fitness[i] = fitf(pop[i]);
+		if (fitf.no_fes() >= fitf.max_num_evaluations) break;
 	}
 }
 
@@ -33,9 +35,9 @@ void jSO::evaluatePopulation(vector<double*> &pop, vector<double> &fitness) {
   IEEE Tran. Evol. Comput., vol. 13, no. 5, pp. 945–958, 2009.
  */
 void jSO::modifySolutionWithParentMedium(double* child, double* parent) {
-	int l_problem_size = func->dim;
-	double* l_min_region = func->x_bound_min;
-	double* l_max_region = func->x_bound_max;
+	int l_problem_size = fitf.dim();
+	double* l_min_region = fitf.x_bound_min();
+	double* l_max_region = fitf.x_bound_max();
 	for (int j = 0; j < l_problem_size; j++) {
 		if (child[j] < l_min_region[j]) {
 			child[j]= (l_min_region[j] + parent[j]) / 2.0;
@@ -47,7 +49,7 @@ void jSO::modifySolutionWithParentMedium(double* child, double* parent) {
 
 void jSO::run_iteration() {}
 
-tuple<double, vector<double>> jSO::run(TestFuncBounds* func) {
+tuple<double, vector<double>> jSO::run(BoundedObjectiveFunction<double>* func) {
 	initRun(func);
 	double p_best_rate_l = p_best_rate;
 	vector <double*> pop(np);
@@ -56,14 +58,14 @@ tuple<double, vector<double>> jSO::run(TestFuncBounds* func) {
 	vector <double> children_fitness(np, std::numeric_limits<double>::max());
 	//initialize population
 	for (int i = 0; i < np; i++) {
-		pop[i] = makeNewIndividual();
-		fitness[i] = eval(pop[i]);
-		children[i] = new double[func->dim];
+		pop[i] = makeNewArrayIndividual();;
+		fitness[i] = fitf(pop[i]);
+		children[i] = new double[fitf.dim()];
 	}
 	//for external archive
 	int arc_ind_count = 0, random_selected_arc_ind;
 	vector <double*> archive;
-	for (int i = 0; i < arc_size; i++) archive.push_back(new double[func->dim]);
+	for (int i = 0; i < arc_size; i++) archive.push_back(new double[fitf.dim()]);
 	int num_success_params = 0, old_num_success_params = 0;
 	vector <double> success_sf;
 	vector <double> success_cr;
@@ -107,20 +109,20 @@ tuple<double, vector<double>> jSO::run(TestFuncBounds* func) {
 				if (pop_cr[target] > 1) pop_cr[target] = 1;
 				else if (pop_cr[target] < 0) pop_cr[target] = 0;
 			}
-			if (nfes < 0.25 * func->max_num_evaluations && pop_cr[target] < 0.7) pop_cr[target] = 0.7;    // jSO
-			if (nfes < 0.50 * func->max_num_evaluations && pop_cr[target] < 0.6) pop_cr[target] = 0.6;    // jSO
+			if (fitf.no_fes() < 0.25 * fitf.max_num_evaluations && pop_cr[target] < 0.7) pop_cr[target] = 0.7;    // jSO
+			if (fitf.no_fes() < 0.50 * fitf.max_num_evaluations && pop_cr[target] < 0.6) pop_cr[target] = 0.6;    // jSO
 			//generate F_i and repair its value
 			do {
 				pop_sf[target] = cauchy_g(mu_sf, 0.1);
 			} while (pop_sf[target] <= 0.0);
 			if (pop_sf[target] > 1) pop_sf[target] = 1.0;
-			if (nfes< 0.6 * func->max_num_evaluations && pop_sf[target] > 0.7) pop_sf[target] = 0.7;    // jSO
+			if (fitf.no_fes() < 0.6 * fitf.max_num_evaluations && pop_sf[target] > 0.7) pop_sf[target] = 0.7;    // jSO
 			//p-best individual is randomly selected from the top pop_size *  p_i members
 			if (p_num == 0) p_num = ceil(pop.size() *  p_best_rate_l) + 1;
 			do {
 				auto ind = rand() % p_num;
 				p_best_ind = sorted_array[ind];
-			} while (nfes < 0.50 * func->max_num_evaluations && p_best_ind == target);                   // iL-SHADE
+			} while (fitf.no_fes() < 0.50 * fitf.max_num_evaluations && p_best_ind == target);                   // iL-SHADE
 			operateCurrentToPBest1BinWithArchive(pop, &children[target][0], target, p_best_ind, pop_sf[target], pop_cr[target], archive, arc_ind_count);
 		}
 		// evaluate the children's fitness values
@@ -129,7 +131,7 @@ tuple<double, vector<double>> jSO::run(TestFuncBounds* func) {
 		for (int i = 0; i < pop.size(); i++) {
 			if (children_fitness[i] == fitness[i]) {
 				fitness[i] = children_fitness[i];
-				for (int j = 0; j < func->dim; j ++) pop[i][j] = children[i][j];
+				for (int j = 0; j < fitf.dim(); j ++) pop[i][j] = children[i][j];
 			} else if (children_fitness[i] < fitness[i]) {
 				setBestSolution(children[i], children_fitness[i]);
 				dif_fitness.push_back(fabs(fitness[i] - children_fitness[i]));
@@ -140,14 +142,14 @@ tuple<double, vector<double>> jSO::run(TestFuncBounds* func) {
 				//parent vectors x_i which were worse than the trial vectors u_i are preserved
 				if (arc_size > 1) {
 					if (arc_ind_count < arc_size) {
-						for (int j = 0; j < func->dim; j++) archive[arc_ind_count][j] = pop[i][j];
+						for (int j = 0; j < fitf.dim(); j++) archive[arc_ind_count][j] = pop[i][j];
 						arc_ind_count++;
 					} else { //Whenever the size of the archive exceeds, randomly selected elements are deleted to make space for the newly inserted elements
 						random_selected_arc_ind = rand() % arc_size;
-						for (int j = 0; j < func->dim; j++) archive[random_selected_arc_ind][j] = pop[i][j];
+						for (int j = 0; j < fitf.dim(); j++) archive[random_selected_arc_ind][j] = pop[i][j];
 					}
 				}
-				for (int j = 0; j < func->dim; j ++) pop[i][j] = children[i][j];    // jSO
+				for (int j = 0; j < fitf.dim(); j ++) pop[i][j] = children[i][j];    // jSO
 			}
 		}
 		old_num_success_params = num_success_params;
@@ -186,7 +188,7 @@ tuple<double, vector<double>> jSO::run(TestFuncBounds* func) {
 			dif_fitness.clear();
 		}
 		// calculate the population size in the next generation
-		plan_pop_size = round((((min_pop_size - pop.size()) / double(func->max_num_evaluations)) * nfes) + pop.size());
+		plan_pop_size = round((((min_pop_size - pop.size()) / double(fitf.max_num_evaluations)) * fitf.no_fes()) + pop.size());
 		if (pop.size() > plan_pop_size) {
 			reduction_ind_num = pop.size() - plan_pop_size;
 			if (pop.size() - reduction_ind_num <  min_pop_size) reduction_ind_num = pop.size() - min_pop_size;
@@ -195,7 +197,7 @@ tuple<double, vector<double>> jSO::run(TestFuncBounds* func) {
 			arc_size = pop.size() * arc_rate;
 			if (arc_ind_count > arc_size) arc_ind_count = arc_size;
 			// resize the number of p-best individuals
-			p_best_rate_l = p_best_rate_l * (1.0 - 0.5 * nfes /  double(func->max_num_evaluations));   // JANEZ
+			p_best_rate_l = p_best_rate_l * (1.0 - 0.5 * fitf.no_fes() / double(fitf.max_num_evaluations));   // JANEZ
 			p_num = round(pop.size() *  p_best_rate_l);
 			if (p_num <= 1)  p_num = 2;
 		}
@@ -222,9 +224,9 @@ tuple<double, vector<double>> jSO::run(TestFuncBounds* func) {
 void jSO::operateCurrentToPBest1BinWithArchive(const vector<double*> &pop, double* child, int &target, int &p_best_individual, double &scaling_factor, double &cross_rate, const vector<double*> &archive, int arc_ind_count) {
 	int r1, r2;
 	double jF = scaling_factor;                                // jSO
-	if (nfes < 0.2 * func->max_num_evaluations) {
+	if (fitf.no_fes() < 0.2 * fitf.max_num_evaluations) {
 		jF = jF * 0.7;        // jSO
-	} else if (nfes < 0.4 * func->max_num_evaluations) {
+	} else if (fitf.no_fes() < 0.4 * fitf.max_num_evaluations) {
 		jF = jF * 0.8;        // jSO
 	} else {
 		jF = jF * 1.2;      // jSO
@@ -235,15 +237,15 @@ void jSO::operateCurrentToPBest1BinWithArchive(const vector<double*> &pop, doubl
 	do {
 		r2 = rand() % (pop.size() + arc_ind_count);
 	} while ((r2 == target) || (r2 == r1));
-	int random_variable = rand() % func->dim;
+	int random_variable = rand() % fitf.dim();
 	if (r2 >= pop.size()) {
 		r2 -= pop.size();
-		for (int i = 0; i < func->dim; i++) {
+		for (int i = 0; i < fitf.dim(); i++) {
 			if ((randDouble() < cross_rate) || (i == random_variable)) child[i] = pop[target][i] + jF * (pop[p_best_individual][i] - pop[target][i]) + scaling_factor * (pop[r1][i] - archive[r2][i]);  // jSO
 			else child[i] = pop[target][i];
 		}
 	} else {
-		for (int i = 0; i < func->dim; i++) {
+		for (int i = 0; i < fitf.dim(); i++) {
 			if ((randDouble() < cross_rate) || (i == random_variable)) child[i] = pop[target][i] + jF * (pop[p_best_individual][i] - pop[target][i]) + scaling_factor * (pop[r1][i] - pop[r2][i]);     // jSO
 			else child[i] = pop[target][i];
 		}

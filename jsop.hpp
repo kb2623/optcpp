@@ -1,12 +1,11 @@
 #ifndef _JSOP_H_
 #define _JSOP_H_
 
-#include "parallel_search_algorithm.hpp"
-#include "jso.hpp"
+#include "continuous_parallel_search_algorithm.hpp"
 
 using namespace std;
 
-class jSOp: public ParallelSearchAlgorithm {
+class jSOp: public ContinuousParallelSearchAlgorithm {
 public:
 	jSOp();
 	jSOp(size_t);
@@ -16,16 +15,16 @@ public:
 	virtual string info() override;
 	virtual string sinfo() override;
 	virtual void setParameters(AlgParams*) override;
-	virtual tuple<double, vector<double>> run(TestFuncBounds*) override;
-	virtual void run_iteration(int) override;
-	virtual void initRun(TestFuncBounds*) override;
-	virtual void run_thread(int) override;
+	virtual tuple<double, vector<double>> run(TestFuncBounds<double>*) override;
+	virtual void run_iteration() override;
+	virtual void initRun(TestFuncBounds<double>*) override;
+	virtual void run_thread() override;
 
 protected:
 	void modifySolutionWithParentMedium(double*, const double*);
 	void setSHADEParameters(double, double, int);
 	void reducePopulationWithSort(vector<double*>&, vector<double>&);
-	void operateCurrentToPBest1BinWithArchive(int, vector<double*>, double*, int&, int&, double&, double&, vector<double*>, int);
+	void operateCurrentToPBest1BinWithArchive(vector<double*>, double*, int&, int&, double&, double&, vector<double*>, int);
 	void clean();
 
 	std::mutex success_lock;

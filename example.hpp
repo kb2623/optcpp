@@ -3,7 +3,7 @@
 
 #include "parallel_search_algorithm.hpp"
 
-class Bar : public ParallelSearchAlgorithm {
+class Bar : public ParallelSearchAlgorithm<double> {
 public:
 	Bar();
 	Bar(size_t);
@@ -13,9 +13,9 @@ public:
 	virtual string info() override;
 	virtual string sinfo() override;
 	virtual void setParameters(AlgParams*) override;
-	void initRun(TestFuncBounds*) override;
-	virtual tuple<double, vector<double>> run(TestFuncBounds*) override;
-	virtual void run_iteration(int) override;
+	void initRun(BoundedObjectiveFunction<double>*) override;
+	virtual tuple<double, vector<double>> run(BoundedObjectiveFunction<double>*) override;
+	virtual void run_iteration() override;
 
 protected:
 	size_t np;

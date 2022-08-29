@@ -4,24 +4,28 @@
 #include "parallel_search_algorithm.hpp"
 #include "analize_algorithm.hpp"
 
-#include <random>
-#include <thread>
-#include "barrier.hpp"
-
-class ParallelCooperativeCoevolution : public ParallelSearchAlgorithm {
+template<typename T>
+class ParallelCooperativeCoevolution : public ParallelSearchAlgorithm<T> {
 public:
 	ParallelCooperativeCoevolution();
 	ParallelCooperativeCoevolution(size_t no_thr);
 	ParallelCooperativeCoevolution(size_t no_thr, size_t seed);
 	~ParallelCooperativeCoevolution();
 
-
-	virtual void run_thread(int) override;
-	virtual std::tuple<double, std::vector<double>> run(TestFuncBounds *) override;
+	/**
+	 * @brief run_thread
+	 */
+	virtual void run_thread() override;
+	/**
+	 * @brief run
+	 * @param problem
+	 * @return
+	 */
+	virtual std::tuple<double, std::vector<T>> run(BoundedObjectiveFunction<T>* problem) override;
 
 private:
-	vector<SearchAlgorithm*> algs;
-	AnalizeAlgorithm* anal;
+	vector<SearchAlgorithm<T>*> algs;
+	AnalizeAlgorithm<T>* anal;
 };
 
 #endif

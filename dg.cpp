@@ -18,23 +18,23 @@ string DG::sinfo() {
 	return "DG";
 }
 
-tuple<vector<unsigned int>, vector<vector<unsigned int>>> DG::run(TestFuncBounds* ifunc) {
+tuple<vector<unsigned int>, vector<vector<unsigned int>>> DG::run(BoundedObjectiveFunction<double>* ifunc) {
 	initRun(ifunc);
 	auto seps = vector<uint>();
 	auto allgroups = vector<vector<uint>>();
-	auto dims = vector<uint>(func->dim);
-	for (uint i = 0; i < func->dim; i++) dims[i] = i;
-	auto p1 = new double[func->dim], p2 = new double[func->dim];
+	auto dims = vector<uint>(fitf.dim());
+	for (uint i = 0; i < fitf.dim(); i++) dims[i] = i;
+	auto p1 = new double[fitf.dim()], p2 = new double[fitf.dim()];
 	while (dims.size() > 0) {
 		auto i = dims[0];
 		auto group = vector<uint>(1, i);
 		for (auto j : dims) if (i != j) {
-			for (uint k = 0; k < func->dim; k++) p1[k] = p2[k] = func->x_bound_min[k];
-			p2[i] = func->x_bound_max[i];
-			auto y1 = eval(p1), y2 = eval(p2);
+			for (uint k = 0; k < fitf.dim(); k++) p1[k] = p2[k] = fitf.x_bound_min()[k];
+			p2[i] = fitf.x_bound_max()[i];
+			auto y1 = fitf(p1), y2 = fitf(p2);
 			auto delta1 = y1 - y2;
-			p1[j] = p2[j] = func->x_bound_min[j] + (func->x_bound_max[j] - func->x_bound_min[j]) / 2;
-			auto y3 = eval(p1), y4 = eval(p2);
+			p1[j] = p2[j] = fitf.x_bound_min()[j] + (fitf.x_bound_max()[j] - fitf.x_bound_min()[j]) / 2;
+			auto y3 = fitf(p1), y4 = fitf(p2);
 			auto delta2 = y3 - y4;
 			if (abs(delta1 - delta2) > epsilon(y1, y2, y3, y4)) group.push_back(j);
 		}

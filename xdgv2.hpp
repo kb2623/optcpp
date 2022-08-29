@@ -2,7 +2,6 @@
 #define _XDGV2_H_
 
 #include "xdg.hpp"
-#include "testfunc.hpp"
 
 #include <algorithm>
 

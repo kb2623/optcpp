@@ -38,7 +38,7 @@ CEC17::~CEC17() {
 	}
 }
 
-CEC17::CEC17(int nx, int func_num, int g_max_eval): TestFuncBounds(nx, g_max_eval) {
+CEC17::CEC17(int nx, int func_num, int g_max_eval): BoundedObjectiveFunction(nx, g_max_eval) {
 	int cf_num = 10, i, j;
 	FILE *fpt;
 	char FileName[256];
@@ -62,8 +62,8 @@ CEC17::CEC17(int nx, int func_num, int g_max_eval): TestFuncBounds(nx, g_max_eva
 	}
 	/* Set bounds */
 	for (i = 0; i < nx; i++) {
-		x_bound_min[i] = -100.0;
-		x_bound_max[i] = 100.0;
+		_x_bound_min[i] = -100.0;
+		_x_bound_max[i] = 100.0;
 	}
 	/* Load Matrix M*/
 	sprintf(FileName, "input_data/M_%d_D%d.txt", func_num,nx);
@@ -113,142 +113,110 @@ CEC17::CEC17(int nx, int func_num, int g_max_eval): TestFuncBounds(nx, g_max_eva
 	func_flag = func_num;
 }
 
-void CEC17::test_func(double *x, double *f, int mx) {
+double CEC17::func(double *x, int dim) {
 	int i;
-	for (i = 0; i < mx; i++) {
-		switch(func_flag) {
-			case 1:
-				bent_cigar_func(&x[i*n_flag],&f[i],n_flag,OShift,M,1,1);
-				f[i]+=100.0;
-				break;
-			case 2:
-				sum_diff_pow_func(&x[i*n_flag],&f[i],n_flag,OShift,M,1,1);
-				f[i]+=200.0;
-				break;
-			case 3:
-				zakharov_func(&x[i*n_flag],&f[i],n_flag,OShift,M,1,1);
-				f[i]+=300.0;
-				break;
-			case 4:
-				rosenbrock_func(&x[i*n_flag],&f[i],n_flag,OShift,M,1,1);
-				f[i]+=400.0;
-				break;
-			case 5:
-				rastrigin_func(&x[i*n_flag],&f[i],n_flag,OShift,M,1,1);
-				f[i]+=500.0;
-				break;
-			case 6:
-				schaffer_F7_func(&x[i*n_flag],&f[i],n_flag,OShift,M,1,1);
-				f[i]+=600.0;
-				break;
-			case 7:
-				bi_rastrigin_func(&x[i*n_flag],&f[i],n_flag,OShift,M,1,1);
-				f[i]+=700.0;
-				break;
-			case 8:
-				step_rastrigin_func(&x[i*n_flag],&f[i],n_flag,OShift,M,1,1);
-				f[i]+=800.0;
-				break;
-			case 9:
-				levy_func(&x[i*n_flag],&f[i],n_flag,OShift,M,1,1);
-				f[i]+=900.0;
-				break;
-			case 10:
-				schwefel_func(&x[i*n_flag],&f[i],n_flag,OShift,M,1,1);
-				f[i]+=1000.0;
-				break;
-			case 11:
-				hf01(&x[i*n_flag],&f[i],n_flag,OShift,M,SS,1,1);
-				f[i]+=1100.0;
-				break;
-			case 12:
-				hf02(&x[i*n_flag],&f[i],n_flag,OShift,M,SS,1,1);
-				f[i]+=1200.0;
-				break;
-			case 13:
-				hf03(&x[i*n_flag],&f[i],n_flag,OShift,M,SS,1,1);
-				f[i]+=1300.0;
-				break;
-			case 14:
-				hf04(&x[i*n_flag],&f[i],n_flag,OShift,M,SS,1,1);
-				f[i]+=1400.0;
-				break;
-			case 15:
-				hf05(&x[i*n_flag],&f[i],n_flag,OShift,M,SS,1,1);
-				f[i]+=1500.0;
-				break;
-			case 16:
-				hf06(&x[i*n_flag],&f[i],n_flag,OShift,M,SS,1,1);
-				f[i]+=1600.0;
-				break;
-			case 17:
-				hf07(&x[i*n_flag],&f[i],n_flag,OShift,M,SS,1,1);
-				f[i]+=1700.0;
-				break;
-			case 18:
-				hf08(&x[i*n_flag],&f[i],n_flag,OShift,M,SS,1,1);
-				f[i]+=1800.0;
-				break;
-			case 19:
-				hf09(&x[i*n_flag],&f[i],n_flag,OShift,M,SS,1,1);
-				f[i]+=1900.0;
-				break;
-			case 20:
-				hf10(&x[i*n_flag],&f[i],n_flag,OShift,M,SS,1,1);
-				f[i]+=2000.0;
-				break;
-			case 21:
-				cf01(&x[i*n_flag],&f[i],n_flag,OShift,M,1);
-				f[i]+=2100.0;
-				break;
-			case 22:
-				cf02(&x[i*n_flag],&f[i],n_flag,OShift,M,1);
-				f[i]+=2200.0;
-				break;
-			case 23:
-				cf03(&x[i*n_flag],&f[i],n_flag,OShift,M,1);
-				f[i]+=2300.0;
-				break;
-			case 24:
-				cf04(&x[i*n_flag],&f[i],n_flag,OShift,M,1);
-				f[i]+=2400.0;
-				break;
-			case 25:
-				cf05(&x[i*n_flag],&f[i],n_flag,OShift,M,1);
-				f[i]+=2500.0;
-				break;
-			case 26:
-				cf06(&x[i*n_flag],&f[i],n_flag,OShift,M,1);
-				f[i]+=2600.0;
-				break;
-			case 27:
-				cf07(&x[i*n_flag],&f[i],n_flag,OShift,M,1);
-				f[i]+=2700.0;
-				break;
-			case 28:
-				cf08(&x[i*n_flag],&f[i],n_flag,OShift,M,1);
-				f[i]+=2800.0;
-				break;
-			case 29:
-				cf09(&x[i*n_flag],&f[i],n_flag,OShift,M,SS,1);
-				f[i]+=2900.0;
-				break;
-			case 30:
-				cf10(&x[i*n_flag],&f[i],n_flag,OShift,M,SS,1);
-				f[i]+=3000.0;
-				break;
-			default:
-				throw "Error: There are only 30 test functions in this test suite!";
-				f[i] = 0.0;
-				break;
-		}
+	double f;
+	switch(func_flag) {
+		case 1:
+			bent_cigar_func(&x[i*n_flag],&f,n_flag,OShift,M,1,1);
+			return f + 100.0;
+		case 2:
+			sum_diff_pow_func(&x[i*n_flag],&f,n_flag,OShift,M,1,1);
+			return f + 200.0;
+		case 3:
+			zakharov_func(&x[i*n_flag],&f,n_flag,OShift,M,1,1);
+			return f + 300.0;
+		case 4:
+			rosenbrock_func(&x[i*n_flag],&f,n_flag,OShift,M,1,1);
+			return f + 400.0;
+		case 5:
+			rastrigin_func(&x[i*n_flag],&f,n_flag,OShift,M,1,1);
+			return f + 500.0;
+		case 6:
+			schaffer_F7_func(&x[i*n_flag],&f,n_flag,OShift,M,1,1);
+			return f + 600.0;
+		case 7:
+			bi_rastrigin_func(&x[i*n_flag],&f,n_flag,OShift,M,1,1);
+			return f + 700.0;
+		case 8:
+			step_rastrigin_func(&x[i*n_flag],&f,n_flag,OShift,M,1,1);
+			return f + 800.0;
+		case 9:
+			levy_func(&x[i*n_flag],&f,n_flag,OShift,M,1,1);
+			return f + 900.0;
+		case 10:
+			schwefel_func(&x[i*n_flag],&f,n_flag,OShift,M,1,1);
+			return f + 1000.0;
+		case 11:
+			hf01(&x[i*n_flag],&f,n_flag,OShift,M,SS,1,1);
+			return f + 1100.0;
+		case 12:
+			hf02(&x[i*n_flag],&f,n_flag,OShift,M,SS,1,1);
+			return f + 1200.0;
+		case 13:
+			hf03(&x[i*n_flag],&f,n_flag,OShift,M,SS,1,1);
+			return f + 1300.0;
+		case 14:
+			hf04(&x[i*n_flag],&f,n_flag,OShift,M,SS,1,1);
+			return f + 1400.0;
+		case 15:
+			hf05(&x[i*n_flag],&f,n_flag,OShift,M,SS,1,1);
+			return f + 1500.0;
+		case 16:
+			hf06(&x[i*n_flag],&f,n_flag,OShift,M,SS,1,1);
+			return f + 1600.0;
+		case 17:
+			hf07(&x[i*n_flag],&f,n_flag,OShift,M,SS,1,1);
+			return f + 1700.0;
+		case 18:
+			hf08(&x[i*n_flag],&f,n_flag,OShift,M,SS,1,1);
+			return f + 1800.0;
+		case 19:
+			hf09(&x[i*n_flag],&f,n_flag,OShift,M,SS,1,1);
+			return f + 1900.0;
+		case 20:
+			hf10(&x[i*n_flag],&f,n_flag,OShift,M,SS,1,1);
+			return f + 2000.0;
+		case 21:
+			cf01(&x[i*n_flag],&f,n_flag,OShift,M,1);
+			return f + 2100.0;
+		case 22:
+			cf02(&x[i*n_flag],&f,n_flag,OShift,M,1);
+			return f + 2200.0;
+		case 23:
+			cf03(&x[i*n_flag],&f,n_flag,OShift,M,1);
+			return f + 2300.0;
+		case 24:
+			cf04(&x[i*n_flag],&f,n_flag,OShift,M,1);
+			return f + 2400.0;
+		case 25:
+			cf05(&x[i*n_flag],&f,n_flag,OShift,M,1);
+			return f + 2500.0;
+		case 26:
+			cf06(&x[i*n_flag],&f,n_flag,OShift,M,1);
+			return f + 2600.0;
+		case 27:
+			cf07(&x[i*n_flag],&f,n_flag,OShift,M,1);
+			return f + 2700.0;
+		case 28:
+			cf08(&x[i*n_flag],&f,n_flag,OShift,M,1);
+			return f + 2800.0;
+		case 29:
+			cf09(&x[i*n_flag],&f,n_flag,OShift,M,SS,1);
+			return f + 2900.0;
+		case 30:
+			cf10(&x[i*n_flag],&f,n_flag,OShift,M,SS,1);
+			return f + 3000.0;
+		default:
+			throw "Error: There are only 30 test functions in this test suite!";
 	}
+	return f;
 }
 
 void CEC17::sphere_func (double *x, double *f, int nx, double *Os, double *Mr, int s_flag, int r_flag) /* Sphere */ {
 	int i;
 	f[0] = 0.0;
-	std::vector<double> z(dim), y(dim);
+	std::vector<double> z(_dim), y(_dim);
 	sr_func (x, z.data(), y.data(), nx, Os, Mr, 1.0, s_flag, r_flag); /* shift and rotate */
 	for (i=0; i<nx; i++)  f[0] += z[i]*z[i];
 }
@@ -256,14 +224,14 @@ void CEC17::sphere_func (double *x, double *f, int nx, double *Os, double *Mr, i
 void CEC17::ellips_func (double *x, double *f, int nx, double *Os,double *Mr, int s_flag, int r_flag) /* Ellipsoidal */ {
 	int i;
 	f[0] = 0.0;
-	std::vector<double> z(dim), y(dim);
+	std::vector<double> z(_dim), y(_dim);
 	sr_func (x, z.data(), y.data(), nx, Os, Mr,1.0, s_flag, r_flag); /* shift and rotate */
 	for (i=0; i<nx; i++) f[0] += pow(10.0,6.0*i/(nx-1))*z[i]*z[i];
 }
 
 void CEC17::sum_diff_pow_func (double *x, double *f, int nx, double *Os,double *Mr, int s_flag, int r_flag) /* sum of different power */ {
 	int i;
-	std::vector<double> z(dim), y(dim);
+	std::vector<double> z(_dim), y(_dim);
 	sr_func (x, z.data(), y.data(), nx, Os, Mr,1.0, s_flag, r_flag); // shift and rotate
 	f[0] = 0.0;
 	double sum = 0.0;
@@ -277,7 +245,7 @@ void CEC17::sum_diff_pow_func (double *x, double *f, int nx, double *Os,double *
 
 void CEC17::zakharov_func (double *x, double *f, int nx, double *Os,double *Mr, int s_flag, int r_flag) /* zakharov */ {
 	int i;
-	std::vector<double> z(dim), y(dim);
+	std::vector<double> z(_dim), y(_dim);
 	sr_func (x, z.data(), y.data(), nx, Os, Mr, 1.0, s_flag, r_flag); // shift and rotate
 	f[0] = 0.0;
 	double sum1 = 0.0;
@@ -294,7 +262,7 @@ void CEC17::zakharov_func (double *x, double *f, int nx, double *Os,double *Mr, 
 void CEC17::levy_func (double *x, double *f, int nx, double *Os,double *Mr, int s_flag, int r_flag) /* Levy */ {
 	int i;
 	f[0] = 0.0;
-	std::vector<double> z(dim), y(dim), w(dim);
+	std::vector<double> z(_dim), y(_dim), w(_dim);
 	sr_func (x, z.data(), y.data(), nx, Os, Mr, 1.0, s_flag, r_flag); /* shift and rotate */
 	double sum1= 0.0;
 	for (i=0; i<nx; i++) w[i] = 1.0 + (z[i] - 1.0)/4.0;
@@ -313,7 +281,7 @@ void CEC17::levy_func (double *x, double *f, int nx, double *Os,double *Mr, int 
 void CEC17::dixon_price_func (double *x, double *f, int nx, double *Os,double *Mr, int s_flag, int r_flag) /* Dixon and Price */ {
 	int i;
 	int j;
-	std::vector<double> z(dim), y(dim);
+	std::vector<double> z(_dim), y(_dim);
 	sr_func (x, z.data(), y.data(), nx, Os, Mr, 1.0, s_flag, r_flag); // shift and rotate
 	f[0] = 0;
 	double x1 = z[0];;
@@ -330,7 +298,7 @@ void CEC17::dixon_price_func (double *x, double *f, int nx, double *Os,double *M
 
 void CEC17::bent_cigar_func (double *x, double *f, int nx, double *Os,double *Mr, int s_flag, int r_flag) /* Bent_Cigar */ {
 	int i;
-	std::vector<double> z(dim), y(dim);
+	std::vector<double> z(_dim), y(_dim);
 	sr_func (x, z.data(), y.data(), nx, Os, Mr, 1.0, s_flag, r_flag); /* shift and rotate */
 	f[0] = z[0]*z[0];
 	for (i=1; i<nx; i++) f[0] += pow(10.0,6.0)*z[i]*z[i];
@@ -338,7 +306,7 @@ void CEC17::bent_cigar_func (double *x, double *f, int nx, double *Os,double *Mr
 
 void CEC17::discus_func (double *x, double *f, int nx, double *Os,double *Mr, int s_flag, int r_flag) /* Discus */ {
 	int i;
-	std::vector<double> z(dim), y(dim);
+	std::vector<double> z(_dim), y(_dim);
 	sr_func (x, z.data(), y.data(), nx, Os, Mr, 1.0, s_flag, r_flag); /* shift and rotate */
 	f[0] = pow(10.0,6.0)*z[0]*z[0];
 	for (i=1; i<nx; i++) f[0] += z[i]*z[i];
@@ -347,7 +315,7 @@ void CEC17::discus_func (double *x, double *f, int nx, double *Os,double *Mr, in
 void CEC17::dif_powers_func (double *x, double *f, int nx, double *Os,double *Mr,int s_flag, int r_flag) /* Different Powers */ {
 	int i;
 	f[0] = 0.0;
-	std::vector<double> z(dim), y(dim);
+	std::vector<double> z(_dim), y(_dim);
 	sr_func (x, z.data(), y.data(), nx, Os, Mr, 1.0, s_flag, r_flag); /* shift and rotate */
 	for (i=0; i<nx; i++) f[0] += pow(fabs(z[i]),2+4*i/(nx-1));
 	f[0]=pow(f[0],0.5);
@@ -356,7 +324,7 @@ void CEC17::dif_powers_func (double *x, double *f, int nx, double *Os,double *Mr
 void CEC17::rosenbrock_func (double *x, double *f, int nx, double *Os,double *Mr,int s_flag, int r_flag) /* Rosenbrock's */ {
 	int i;
 	double tmp1,tmp2;
-	std::vector<double> z(dim), y(dim);
+	std::vector<double> z(_dim), y(_dim);
 	f[0] = 0.0;
 	sr_func (x, z.data(), y.data(), nx, Os, Mr, 2.048/100.0, s_flag, r_flag); /* shift and rotate */
 	z[0] += 1.0;//shift to orgin
@@ -371,7 +339,7 @@ void CEC17::rosenbrock_func (double *x, double *f, int nx, double *Os,double *Mr
 void CEC17::schaffer_F7_func (double *x, double *f, int nx, double *Os,double *Mr,int s_flag, int r_flag) /* Schwefel's 1.2  */ {
 	int i;
 	double tmp;
-	std::vector<double> z(dim), y(dim);
+	std::vector<double> z(_dim), y(_dim);
 	f[0] = 0.0;
 	sr_func (x, z.data(), y.data(), nx, Os, Mr, 1.0, s_flag, r_flag); /* shift and rotate */
 	for (i=0; i<nx-1; i++) {
@@ -387,7 +355,7 @@ void CEC17::ackley_func (double *x, double *f, int nx, double *Os,double *Mr,int
 	double sum1, sum2;
 	sum1 = 0.0;
 	sum2 = 0.0;
-	std::vector<double> z(dim), y(dim);
+	std::vector<double> z(_dim), y(_dim);
 	sr_func (x, z.data(), y.data(), nx, Os, Mr, 1.0, s_flag, r_flag); /* shift and rotate */
 	for (i=0; i<nx; i++) {
 		sum1 += z[i]*z[i];
@@ -401,7 +369,7 @@ void CEC17::ackley_func (double *x, double *f, int nx, double *Os,double *Mr,int
 void CEC17::weierstrass_func (double *x, double *f, int nx, double *Os,double *Mr,int s_flag, int r_flag) /* Weierstrass's  */ {
 	int i,j,k_max;
 	double sum,sum2, a, b;
-	std::vector<double> z(dim), y(dim);
+	std::vector<double> z(_dim), y(_dim);
 	a = 0.5;
 	b = 3.0;
 	k_max = 20;
@@ -426,7 +394,7 @@ void CEC17::griewank_func (double *x, double *f, int nx, double *Os,double *Mr,i
 	double s, p;
 	s = 0.0;
 	p = 1.0;
-	std::vector<double> z(dim), y(dim);
+	std::vector<double> z(_dim), y(_dim);
 
 	sr_func (x, z.data(), y.data(), nx, Os, Mr, 600.0/100.0, s_flag, r_flag); /* shift and rotate */
 
@@ -440,14 +408,14 @@ void CEC17::griewank_func (double *x, double *f, int nx, double *Os,double *Mr,i
 void CEC17::rastrigin_func (double *x, double *f, int nx, double *Os,double *Mr,int s_flag, int r_flag) /* Rastrigin's  */ {
 	int i;
 	f[0] = 0.0;
-	std::vector<double> z(dim), y(dim);
+	std::vector<double> z(_dim), y(_dim);
 	sr_func (x, z.data(), y.data(), nx, Os, Mr, 5.12/100.0, s_flag, r_flag); /* shift and rotate */
 	for (i=0; i<nx; i++) f[0] += (z[i]*z[i] - 10.0*cos(2.0*PI*z[i]) + 10.0);
 }
 
 void CEC17::step_rastrigin_func (double *x, double *f, int nx, double *Os,double *Mr,int s_flag, int r_flag) /* Noncontinuous Rastrigin's  */ {
 	int i;
-	std::vector<double> y(dim), z(dim);
+	std::vector<double> y(_dim), z(_dim);
 	f[0]=0.0;
 	for (i=0; i<nx; i++) 	{
 		if (fabs(y[i]-Os[i])>0.5) y[i]=Os[i]+floor(2*(y[i]-Os[i])+0.5)/2;
@@ -460,7 +428,7 @@ void CEC17::schwefel_func (double *x, double *f, int nx, double *Os,double *Mr,i
 	int i;
 	double tmp;
 	f[0]=0.0;
-	std::vector<double> z(dim), y(dim);
+	std::vector<double> z(_dim), y(_dim);
 	sr_func (x, z.data(), y.data(), nx, Os, Mr, 1000.0/100.0, s_flag, r_flag); /* shift and rotate */
 	for (i=0; i<nx; i++) {
 		z[i] += 4.209687462275036e+002;
@@ -482,7 +450,7 @@ void CEC17::schwefel_func (double *x, double *f, int nx, double *Os,double *Mr,i
 void CEC17::katsuura_func (double *x, double *f, int nx, double *Os,double *Mr,int s_flag, int r_flag) /* Katsuura  */ {
 	int i,j;
 	double temp,tmp1,tmp2,tmp3;
-	std::vector<double> z(dim), y(dim);
+	std::vector<double> z(_dim), y(_dim);
 	f[0]=1.0;
 	tmp3=pow(1.0*nx,1.2);
 	sr_func (x, z.data(), y.data(), nx, Os, Mr, 5.0/100.0, s_flag, r_flag); /* shift and rotate */
@@ -503,7 +471,7 @@ void CEC17::katsuura_func (double *x, double *f, int nx, double *Os,double *Mr,i
 void CEC17::bi_rastrigin_func (double *x, double *f, int nx, double *Os,double *Mr,int s_flag, int r_flag) /* Lunacek Bi_rastrigin Function */ {
 	int i;
 	double mu0=2.5,d=1.0,s,mu1,tmp,tmp1,tmp2;
-	std::vector<double> y(dim), z(dim), tmpx(dim);
+	std::vector<double> y(_dim), z(_dim), tmpx(_dim);
 	s=1.0-1.0/(2.0*pow(nx+20.0,0.5)-8.2);
 	mu1=-pow((mu0*mu0-d)/s,0.5);
 	if (s_flag==1)
@@ -554,7 +522,7 @@ void CEC17::grie_rosen_func (double *x, double *f, int nx, double *Os,double *Mr
 	int i;
 	double temp,tmp1,tmp2;
 	f[0]=0.0;
-	std::vector<double> z(dim), y(dim);
+	std::vector<double> z(_dim), y(_dim);
 	sr_func (x, z.data(), y.data(), nx, Os, Mr, 5.0/100.0, s_flag, r_flag); /* shift and rotate */
 	z[0] += 1.0;//shift to orgin
 	for (i=0; i<nx-1; i++) {
@@ -574,7 +542,7 @@ void CEC17::grie_rosen_func (double *x, double *f, int nx, double *Os,double *Mr
 void CEC17::escaffer6_func (double *x, double *f, int nx, double *Os,double *Mr,int s_flag, int r_flag) /* Expanded Scaffer??s F6  */ {
 	int i;
 	double temp1, temp2;
-	std::vector<double> z(dim), y(dim);
+	std::vector<double> z(_dim), y(_dim);
 	sr_func (x, z.data(), y.data(), nx, Os, Mr, 1.0, s_flag, r_flag); /* shift and rotate */
 	f[0] = 0.0;
 	for (i=0; i<nx-1; i++) {
@@ -595,7 +563,7 @@ void CEC17::happycat_func (double *x, double *f, int nx, double *Os,double *Mr,i
 	double alpha,r2,sum_z;
 	alpha=1.0/8.0;
 
-	std::vector<double> z(dim), y(dim);
+	std::vector<double> z(_dim), y(_dim);
 	sr_func (x, z.data(), y.data(), nx, Os, Mr, 5.0/100.0, s_flag, r_flag); /* shift and rotate */
 
 	r2 = 0.0;
@@ -614,7 +582,7 @@ void CEC17::hgbat_func (double *x, double *f, int nx, double *Os,double *Mr,int 
 	double alpha,r2,sum_z;
 	alpha=1.0/4.0;
 
-	std::vector<double> z(dim), y(dim);
+	std::vector<double> z(_dim), y(_dim);
 	sr_func (x, z.data(), y.data(), nx, Os, Mr, 5.0/100.0, s_flag, r_flag); /* shift and rotate */
 
 	r2 = 0.0;
@@ -647,7 +615,7 @@ void CEC17::hf01 (double *x, double *f, int nx, double *Os,double *Mr,int *S,int
 		G[i] = G[i-1]+G_nx[i-1];
 	}
 
-	std::vector<double> z(dim), y(dim);
+	std::vector<double> z(_dim), y(_dim);
 	sr_func (x, z.data(), y.data(), nx, Os, Mr, 1.0, s_flag, r_flag); /* shift and rotate */
 
 	for (i = 0; i < nx; i++) y[i] = z[S[i] - 1];
@@ -676,7 +644,7 @@ void CEC17::hf02 (double *x, double *f, int nx, double *Os,double *Mr,int *S,int
 
 	G[0]=0;
 	for (i=1; i<cf_num; i++) G[i] = G[i-1]+G_nx[i-1];
-	std::vector<double> z(dim), y(dim);
+	std::vector<double> z(_dim), y(_dim);
 	sr_func (x, z.data(), y.data(), nx, Os, Mr, 1.0, s_flag, r_flag); /* shift and rotate */
 
 	for (i=0; i<nx; i++) y[i]=z[S[i]-1];
@@ -711,7 +679,7 @@ void CEC17::hf03 (double *x, double *f, int nx, double *Os,double *Mr,int *S,int
 		G[i] = G[i-1]+G_nx[i-1];
 	}
 
-	std::vector<double> z(dim), y(dim);
+	std::vector<double> z(_dim), y(_dim);
 	sr_func (x, z.data(), y.data(), nx, Os, Mr, 1.0, s_flag, r_flag); /* shift and rotate */
 
 	for (i=0; i<nx; i++)
@@ -750,7 +718,7 @@ void CEC17::hf04 (double *x, double *f, int nx, double *Os,double *Mr,int *S,int
 	G[0]=0;
 	for (i=1; i<cf_num; i++) G[i] = G[i-1]+G_nx[i-1];
 
-	std::vector<double> z(dim), y(dim);
+	std::vector<double> z(_dim), y(_dim);
 	sr_func (x, z.data(), y.data(), nx, Os, Mr, 1.0, s_flag, r_flag); /* shift and rotate */
 
 	for (i=0; i<nx; i++) y[i]=z[S[i]-1];
@@ -783,7 +751,7 @@ void CEC17::hf05 (double *x, double *f, int nx, double *Os,double *Mr,int *S,int
 	G[0]=0;
 	for (i=1; i<cf_num; i++) G[i] = G[i-1]+G_nx[i-1];
 
-	std::vector<double> z(dim), y(dim);
+	std::vector<double> z(_dim), y(_dim);
 	sr_func (x, z.data(), y.data(), nx, Os, Mr, 1.0, s_flag, r_flag); /* shift and rotate */
 
 	for (i=0; i<nx; i++) y[i]=z[S[i]-1];
@@ -822,7 +790,7 @@ void CEC17::hf06 (double *x, double *f, int nx, double *Os,double *Mr,int *S,int
 		G[i] = G[i-1]+G_nx[i-1];
 	}
 
-	std::vector<double> z(dim), y(dim);
+	std::vector<double> z(_dim), y(_dim);
 	sr_func (x, z.data(), y.data(), nx, Os, Mr, 1.0, s_flag, r_flag); /* shift and rotate */
 
 	for (i=0; i<nx; i++)
@@ -861,7 +829,7 @@ void CEC17::hf07 (double *x, double *f, int nx, double *Os,double *Mr,int *S,int
 	G[0]=0;
 	for (i=1; i<cf_num; i++) G[i] = G[i-1]+G_nx[i-1];
 
-	std::vector<double> z(dim), y(dim);
+	std::vector<double> z(_dim), y(_dim);
 	sr_func (x, z.data(), y.data(), nx, Os, Mr, 1.0, s_flag, r_flag); /* shift and rotate */
 
 	for (i=0; i<nx; i++) y[i]=z[S[i]-1];
@@ -896,7 +864,7 @@ void CEC17::hf08 (double *x, double *f, int nx, double *Os,double *Mr,int *S,int
 	G[0]=0;
 	for (i=1; i<cf_num; i++) G[i] = G[i-1]+G_nx[i-1];
 
-	std::vector<double> z(dim), y(dim);
+	std::vector<double> z(_dim), y(_dim);
 	sr_func (x, z.data(), y.data(), nx, Os, Mr, 1.0, s_flag, r_flag); /* shift and rotate */
 
 	for (i=0; i<nx; i++) y[i]=z[S[i]-1];
@@ -932,7 +900,7 @@ void CEC17::hf09 (double *x, double *f, int nx, double *Os,double *Mr,int *S,int
 	G[0]=0;
 	for (i=1; i<cf_num; i++) G[i] = G[i-1]+G_nx[i-1];
 
-	std::vector<double> z(dim), y(dim);
+	std::vector<double> z(_dim), y(_dim);
 	sr_func (x, z.data(), y.data(), nx, Os, Mr, 1.0, s_flag, r_flag); /* shift and rotate */
 
 	for (i=0; i<nx; i++) y[i]=z[S[i]-1];
@@ -967,7 +935,7 @@ void CEC17::hf10 (double *x, double *f, int nx, double *Os,double *Mr,int *S,int
 
 	G[0]=0;
 	for (i=1; i<cf_num; i++) G[i] = G[i-1]+G_nx[i-1];
-	std::vector<double> z(dim), y(dim);
+	std::vector<double> z(_dim), y(_dim);
 
 	sr_func (x, z.data(), y.data(), nx, Os, Mr, 1.0, s_flag, r_flag); /* shift and rotate */
 
@@ -1006,7 +974,7 @@ void CEC17::cf01 (double *x, double *f, int nx, double *Os,double *Mr,int r_flag
 	fit[i]=10000*fit[i]/1e+10;
 	i=2;
 	rastrigin_func(x,&fit[i],nx,&Os[i*nx],&Mr[i*nx*nx],1,r_flag);
-	std::vector<double> y(dim);
+	std::vector<double> y(_dim);
 	cf_cal(x, f, y.data(), nx, Os, delta,bias,fit,cf_num);
 }
 
@@ -1023,7 +991,7 @@ void CEC17::cf02 (double *x, double *f, int nx, double *Os,double *Mr,int r_flag
 	fit[i]=1000*fit[i]/100;
 	i=2;
 	schwefel_func(x,&fit[i],nx,&Os[i*nx],&Mr[i*nx*nx],1,r_flag);
-	std::vector<double> y(dim);
+	std::vector<double> y(_dim);
 	cf_cal(x, f, y.data(), nx, Os, delta,bias,fit,cf_num);
 }
 
@@ -1041,7 +1009,7 @@ void CEC17::cf03 (double *x, double *f, int nx, double *Os,double *Mr,int r_flag
 	schwefel_func(x,&fit[i],nx,&Os[i*nx],&Mr[i*nx*nx],1,r_flag);
 	i=3;
 	rastrigin_func(x,&fit[i],nx,&Os[i*nx],&Mr[i*nx*nx],1,r_flag);
-	std::vector<double> y(dim);
+	std::vector<double> y(_dim);
 	cf_cal(x, f, y.data(), nx, Os, delta,bias,fit,cf_num);
 }
 
@@ -1062,7 +1030,7 @@ void CEC17::cf04 (double *x, double *f, int nx, double *Os,double *Mr,int r_flag
 	fit[i]=1000*fit[i]/100;
 	i=3;
 	rastrigin_func(x,&fit[i],nx,&Os[i*nx],&Mr[i*nx*nx],1,r_flag);
-	std::vector<double> y(dim);
+	std::vector<double> y(_dim);
 	cf_cal(x, f, y.data(), nx, Os, delta,bias,fit,cf_num);
 }
 
@@ -1085,7 +1053,7 @@ void CEC17::cf05 (double *x, double *f, int nx, double *Os,double *Mr,int r_flag
 	fit[i]=10000*fit[i]/1e+10;
 	i=4;
 	rosenbrock_func(x,&fit[i],nx,&Os[i*nx],&Mr[i*nx*nx],1,r_flag);
-	std::vector<double> y(dim);
+	std::vector<double> y(_dim);
 	cf_cal(x, f, y.data(), nx, Os, delta,bias,fit,cf_num);
 }		
 
@@ -1107,7 +1075,7 @@ void CEC17::cf06 (double *x, double *f, int nx, double *Os,double *Mr,int r_flag
 	i=4;
 	rastrigin_func(x,&fit[i],nx,&Os[i*nx],&Mr[i*nx*nx],1,r_flag);
 	fit[i]=10000*fit[i]/1e+3;
-	std::vector<double> y(dim);
+	std::vector<double> y(_dim);
 	cf_cal(x, f, y.data(), nx, Os, delta,bias,fit,cf_num);
 }
 
@@ -1134,7 +1102,7 @@ void CEC17::cf07 (double *x, double *f, int nx, double *Os,double *Mr,int r_flag
 	i=5;
 	escaffer6_func(x,&fit[i],nx,&Os[i*nx],&Mr[i*nx*nx],1,r_flag);
 	fit[i]=10000*fit[i]/2e+7;
-	std::vector<double> y(dim);
+	std::vector<double> y(_dim);
 	cf_cal(x, f, y.data(), nx, Os, delta,bias,fit,cf_num);
 }
 
@@ -1160,7 +1128,7 @@ void CEC17::cf08 (double *x, double *f, int nx, double *Os,double *Mr,int r_flag
 	i=5;
 	escaffer6_func(x,&fit[i],nx,&Os[i*nx],&Mr[i*nx*nx],1,r_flag);
 	fit[i]=10000*fit[i]/2e+7;
-	std::vector<double> y(dim);
+	std::vector<double> y(_dim);
 	cf_cal(x, f, y.data(), nx, Os, delta,bias,fit,cf_num);
 }
 
@@ -1176,7 +1144,7 @@ void CEC17::cf09 (double *x, double *f, int nx, double *Os,double *Mr,int *SS,in
 	hf06(x,&fit[i],nx,&Os[i*nx],&Mr[i*nx*nx],&SS[i*nx],1,r_flag);
 	i=2;
 	hf07(x,&fit[i],nx,&Os[i*nx],&Mr[i*nx*nx],&SS[i*nx],1,r_flag);
-	std::vector<double> y(dim);
+	std::vector<double> y(_dim);
 	cf_cal(x, f, y.data(), nx, Os, delta,bias,fit,cf_num);
 
 }
@@ -1192,7 +1160,7 @@ void CEC17::cf10 (double *x, double *f, int nx, double *Os,double *Mr,int *SS,in
 	hf08(x,&fit[i],nx,&Os[i*nx],&Mr[i*nx*nx],&SS[i*nx],1,r_flag);
 	i=2;
 	hf09(x,&fit[i],nx,&Os[i*nx],&Mr[i*nx*nx],&SS[i*nx],1,r_flag);
-	std::vector<double> y(dim);
+	std::vector<double> y(_dim);
 	cf_cal(x, f, y.data(), nx, Os, delta,bias,fit,cf_num);
 }
 

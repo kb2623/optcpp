@@ -21,6 +21,6 @@ void FII::setParameters(AlgParams *params) {
 	// TODO
 }
 
-tuple<vector<unsigned int>, vector<vector<unsigned int>>> FII::run(TestFuncBounds* ifunc) {
+tuple<vector<unsigned int>, vector<vector<unsigned int>>> FII::run(BoundedObjectiveFunction<double>* ifunc) {
 	// TODO
 }

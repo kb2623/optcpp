@@ -2,7 +2,7 @@
 #define _XDGV1_H_
 
 #include "xdg.hpp"
-#include "testfunc.hpp"
+#include "objective_function.hpp"
 
 #include <algorithm>
 
@@ -13,7 +13,7 @@ public:
 
 	virtual string info() override;
 	virtual string sinfo() override;
-	virtual tuple<vector<unsigned int>, vector<vector<unsigned int>>> run(TestFuncBounds*) override;
+	virtual tuple<vector<unsigned int>, vector<vector<unsigned int>>> run(BoundedObjectiveFunction<double>*) override;
 
 protected:
 	double epsilon(double, double, double, double);
