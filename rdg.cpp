@@ -25,7 +25,7 @@ void RDG::setParameters(AlgParams *params) {
 double RDG::calc_epsilon(BoundedObjectiveFunction<double>* func) {
 	auto x = vector<vector<double>>(np, vector<double>(fitf.dim()));
 	auto xf = vector<double>(np);
-	for (int i = 0; i < np; i++) for (int j = 0; j < fitf.dim(); j++) x[i][j] = fitf.x_bound_max()[j] - fitf.x_bound_min()[j] * randDouble() + fitf.x_bound_min()[j];
+	for (int i = 0; i < np; i++) for (int j = 0; j < fitf.dim(); j++) x[i][j] = fitf.x_bound_max(j) - fitf.x_bound_min(j) * randDouble() + fitf.x_bound_min(j);
 	for (int i = 0; i < np; i++) xf[i] = fitf(x[i].data());
 	auto minf = abs(xf[0]);
 	for (int i = 1; i < np; i++) if (minf > abs(xf[i])) minf = abs(xf[i]);
@@ -36,7 +36,7 @@ tuple<vector<unsigned int>, vector<vector<unsigned int>>> RDG::run(BoundedObject
 	initRun(ifunc);
 	auto epsilon = calc_epsilon(ifunc);
 	auto x = new double[fitf.dim()];
-	for (int i = 0; i < fitf.dim(); i++) x[i] = fitf.x_bound_min()[i];
+	for (int i = 0; i < fitf.dim(); i++) x[i] = fitf.x_bound_min(i);
 	auto xf = fitf(x);
 	auto sub1 = vector<unsigned int>(1, 0), sub2 = vector<unsigned int>(fitf.dim() - 1);
 	for (int i = 0; i < sub2.size(); i++) sub2[i] = i + 1;
@@ -76,11 +76,11 @@ tuple<vector<unsigned int>, vector<vector<unsigned int>>> RDG::run(BoundedObject
 vector<unsigned int> RDG::interact(double *a, double af, double epsilon, vector<unsigned int> sub1, vector<unsigned int> sub2, vector<unsigned int> &xremain) {
 	auto b = new double[fitf.dim()], c = new double[fitf.dim()], d = new double[fitf.dim()];
 	for (int i = 0; i < fitf.dim(); i++) b[i] = c[i] = a[i];
-	for (int i = 0; i < sub1.size(); i++) b[sub1[i]] = fitf.x_bound_max()[sub1[i]];
+	for (int i = 0; i < sub1.size(); i++) b[sub1[i]] = fitf.x_bound_max(sub1[i]);
 	auto bf = fitf(b);
 	auto delta1 = af - bf;
 	for (int i = 0; i < fitf.dim(); i++) d[i] = b[i];
-	for (int i = 0; i < sub2.size(); i++) c[sub2[i]] = d[sub2[i]] = fitf.x_bound_min()[sub2[i]] + (fitf.x_bound_max()[sub2[i]] - fitf.x_bound_min()[sub2[i]]) / 2;
+	for (int i = 0; i < sub2.size(); i++) c[sub2[i]] = d[sub2[i]] = fitf.x_bound_min(sub2[i]) + (fitf.x_bound_max(sub2[i]) - fitf.x_bound_min(sub2[i])) / 2;
 	auto cf = fitf(c), df = fitf(d);
 	auto delta2 = cf - df;
 	delete[] b, delete[] c, delete[] d;

@@ -1,13 +1,13 @@
 #include "objective_function.hpp"
 
 template <typename T>
-ObjectiveFunction<T>::ObjectiveFunction() : _dim(0), _no_fes(0) {}
+ObjectiveFunction<T>::ObjectiveFunction() : RepairSolution<T>(), _dim(0), _no_fes(0) {}
 
 template <typename T>
-ObjectiveFunction<T>::ObjectiveFunction(const ObjectiveFunction<T>& o) : _dim(o.dim), _no_fes(o.no_fes) {}
+ObjectiveFunction<T>::ObjectiveFunction(const ObjectiveFunction<T>& o) : RepairSolution<T>(o), _dim(o.dim), _no_fes(o.no_fes) {}
 
 template <typename T>
-ObjectiveFunction<T>::ObjectiveFunction(size_t dim) : _dim(dim), _no_fes(0) {}
+ObjectiveFunction<T>::ObjectiveFunction(size_t dim) : RepairSolution<T>(), _dim(dim), _no_fes(0) {}
 
 template <typename T>
 ObjectiveFunction<T>::~ObjectiveFunction() {}
@@ -81,6 +81,12 @@ inline T* BoundedObjectiveFunction<T>::x_bound_min() const {
 }
 
 template <typename T>
+inline T BoundedObjectiveFunction<T>::x_bound_min(size_t index) const {
+	if (index < this->dim()) return _x_bound_min[index];
+	else return _x_bound_min[0];
+}
+
+template <typename T>
 void BoundedObjectiveFunction<T>::x_bound_min(T* low_lim) {
 	_x_bound_min = copy_vector(low_lim, _x_bound_min, this->dim);
 }
@@ -88,6 +94,12 @@ void BoundedObjectiveFunction<T>::x_bound_min(T* low_lim) {
 template <typename T>
 inline T* BoundedObjectiveFunction<T>::x_bound_max() const {
 	return _x_bound_max;
+}
+
+template <typename T>
+inline T BoundedObjectiveFunction<T>::x_bound_max(size_t index) const {
+	if (index < this->dim()) return _x_bound_max[index];
+	return _x_bound_max[0];
 }
 
 template <typename T>

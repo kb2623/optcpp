@@ -22,26 +22,26 @@ string GDG::sinfo() {
 tuple<vector<unsigned int>, vector<vector<unsigned int>>> GDG::run(BoundedObjectiveFunction<double>* ifunc) {
 	initRun(ifunc);
 	auto p1 = new double[fitf.dim()], p2 = new double[fitf.dim()], p3 = new double[fitf.dim()], p4 = new double[fitf.dim()];
-	for (int i = 0; i < fitf.dim(); i++) p1[i] = fitf.x_bound_min()[i];
+	for (int i = 0; i < fitf.dim(); i++) p1[i] = fitf.x_bound_min(i);
 	double p1f = fitf(p1);
 	auto p2_vec = vector<double>(fitf.dim(), 0);
 	for (int i = 0; i < fitf.dim(); i++) {
 		for (int j = 0; j < fitf.dim(); j++) p2[j] = p1[j];
-		p2[i] = fitf.x_bound_max()[i];
+		p2[i] = fitf.x_bound_max(i);
 		p2_vec[i] = fitf(p2);
 	}
 	auto p3_vec = vector<double>(fitf.dim(), 0);
 	for (int i = 0; i < fitf.dim(); i++) {
 		for (int j = 0; j < fitf.dim(); j++) p3[j] = p1[j];
-		p3[i] = (fitf.x_bound_max()[i] + fitf.x_bound_min()[i]) / 2;
+		p3[i] = (fitf.x_bound_max(i) + fitf.x_bound_min(i)) / 2;
 		p3_vec[i] = fitf(p3);
 	}
 	auto deltaMtx = vector<vector<double>>(fitf.dim(), vector<double>(fitf.dim(), 0));
 	for (int i = 0; i < fitf.dim(); i++) {
 		for (int j = 0; j < fitf.dim(); j++) {
 			for (int k = 0; k < fitf.dim(); k++) p4[k] = p1[k];
-			p4[i] = fitf.x_bound_max()[i];
-			p4[j] = fitf.x_bound_min()[j] + (fitf.x_bound_max()[i] - fitf.x_bound_min()[i]) / 2;
+			p4[i] = fitf.x_bound_max(i);
+			p4[j] = fitf.x_bound_min(j) + (fitf.x_bound_max(i) - fitf.x_bound_min(i)) / 2;
 			auto p4f = fitf(p4);
 			auto d_1 = p1f - p2_vec[i];
 			auto d_2 = p3_vec[j] - p4f;
@@ -103,7 +103,7 @@ tuple<vector<int>, vector<int>> GDG::graph_connected_components(vector<vector<do
 double GDG::calc_treshold(vector<vector<double>> &deltaMtx) {
 	auto x = vector<vector<double>>(np, vector<double>(fitf.dim()));
 	auto xf = vector<double>(np);
-	for (int i = 0; i < np; i++) for (int j = 0; j < fitf.dim(); j++) x[i][j] = fitf.x_bound_max()[j] - fitf.x_bound_min()[j] * randDouble() + fitf.x_bound_min()[j];
+	for (int i = 0; i < np; i++) for (int j = 0; j < fitf.dim(); j++) x[i][j] = fitf.x_bound_max(j) - fitf.x_bound_min(j) * randDouble() + fitf.x_bound_min(j);
 	for (int i = 0; i < np; i++) xf[i] = fitf(x[i].data());
 	auto minf = abs(xf[0]);
 	for (int i = 1; i < np; i++) if (minf > abs(xf[i])) minf = abs(xf[i]);

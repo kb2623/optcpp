@@ -26,21 +26,21 @@ tuple<vector<uint>, vector<vector<uint>>> DDG::run(BoundedObjectiveFunction<doub
 	auto seps = vector<uint>();
 	auto allgroups = vector<vector<uint>>();
 	auto x1 = new double[fitf.dim()], x2 = new double[fitf.dim()], x3 = new double[fitf.dim()], x4 = new double[fitf.dim()];
-	for (uint i = 0; i < fitf.dim(); i++) x1[i] = fitf.x_bound_min()[i];
+	for (uint i = 0; i < fitf.dim(); i++) x1[i] = fitf.x_bound_min(i);
 	auto y1 = fitf(x1), y2 = .0, y3 = .0, y4 = .0;
 	auto delta_addi = .0, delta_multi = .0;
 	while (dims.size() > 0) {
 		auto i = dims[0];
 		auto tmpgroup = vector<uint>(1, i);
 		for (uint j = 0; j < fitf.dim(); j++) x2[i] = x1[i];
-		x2[i] = fitf.x_bound_max()[i];
+		x2[i] = fitf.x_bound_max(i);
 		y2 = fitf(x2);
 		for (auto j : dims) if (i != j) {
 			for (uint k = 0; k < fitf.dim(); k++) x3[k] = x1[k];
-			x3[j] = fitf.x_bound_min()[j] + (fitf.x_bound_max()[j] - fitf.x_bound_min()[j]) / 2;
+			x3[j] = fitf.x_bound_min(j) + (fitf.x_bound_max(j) - fitf.x_bound_min(j)) / 2;
 			y3 = fitf(x3);
 			for(uint k = 0; k < fitf.dim(); k++) x4[k] = x2[k];
-			x4[j] = fitf.x_bound_min()[j] + (fitf.x_bound_max()[j] - fitf.x_bound_min()[j]) / 2;
+			x4[j] = fitf.x_bound_min(j) + (fitf.x_bound_max(j) - fitf.x_bound_min(j)) / 2;
 			y4 = fitf(x4);
 			delta_addi = abs((y1 - y2) - (y3 - y4));
 			if (y1 > 0 && y2 > 0 && y3 > 0 && y4 > 0) {

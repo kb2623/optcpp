@@ -29,11 +29,11 @@ tuple<vector<unsigned int>, vector<vector<unsigned int>>> DG::run(BoundedObjecti
 		auto i = dims[0];
 		auto group = vector<uint>(1, i);
 		for (auto j : dims) if (i != j) {
-			for (uint k = 0; k < fitf.dim(); k++) p1[k] = p2[k] = fitf.x_bound_min()[k];
-			p2[i] = fitf.x_bound_max()[i];
+			for (uint k = 0; k < fitf.dim(); k++) p1[k] = p2[k] = fitf.x_bound_min(k);
+			p2[i] = fitf.x_bound_max(i);
 			auto y1 = fitf(p1), y2 = fitf(p2);
 			auto delta1 = y1 - y2;
-			p1[j] = p2[j] = fitf.x_bound_min()[j] + (fitf.x_bound_max()[j] - fitf.x_bound_min()[j]) / 2;
+			p1[j] = p2[j] = fitf.x_bound_min(j) + (fitf.x_bound_max(j) - fitf.x_bound_min(j)) / 2;
 			auto y3 = fitf(p1), y4 = fitf(p2);
 			auto delta2 = y3 - y4;
 			if (abs(delta1 - delta2) > epsilon(y1, y2, y3, y4)) group.push_back(j);

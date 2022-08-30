@@ -29,7 +29,7 @@ void jDE::setParameters(AlgParams *params) {
 	this->CR_s = getParam(params, "CR_s", 0.9);
 }
 
-void jDE::initRun(TestFuncBounds<double> *func) {
+void jDE::initRun(BoundedObjectiveFunction<double> *func) {
 	DE::initRun(func);
 	for (int i = 0; i < np; i++) {
 		Fs.push_back(F_s);
@@ -37,7 +37,7 @@ void jDE::initRun(TestFuncBounds<double> *func) {
 	}
 }
 
-tuple<double, vector<double>> jDE::run(TestFuncBounds<double> *func) {
+tuple<double, vector<double>> jDE::run(BoundedObjectiveFunction<double> *func) {
 	initRun(func);
 	auto r = DE::run(func);
 	for (auto e : pop) delete [] e;
@@ -48,7 +48,7 @@ tuple<double, vector<double>> jDE::run(TestFuncBounds<double> *func) {
 
 void jDE::run_iteration() {
 	auto s = ceil(np / double(no_thr));
-	auto y = new double[fitf->dim];
+	auto y = new double[fitf.dim()];
 	for (int i = s * optcpp::tid; i < s * (optcpp::tid + 1); i++) if (i < np) {
 		double F_n = F_l + rand() * F_u;
 		Fs[i] = (rand() < tao_1) ? F_n : Fs[i];
@@ -57,7 +57,7 @@ void jDE::run_iteration() {
 		auto f = opt(*this, i, y);
 		sync->arrive_and_wait();
 		if (f < popf[i]) {
-			for (int j = 0; j < fitf->dim; j++) pop[i][j] = y[j];
+			for (int j = 0; j < fitf.dim(); j++) pop[i][j] = y[j];
 			popf[i] = f;
 			setBestSolution(y, f);
 		}
@@ -74,16 +74,16 @@ double jDE::rand_1(int i, double* y) {
 	do a = rand() % np; while (a == i);
 	do b = rand() % np; while (b == i || b == a);
 	do c = rand() % np; while (c == i || c == b || c == a);
-	int r = rand() % fitf->dim;
-	for (int j = 0; j < fitf->dim; j++) {
+	int r = rand() % fitf.dim();
+	for (int j = 0; j < fitf.dim(); j++) {
 		if (randDouble() < CRs[i] || j == r) {
 			y[j] = pop[a][j] + Fs[i] * (pop[b][j] - pop[c][j]);
 		} else {
 			y[j] = pop[i][j];
 		}
 	}
-	fix_solution(*this, y);
-	return eval(y);
+	fitf.fix_solution_arr(fitf, y);
+	return fitf(y);
 }
 
 double jDE::best_2(int i, double *y) {
@@ -92,16 +92,16 @@ double jDE::best_2(int i, double *y) {
 	do b = rand() % np; while (b == i || b == a);
 	do c = rand() % np; while (c == i || c == b || c == a);
 	do d = rand() % np; while (d == i || d == b || d == a || d == c);
-	int r = rand() % fitf->dim;
-	for (int j = 0; j < fitf->dim; j++) {
+	int r = rand() % fitf.dim();
+	for (int j = 0; j < fitf.dim(); j++) {
 		if (randDouble() < CRs[i] || j == r) {
 			y[j] = x_best[j] + Fs[i] * (pop[a][j] - pop[b][j]) + F * (pop[c][j] - pop[d][j]);
 		} else {
 			y[j] = pop[i][j];
 		}
 	}
-	fix_solution(*this, y);
-	return eval(y);
+	fitf.fix_solution_arr(fitf, y);
+	return fitf(y);
 }
 
 double jDE::rand_to_best_1(int i, double *y) {
@@ -109,14 +109,14 @@ double jDE::rand_to_best_1(int i, double *y) {
 	do a = rand() % np; while (a == i);
 	do b = rand() % np; while (b == i || b == a);
 	do c = rand() % np; while (c == i || c == b || c == a);
-	int r = rand() % fitf->dim;
-	for (int j = 0; j < fitf->dim; j++) {
+	int r = rand() % fitf.dim();
+	for (int j = 0; j < fitf.dim(); j++) {
 		if (randDouble() < CRs[i] || j == r) {
 			y[j] = pop[a][j] + Fs[i] * (x_best[j] - pop[i][j]) + F * (pop[b][j] - pop[c][j]);
 		} else {
 			y[j] = pop[i][j];
 		}
 	}
-	fix_solution(*this, y);
-	return eval(y);
+	fitf.fix_solution_arr(fitf, y);
+	return fitf(y);
 }

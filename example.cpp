@@ -39,7 +39,7 @@ tuple<double, vector<double>> Bar::run(BoundedObjectiveFunction<double>* func) {
 void Bar::run_iteration() {
 	int s = ceil(np / double(no_thr));
 	for (int i = s * optcpp::tid; i < np && i < (optcpp::tid + 1) * s; i++) {
-		for (int j = 0; j < fitf.dim(); j++) x[i][j] = fitf.x_bound_max()[j] - fitf.x_bound_min()[j] * randDouble() + fitf.x_bound_min()[j];
+		for (int j = 0; j < fitf.dim(); j++) x[i][j] = fitf.x_bound_max(j) - fitf.x_bound_min(j) * randDouble() + fitf.x_bound_min(j);
 		xf[i] = fitf(x[i].data());
 		if (f_best > xf[i]) {
 			best_lock.lock();

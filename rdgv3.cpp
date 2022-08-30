@@ -21,7 +21,7 @@ string RDGv3::sinfo() {
 tuple<vector<unsigned int>, vector<vector<unsigned int>>> RDGv3::run(BoundedObjectiveFunction<double>* ifunc) {
 	initRun(ifunc);
 	auto x = new double[fitf.dim()];
-	for (int i = 0; i < fitf.dim(); i++) x[i] = fitf.x_bound_min()[i];
+	for (int i = 0; i < fitf.dim(); i++) x[i] = fitf.x_bound_min(i);
 	auto xf = fitf(x);
 	auto sub1 = vector<unsigned int>(1, 0), sub2 = vector<unsigned int>(fitf.dim() - 1);
 	for (int i = 0; i < sub2.size(); i++) sub2[i] = i + 1;
@@ -62,11 +62,11 @@ tuple<vector<unsigned int>, vector<vector<unsigned int>>> RDGv3::run(BoundedObje
 vector<unsigned int> RDGv3::interact(double *a, double af, vector<unsigned int> sub1, vector<unsigned int> sub2, vector<unsigned int> &xremain) {
 	auto b = new double[fitf.dim()], c = new double[fitf.dim()], d = new double[fitf.dim()];
 	for (int i = 0; i < fitf.dim(); i++) b[i] = c[i] = a[i];
-	for (int i = 0; i < sub1.size(); i++) b[sub1[i]] = fitf.x_bound_max()[sub1[i]];
+	for (int i = 0; i < sub1.size(); i++) b[sub1[i]] = fitf.x_bound_max(sub1[i]);
 	auto bf = fitf(b);
 	auto delta1 = af - bf;
 	for (int i = 0; i < fitf.dim(); i++) d[i] = b[i];
-	for (int i = 0; i < sub2.size(); i++) c[sub2[i]] = d[sub2[i]] = (fitf.x_bound_max()[sub2[i]] - fitf.x_bound_min()[sub2[i]]) / 2;
+	for (int i = 0; i < sub2.size(); i++) c[sub2[i]] = d[sub2[i]] = (fitf.x_bound_max(sub2[i]) - fitf.x_bound_min(sub2[i])) / 2;
 	auto cf = fitf(c), df = fitf(d);
 	auto delta2 = cf - df;
 	delete[] b, delete[] c, delete[] d;

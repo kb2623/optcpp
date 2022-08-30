@@ -25,6 +25,21 @@ public:
 	void reducePopulationWithSort(vector<double*>&, vector<double>&);
 	void operateCurrentToPBest1BinWithArchive(const vector<double*>&, double*, int&, int&, double&, double&, const vector<double*>&, int);
 
+protected:
+	/**
+	 * http://www.sat.t.u-tokyo.ac.jp/~omi/random_variables_generation.html#Cauchy
+	 * @brief cauchy_g Return random value from Cauchy distribution with mean "mu" and variance "gamma"
+	 * @return Real number
+	 */
+	double cauchy_g(double, double);
+	/**
+	 * http://www.sat.t.u-tokyo.ac.jp/~omi/random_variables_generation.html#Gauss
+	 * @brief gauss Return random value from normal distribution with mean "mu" and variance "gamma"
+	 * @return Real number
+	 */
+	double gauss(double, double);
+
+public:
 	double epsilon;
 	double arc_rate;
 	double p_best_rate;

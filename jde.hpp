@@ -15,8 +15,8 @@ public:
 	virtual string info() override;
 	virtual string sinfo() override;
 	virtual void setParameters(AlgParams*) override;
-	void initRun(TestFuncBounds<double>*) override;
-	virtual tuple<double, vector<double>> run(TestFuncBounds<double>*) override;
+	void initRun(BoundedObjectiveFunction<double>*) override;
+	virtual tuple<double, vector<double>> run(BoundedObjectiveFunction<double>*) override;
 	virtual void run_iteration() override;
 
 	virtual double rand_1(int, double*) override;

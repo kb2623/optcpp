@@ -1,15 +1,14 @@
-#include"search_algorithm.hpp"
+#include "search_algorithm.hpp"
 
 #include <limits>
 #include <cstdlib>
 
 template <typename T>
-SearchAlgorithm<T>::SearchAlgorithm() : prand(), dists(), _no_gen(0) {
+SearchAlgorithm<T>::SearchAlgorithm() : StoppingCondition(), prand(), dists(), _no_gen(0) {
 	f_best = std::numeric_limits<double>::max();
 	x_best = std::vector<double>();
 	prand.push_back(std::default_random_engine());
 	dists.push_back(std::uniform_int_distribution<size_t>(0, std::numeric_limits<size_t>::max()));
-	// FIXME do something with stopping condition
 }
 
 template <typename T>
@@ -45,6 +44,8 @@ void SearchAlgorithm<T>::initRun(BoundedObjectiveFunction<T>* func) {
 	this->_no_gen = 0;
 	x_best = std::vector<double>(fitf->dim);
 	f_best = std::numeric_limits<double>::max();
+	// One of the stopping conditinos predondition
+	start_timer();
 }
 
 template <typename T>
@@ -52,6 +53,7 @@ tuple<double, vector<T>> SearchAlgorithm<T>::run(BoundedObjectiveFunction<T>* fu
 	initRun(func);
 	while (!stop_cond(*this)) {
 		run_iteration();
+		// One of the stopping conditions precondition of counting
 		_no_gen++;
 	}
 	return std::make_tuple(f_best, x_best);
@@ -75,4 +77,19 @@ double SearchAlgorithm<T>::randDouble() {
 template <typename T>
 inline unsigned long long int SearchAlgorithm<T>::no_gen() const {
 	return _no_gen;
+}
+
+template <typename T>
+bool SearchAlgorithm<T>::max_no_fes() {
+	return fitf.no_fes() >= lim_no_fes;
+}
+
+template <typename T>
+bool SearchAlgorithm<T>::max_no_gen() {
+	return _no_gen >= lim_no_gen;
+}
+
+template <typename T>
+bool SearchAlgorithm<T>::target_value() {
+	return f_best <= fitness_target_value;
 }

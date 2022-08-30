@@ -1,11 +1,11 @@
 #ifndef _JSOP_H_
 #define _JSOP_H_
 
-#include "continuous_parallel_search_algorithm.hpp"
+#include "parallel_search_algorithm.hpp"
 
 using namespace std;
 
-class jSOp: public ContinuousParallelSearchAlgorithm {
+class jSOp: public ParallelSearchAlgorithm<double> {
 public:
 	jSOp();
 	jSOp(size_t);
@@ -15,9 +15,9 @@ public:
 	virtual string info() override;
 	virtual string sinfo() override;
 	virtual void setParameters(AlgParams*) override;
-	virtual tuple<double, vector<double>> run(TestFuncBounds<double>*) override;
+	virtual tuple<double, vector<double>> run(BoundedObjectiveFunction<double>*) override;
 	virtual void run_iteration() override;
-	virtual void initRun(TestFuncBounds<double>*) override;
+	virtual void initRun(BoundedObjectiveFunction<double>*) override;
 	virtual void run_thread() override;
 
 protected:
@@ -26,6 +26,18 @@ protected:
 	void reducePopulationWithSort(vector<double*>&, vector<double>&);
 	void operateCurrentToPBest1BinWithArchive(vector<double*>, double*, int&, int&, double&, double&, vector<double*>, int);
 	void clean();
+	/**
+	  * http://www.sat.t.u-tokyo.ac.jp/~omi/random_variables_generation.html#Cauchy
+	  * @brief cauchy_g Return random value from Cauchy distribution with mean "mu" and variance "gamma"
+	  * @return Real number
+	  */
+	double cauchy_g(double, double);
+	/**
+	  * http://www.sat.t.u-tokyo.ac.jp/~omi/random_variables_generation.html#Gauss
+	  * @brief gauss Return random value from normal distribution with mean "mu" and variance "gamma"
+	  * @return Real number
+	  */
+	double gauss(double, double);
 
 	std::mutex success_lock;
 	std::mutex archive_lock;

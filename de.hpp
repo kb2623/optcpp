@@ -1,7 +1,7 @@
 #ifndef _DE_H_
 #define _DE_H_
 
-#include "parallel_search_algorithm.hpp""
+#include "parallel_search_algorithm.hpp"
 #include "de_mutations.hpp"
 #include "cc_optimizer.hpp"
 

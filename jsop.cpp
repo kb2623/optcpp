@@ -1,12 +1,12 @@
 #include "jsop.hpp"
 
-#include "jso.hpp"
+#include "common_funcs.hpp"
 
-jSOp::jSOp() : ContinuousParallelSearchAlgorithm() {}
+jSOp::jSOp() : ParallelSearchAlgorithm<double>() {}
 
-jSOp::jSOp(size_t no_thr) : ContinuousParallelSearchAlgorithm(no_thr) {}
+jSOp::jSOp(size_t no_thr) : ParallelSearchAlgorithm(no_thr) {}
 
-jSOp::jSOp(size_t no_thr, size_t seed) : ContinuousParallelSearchAlgorithm(no_thr, seed) {}
+jSOp::jSOp(size_t no_thr, size_t seed) : ParallelSearchAlgorithm(no_thr, seed) {}
 
 jSOp::~jSOp() {}
 
@@ -32,33 +32,33 @@ void jSOp::setParameters(AlgParams *params) {
   IEEE Tran. Evol. Comput., vol. 13, no. 5, pp. 945–958, 2009.
  */
 void jSOp::modifySolutionWithParentMedium(double* child, const double* parent) {
-	for (int j = 0; j < fitf->dim; j++) {
-		if (child[j] < fitf->x_bound_min[j]) child[j]= (fitf->x_bound_min[j] + parent[j]) / 2.0;
-		if (child[j] > fitf->x_bound_max[j]) child[j]= (fitf->x_bound_max[j] + parent[j]) / 2.0;
+	for (int j = 0; j < fitf.dim(); j++) {
+		if (child[j] < fitf.x_bound_min(j)) child[j]= (fitf.x_bound_min(j) + parent[j]) / 2.0;
+		if (child[j] > fitf.x_bound_max(j)) child[j]= (fitf.x_bound_max(j) + parent[j]) / 2.0;
 	}
 }
 
 void jSOp::operateCurrentToPBest1BinWithArchive(vector<double*> pop, double* child, int &target, int &p_best_individual, double &scaling_factor, double &cross_rate, vector<double*> archive, int arc_ind_count) {
 	int r1, r2;
 	double jF = scaling_factor;                                // jSO
-	if (nfes < 0.2 * fitf->max_num_evaluations) {
+	if (fitf.no_fes() < 0.2 * lim_no_fes) {
 		jF = jF * 0.7;        // jSO
-	} else if (nfes < 0.4 * fitf->max_num_evaluations) {
+	} else if (fitf.no_fes() < 0.4 * lim_no_fes) {
 		jF = jF * 0.8;        // jSO
 	} else {
 		jF = jF * 1.2;      // jSO
 	}
 	do r1 = rand() % pop.size(); while (r1 == target);
 	do r2 = rand() % (pop.size() + arc_ind_count); while ((r2 == target) || (r2 == r1));
-	int random_variable = rand() % fitf->dim;
+	int random_variable = rand() % fitf.dim();
 	if (r2 >= pop.size()) {
 		r2 -= pop.size();
-		for (int i = 0; i < fitf->dim; i++) {
+		for (int i = 0; i < fitf.dim(); i++) {
 			if ((randDouble() < cross_rate) || (i == random_variable)) child[i] = pop[target][i] + jF * (pop[p_best_individual][i] - pop[target][i]) + scaling_factor * (pop[r1][i] - archive[r2][i]);  // jSO
 			else child[i] = pop[target][i];
 		}
 	} else {
-		for (int i = 0; i < fitf->dim; i++) {
+		for (int i = 0; i < fitf.dim(); i++) {
 			if ((randDouble() < cross_rate) || (i == random_variable)) child[i] = pop[target][i] + jF * (pop[p_best_individual][i] - pop[target][i]) + scaling_factor * (pop[r1][i] - pop[r2][i]);     // jSO
 			else child[i] = pop[target][i];
 		}
@@ -86,24 +86,24 @@ void  jSOp::setSHADEParameters(double g_arc_rate, double g_p_best_rate, int g_me
 	memory_size = g_memory_size;
 }
 
-tuple<double, vector<double>> jSOp::run(TestFuncBounds<double>* ifun) {
+tuple<double, vector<double>> jSOp::run(BoundedObjectiveFunction<double>* ifun) {
 	initRun(ifun);
 	auto r = ParallelSearchAlgorithm::run(ifun);
 	clean();
 	return r;
 }
 
-void jSOp::initRun(TestFuncBounds<double>* func) {
+void jSOp::initRun(BoundedObjectiveFunction<double>* func) {
 	ParallelSearchAlgorithm::initRun(func);
 	pop = std::vector<double*>(), children = vector<double*>();
 	fitness = vector<double>(), children_fitness = vector<double>(np, 0);
 	for (int i = 0; i < np; i++) {
-		pop.push_back(makeNewIndividual());
-		fitness.push_back(eval(pop[i]));
-		children.push_back(new double[fitf->dim]);
+		pop.push_back(makeNewArrayIndividual());
+		fitness.push_back(fitf(pop[i]));
+		children.push_back(new double[fitf.dim()]);
 	}
 	archive = vector<double*>();
-	for (int i = 0; i < arc_size; i++) archive.push_back(new double[fitf->dim]);
+	for (int i = 0; i < arc_size; i++) archive.push_back(new double[fitf.dim()]);
 	success_sf = vector<double>(), success_cr = vector<double>(), dif_fitness = vector<double>();
 	memory_sf = std::vector<double>(memory_size, 0.3), memory_cr = vector<double>(memory_size, 0.8);
 	pop_sf = new double[np], pop_cr = new double[np];
@@ -142,29 +142,29 @@ void jSOp::run_thread() {
 				if (pop_cr[target] > 1) pop_cr[target] = 1;
 				else if (pop_cr[target] < 0) pop_cr[target] = 0;
 			}
-			if (nfes < 0.25 * fitf->max_num_evaluations && pop_cr[target] < 0.7) pop_cr[target] = 0.7;    // jSO
-			if (nfes < 0.50 * fitf->max_num_evaluations && pop_cr[target] < 0.6) pop_cr[target] = 0.6;    // jSO
+			if (fitf.no_fes() < 0.25 * lim_no_fes && pop_cr[target] < 0.7) pop_cr[target] = 0.7;    // jSO
+			if (fitf.no_fes() < 0.50 * lim_no_fes && pop_cr[target] < 0.6) pop_cr[target] = 0.6;    // jSO
 			//generate F_i and repair its value
 			do {
 				pop_sf[target] = cauchy_g(mu_sf, 0.1);
 			} while (pop_sf[target] <= 0.0);
 			if (pop_sf[target] > 1) pop_sf[target] = 1.0;
-			if (nfes< 0.6 * fitf->max_num_evaluations && pop_sf[target] > 0.7) pop_sf[target] = 0.7;    // jSO
+			if (fitf.no_fes() < 0.6 * lim_no_fes && pop_sf[target] > 0.7) pop_sf[target] = 0.7;    // jSO
 			//p-best individual is randomly selected from the top pop_size *  p_i members
 			if (p_num == 0) p_num = ceil(pop.size() * p_best_rate_l) + 1;
 			do {
 				auto ind = p_num == 0 ? 0 : rand() % p_num;
 				p_best_ind = sorted_array[ind];
-			} while (nfes < 0.50 * fitf->max_num_evaluations && p_best_ind == target);                   // iL-SHADE
+			} while (fitf.no_fes() < 0.50 * lim_no_fes && p_best_ind == target);                   // iL-SHADE
 			operateCurrentToPBest1BinWithArchive(pop, children[target], target, p_best_ind, pop_sf[target], pop_cr[target], archive, arc_ind_count);
-			children_fitness[target] = eval(children[target]);
+			children_fitness[target] = fitf(children[target]);
 		}
 		//generation alternation
 		sync->arrive_and_wait();
 		for (int i = s * optcpp::tid; i < pop.size() && i < s * (optcpp::tid + 1); i++) {
 			if (children_fitness[i] == fitness[i]) {
 				fitness[i] = children_fitness[i];
-				for (int j = 0; j < fitf->dim; j ++) pop[i][j] = children[i][j];
+				for (int j = 0; j < fitf.dim(); j ++) pop[i][j] = children[i][j];
 			} else if (children_fitness[i] < fitness[i]) {
 				setBestSolution(children[i], children_fitness[i]);
 				fitness[i] = children_fitness[i];
@@ -178,15 +178,15 @@ void jSOp::run_thread() {
 				if (arc_size > 1) {
 					archive_lock.lock();
 					if (arc_ind_count < arc_size) {
-						for (int j = 0; j < fitf->dim; j++) archive[arc_ind_count][j] = pop[i][j];
+						for (int j = 0; j < fitf.dim(); j++) archive[arc_ind_count][j] = pop[i][j];
 						arc_ind_count++;
 					} else { //Whenever the size of the archive exceeds, randomly selected elements are deleted to make space for the newly inserted elements
 						random_selected_arc_ind = rand() % arc_size;
-						for (int j = 0; j < fitf->dim; j++) archive[random_selected_arc_ind][j] = pop[i][j];
+						for (int j = 0; j < fitf.dim(); j++) archive[random_selected_arc_ind][j] = pop[i][j];
 					}
 					archive_lock.unlock();
 				}
-				for (int j = 0; j < fitf->dim; j ++) pop[i][j] = children[i][j];    // jSO
+				for (int j = 0; j < fitf.dim(); j ++) pop[i][j] = children[i][j];    // jSO
 			}
 		}
 		sync->arrive_and_wait();
@@ -227,7 +227,7 @@ void jSOp::run_thread() {
 				dif_fitness.clear();
 			}
 			// calculate the population size in the next generation
-			size_t plan_pop_size = round((((min_pop_size - pop.size()) / double(fitf->max_num_evaluations)) * nfes) + pop.size());
+			size_t plan_pop_size = round((((min_pop_size - pop.size()) / double(lim_no_fes)) * fitf.no_fes()) + pop.size());
 			if (pop.size() > plan_pop_size) {
 				reduction_ind_num = pop.size() - plan_pop_size;
 				if (pop.size() - reduction_ind_num <  min_pop_size) reduction_ind_num = pop.size() - min_pop_size;
@@ -236,7 +236,7 @@ void jSOp::run_thread() {
 				arc_size = pop.size() * arc_rate;
 				if (arc_ind_count > arc_size) arc_ind_count = arc_size;
 				// resize the number of p-best individuals
-				p_best_rate_l = p_best_rate_l * (1.0 - 0.5 * nfes /  double(fitf->max_num_evaluations));   // JANEZ
+				p_best_rate_l = p_best_rate_l * (1.0 - 0.5 * fitf.no_fes() /  double(lim_no_fes));   // JANEZ
 				p_num = round(pop.size() *  p_best_rate_l);
 				if (p_num <= 1)  p_num = 2;
 			}
@@ -261,4 +261,12 @@ void jSOp::clean() {
 	memory_sf.clear();
 	delete[] sorted_array;
 	delete[] temp_fit; //.clear();
+}
+
+double jSOp::cauchy_g(double mu, double gamma) {
+	return mu + gamma * tan(M_PI * (randDouble() - 0.5));
+}
+
+double jSOp::gauss(double mu, double sigma){
+	return mu + sigma * sqrt(-2.0 * log(randDouble())) * sin(2.0 * M_PI * randDouble());
 }

@@ -73,8 +73,18 @@ public:
 	 * @return
 	 */
 	virtual vector<T> fix_rnd(vector<T> x) = 0;
+	/**
+	 * @brief set_fix_solution_arr
+	 * @param sol_fix
+	 */
+	void set_fix_solution_arr(std::function<T*(RepairSolution<T>&, T*)> sol_fix);
+	/**
+	 * @brief set_fix_solution_vec
+	 * @param sol_fix
+	 */
+	void set_fix_solution_vec(std::function<vector<T>(RepairSolution<T>&, vector<T>)> sol_fix);
 
-protected:
+public:
 	std::function<T*(RepairSolution<T>&, T*)> fix_solution_arr;
 	std::function<vector<T>(RepairSolution<T>&, vector<T>)> fix_solution_vec;
 };

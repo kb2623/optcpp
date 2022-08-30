@@ -92,6 +92,12 @@ public:
 	inline T* x_bound_min() const;
 	/**
 	 * @brief x_bound_min
+	 * @param index
+	 * @return
+	 */
+	inline T x_bound_min(size_t index) const;
+	/**
+	 * @brief x_bound_min
 	 * @param low_lim
 	 * @return
 	 */
@@ -101,6 +107,12 @@ public:
 	 * @return
 	 */
 	inline T* x_bound_max() const;
+	/**
+	 * @brief x_bound_max
+	 * @param index
+	 * @return
+	 */
+	inline T x_bound_max(size_t index) const;
 	/**
 	 * @brief x_bound_max
 	 * @param up_lim

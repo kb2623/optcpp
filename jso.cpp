@@ -24,7 +24,7 @@ void jSO::setParameters(AlgParams *params) {
 void jSO::evaluatePopulation(vector<double*> &pop, vector<double> &fitness) {
 	for (int i = 0; i < pop.size(); i++) {
 		fitness[i] = fitf(pop[i]);
-		if (fitf.no_fes() >= fitf.max_num_evaluations) break;
+		if (fitf.no_fes() >= lim_no_fes) break;
 	}
 }
 
@@ -109,20 +109,20 @@ tuple<double, vector<double>> jSO::run(BoundedObjectiveFunction<double>* func) {
 				if (pop_cr[target] > 1) pop_cr[target] = 1;
 				else if (pop_cr[target] < 0) pop_cr[target] = 0;
 			}
-			if (fitf.no_fes() < 0.25 * fitf.max_num_evaluations && pop_cr[target] < 0.7) pop_cr[target] = 0.7;    // jSO
-			if (fitf.no_fes() < 0.50 * fitf.max_num_evaluations && pop_cr[target] < 0.6) pop_cr[target] = 0.6;    // jSO
+			if (fitf.no_fes() < 0.25 * lim_no_fes && pop_cr[target] < 0.7) pop_cr[target] = 0.7;    // jSO
+			if (fitf.no_fes() < 0.50 * lim_no_fes && pop_cr[target] < 0.6) pop_cr[target] = 0.6;    // jSO
 			//generate F_i and repair its value
 			do {
 				pop_sf[target] = cauchy_g(mu_sf, 0.1);
 			} while (pop_sf[target] <= 0.0);
 			if (pop_sf[target] > 1) pop_sf[target] = 1.0;
-			if (fitf.no_fes() < 0.6 * fitf.max_num_evaluations && pop_sf[target] > 0.7) pop_sf[target] = 0.7;    // jSO
+			if (fitf.no_fes() < 0.6 * lim_no_fes && pop_sf[target] > 0.7) pop_sf[target] = 0.7;    // jSO
 			//p-best individual is randomly selected from the top pop_size *  p_i members
 			if (p_num == 0) p_num = ceil(pop.size() *  p_best_rate_l) + 1;
 			do {
 				auto ind = rand() % p_num;
 				p_best_ind = sorted_array[ind];
-			} while (fitf.no_fes() < 0.50 * fitf.max_num_evaluations && p_best_ind == target);                   // iL-SHADE
+			} while (fitf.no_fes() < 0.50 * lim_no_fes && p_best_ind == target);                   // iL-SHADE
 			operateCurrentToPBest1BinWithArchive(pop, &children[target][0], target, p_best_ind, pop_sf[target], pop_cr[target], archive, arc_ind_count);
 		}
 		// evaluate the children's fitness values
@@ -188,7 +188,7 @@ tuple<double, vector<double>> jSO::run(BoundedObjectiveFunction<double>* func) {
 			dif_fitness.clear();
 		}
 		// calculate the population size in the next generation
-		plan_pop_size = round((((min_pop_size - pop.size()) / double(fitf.max_num_evaluations)) * fitf.no_fes()) + pop.size());
+		plan_pop_size = round((((min_pop_size - pop.size()) / double(lim_no_fes)) * fitf.no_fes()) + pop.size());
 		if (pop.size() > plan_pop_size) {
 			reduction_ind_num = pop.size() - plan_pop_size;
 			if (pop.size() - reduction_ind_num <  min_pop_size) reduction_ind_num = pop.size() - min_pop_size;
@@ -197,7 +197,7 @@ tuple<double, vector<double>> jSO::run(BoundedObjectiveFunction<double>* func) {
 			arc_size = pop.size() * arc_rate;
 			if (arc_ind_count > arc_size) arc_ind_count = arc_size;
 			// resize the number of p-best individuals
-			p_best_rate_l = p_best_rate_l * (1.0 - 0.5 * fitf.no_fes() / double(fitf.max_num_evaluations));   // JANEZ
+			p_best_rate_l = p_best_rate_l * (1.0 - 0.5 * fitf.no_fes() / double(lim_no_fes));   // JANEZ
 			p_num = round(pop.size() *  p_best_rate_l);
 			if (p_num <= 1)  p_num = 2;
 		}
@@ -224,9 +224,9 @@ tuple<double, vector<double>> jSO::run(BoundedObjectiveFunction<double>* func) {
 void jSO::operateCurrentToPBest1BinWithArchive(const vector<double*> &pop, double* child, int &target, int &p_best_individual, double &scaling_factor, double &cross_rate, const vector<double*> &archive, int arc_ind_count) {
 	int r1, r2;
 	double jF = scaling_factor;                                // jSO
-	if (fitf.no_fes() < 0.2 * fitf.max_num_evaluations) {
+	if (fitf.no_fes() < 0.2 * lim_no_fes) {
 		jF = jF * 0.7;        // jSO
-	} else if (fitf.no_fes() < 0.4 * fitf.max_num_evaluations) {
+	} else if (fitf.no_fes() < 0.4 * lim_no_fes) {
 		jF = jF * 0.8;        // jSO
 	} else {
 		jF = jF * 1.2;      // jSO
@@ -271,4 +271,12 @@ void  jSO::setSHADEParameters(double g_arc_rate, double g_p_best_rate, int g_mem
 	arc_size = (int)round(np * arc_rate);
 	p_best_rate = g_p_best_rate;
 	memory_size = g_memory_size;
+}
+
+double jSO::cauchy_g(double mu, double gamma) {
+	return mu + gamma * tan(M_PI * (randDouble() - 0.5));
+}
+
+double jSO::gauss(double mu, double sigma){
+	return mu + sigma * sqrt(-2.0 * log(randDouble())) * sin(2.0 * M_PI * randDouble());
 }

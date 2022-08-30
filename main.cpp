@@ -29,7 +29,7 @@
 #include "gdgv2.hpp"
 #include "fii.hpp"
 
-void runAnal(AnalizeAlgorithm<double>* algo, TestFuncBounds<double>* func) {
+void runAnal(AnalizeAlgorithm<double>* algo, BoundedObjectiveFunction<double>* func) {
 	algo->setParameters(nullptr);
 	auto ret = algo->run(func);
 	auto gs = get<0>(ret);
@@ -47,7 +47,7 @@ void runAnal(AnalizeAlgorithm<double>* algo, TestFuncBounds<double>* func) {
 	cout << "-----------------------------------------------------" << endl;
 }
 
-void runAlgo(SearchAlgorithm<double>* algo, TestFuncBounds<double>* func) {
+void runAlgo(SearchAlgorithm<double>* algo, BoundedObjectiveFunction<double>* func) {
 	cout << algo->sinfo() << " : ";
 	auto r = algo->run(func);
 	for (auto e : get<1>(r)) cout << e << ' ';

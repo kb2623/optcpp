@@ -3,21 +3,20 @@
 
 #include "objective_function.hpp"
 #include "algorithm_parameters.hpp"
+#include "stopping_condition.hpp"
 
-#include <limits>
 #include <cmath>
 #include <tuple>
 #include <string>
 #include <atomic>
 #include <mutex>
 #include <random>
-#include <functional>
 
 using std::tuple;
 using std::string;
 
 template<typename T>
-class SearchAlgorithm {
+class SearchAlgorithm : public StoppingCondition {
 public:
 	SearchAlgorithm();
 	~SearchAlgorithm();
@@ -62,10 +61,6 @@ public:
 	 * @brief f_best Best solution's fitness value.
 	 */
 	double f_best;
-	/**
-	 * @brief best_lock Lock for updating global best.
-	 */
-	std::mutex best_lock;
 
 protected:
 	virtual void initRun(BoundedObjectiveFunction<T>* func);
@@ -97,6 +92,11 @@ protected:
 	double randDouble();
 
 protected:
+	virtual bool max_no_fes() override;
+	virtual bool max_no_gen() override;
+	virtual bool target_value() override;
+
+protected:
 	/**
 	 * @brief no_gen
 	 */
@@ -121,6 +121,10 @@ protected:
 	 * @brief dists List of full number uniform random distribution.
 	 */
 	vector<std::uniform_int_distribution<size_t>> dists;
+	/**
+	 * @brief best_lock Lock for updating global best.
+	 */
+	std::mutex best_lock;
 
 };
 

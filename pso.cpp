@@ -1,10 +1,10 @@
 #include "pso.hpp"
 
-PSO::PSO() : ContinuousParallelSearchAlgorithm(1), CooperativeCoevolutionOptimizer() {}
+PSO::PSO() : ParallelSearchAlgorithm(1), CooperativeCoevolutionOptimizer() {}
 
-PSO::PSO(size_t no_thr) : ContinuousParallelSearchAlgorithm(no_thr), CooperativeCoevolutionOptimizer() {}
+PSO::PSO(size_t no_thr) : ParallelSearchAlgorithm(no_thr), CooperativeCoevolutionOptimizer() {}
 
-PSO::PSO(size_t no_thr, size_t seed) : ContinuousParallelSearchAlgorithm(no_thr, seed), CooperativeCoevolutionOptimizer() {}
+PSO::PSO(size_t no_thr, size_t seed) : ParallelSearchAlgorithm(no_thr, seed), CooperativeCoevolutionOptimizer() {}
 
 PSO::~PSO() {
 	pop.clear();
@@ -35,21 +35,21 @@ void PSO::setParameters(AlgParams *params) {
 	//this->W = params != nullptr && params->has("W") ? params->at<
 }
 
-void PSO::initRun(TestFuncBounds<double>* func) {
+void PSO::initRun(BoundedObjectiveFunction<double>* func) {
 	ParallelSearchAlgorithm::initRun(func);
 	for (int i = 0; i < np; i++) {
-		pop.push_back(makeNewIndividual());
-		popf.push_back(eval(pop[i]));
+		pop.push_back(makeNewArrayIndividual());
+		popf.push_back(fitf(pop[i]));
 	}
 	for (int i = 0; i < pop.size(); i++) {
-		double* x = new double[fitf->dim];
-		for (int j = 0; j < fitf->dim; j++) x[j] = pop[i][j];
+		double* x = new double[fitf.dim()];
+		for (int j = 0; j < fitf.dim(); j++) x[j] = pop[i][j];
 		lpop.push_back(x);
 		lpopf.push_back(popf[i]);
 	}
 }
 
-tuple<double, vector<double>> PSO::run(TestFuncBounds<double>* func) {
+tuple<double, vector<double>> PSO::run(BoundedObjectiveFunction<double>* func) {
 	auto r = ParallelSearchAlgorithm::run(func);
 	for (auto e : pop) delete [] e;
 	pop.clear(), popf.clear();
@@ -60,11 +60,11 @@ tuple<double, vector<double>> PSO::run(TestFuncBounds<double>* func) {
 
 void PSO::run_iteration() {
 	auto s = ceil(np / double(no_thr));
-	auto v = new double[fitf->dim];
+	auto v = new double[fitf.dim()];
 	for (int i = s * optcpp::tid; i < s * (optcpp::tid + 1); i++) if (i < np) {
-		for (int j = 0; j < fitf->dim; j++) V[i][j] = W[j] * V[i][j] + C1 * rand() * (lpop[i][j] - pop[i][j]) + C2 * rand() * (x_best[j] - pop[i][j]);
+		for (int j = 0; j < fitf.dim(); j++) V[i][j] = W[j] * V[i][j] + C1 * rand() * (lpop[i][j] - pop[i][j]) + C2 * rand() * (x_best[j] - pop[i][j]);
 		// TODO fix V to vMin and vMax
-		for (int j = 0; j < fitf->dim; j++) pop[i][j] = pop[i][j] + V[i][j];
+		for (int j = 0; j < fitf.dim(); j++) pop[i][j] = pop[i][j] + V[i][j];
 		// TODO fix pop to min and max of the problem
 		// TODO eval pop
 		// TODO check if new pop better than old lpop and if so update lpop and lpopf

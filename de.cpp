@@ -80,7 +80,7 @@ double DE::rand_1(int i, double* y) {
 			y[j] = pop[i][j];
 		}
 	}
-	fix_solution(*this, y);
+	y = fitf.fix_solution_arr(fitf, y);
 	return fitf(y);
 }
 
@@ -98,7 +98,7 @@ double DE::best_2(int i, double *y) {
 			y[j] = pop[i][j];
 		}
 	}
-	fix_solution(*this, y);
+	y = fitf.fix_solution_arr(fitf, y);
 	return fitf(y);
 }
 
@@ -115,6 +115,6 @@ double DE::rand_to_best_1(int i, double *y) {
 			y[j] = pop[i][j];
 		}
 	}
-	fix_solution(*this, y);
+	y = fitf.fix_solution_arr(fitf, y);
 	return fitf(y);
 }

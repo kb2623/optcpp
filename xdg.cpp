@@ -32,14 +32,14 @@ tuple<vector<unsigned int>, vector<vector<unsigned int>>> XDG::run(BoundedObject
 	double f1 = 0.0, f2 = 0.0, f3 = 0.0, f4 = 0.0;
 	// Direct Interaction Learning
 	for (uint i = 0; i < fitf.dim(); i++) {
-		for (uint k = 0; k < fitf.dim(); k++) p1[k] = p2[k] = fitf.x_bound_min()[k];
-		p2[i] = fitf.x_bound_max()[i];
+		for (uint k = 0; k < fitf.dim(); k++) p1[k] = p2[k] = fitf.x_bound_min(k);
+		p2[i] = fitf.x_bound_max(i);
 		f1 = fitf(p1), f2 = fitf(p2);
 		auto delta1 = f1 - f2;
 		for (uint j = i + 1; j < fitf.dim(); j++) {
 			if (DG[i][j] == 0) {
 				for (uint k = 0; k < fitf.dim(); k++) p3[k] = p1[k], p4[k] = p2[k];
-				p3[j] = p4[j] = fitf.x_bound_min()[j] + (fitf.x_bound_max()[j] - fitf.x_bound_min()[j]) / 2;
+				p3[j] = p4[j] = fitf.x_bound_min(j) + (fitf.x_bound_max(j) - fitf.x_bound_min(j)) / 2;
 				f3 = fitf(p3), f4 = fitf(p4);
 				auto delta2 = f3 - f4;
 				if (abs(delta1 - delta2) > epsilon(f1, f2, f3, f4)) {
