@@ -1,7 +1,5 @@
 #include "fii.hpp"
 
-#include "common_funcs.hpp"
-
 using std::abs;
 using std::make_tuple;
 

@@ -4,6 +4,7 @@
 #include "objective_function.hpp"
 #include "algorithm_parameters.hpp"
 #include "stopping_condition.hpp"
+#include "barrier.hpp"
 
 #include <cmath>
 #include <tuple>
@@ -12,6 +13,8 @@
 #include <mutex>
 #include <random>
 
+// -------------------- SearchAlgorithm --------------------
+
 using std::tuple;
 using std::string;
 
@@ -19,6 +22,7 @@ template<typename T>
 class SearchAlgorithm : public StoppingCondition {
 public:
 	SearchAlgorithm();
+	SearchAlgorithm(const SearchAlgorithm<T>&);
 	~SearchAlgorithm();
 
 	/**
@@ -114,18 +118,43 @@ protected:
 	 */
 	std::function<bool(SearchAlgorithm&)> stop_cond;
 	/**
-	 * @brief prand List of random egines.
-	 */
-	vector<std::default_random_engine> prand;
-	/**
-	 * @brief dists List of full number uniform random distribution.
-	 */
-	vector<std::uniform_int_distribution<size_t>> dists;
-	/**
 	 * @brief best_lock Lock for updating global best.
 	 */
 	std::mutex best_lock;
 
+};
+
+// -------------------- ParallelSearchAlgorithm --------------------
+
+template<typename T>
+class ParallelSearchAlgorithm: public SearchAlgorithm<T>  {
+public:
+	ParallelSearchAlgorithm();
+	ParallelSearchAlgorithm(size_t);
+	ParallelSearchAlgorithm(size_t, size_t);
+	ParallelSearchAlgorithm(const ParallelSearchAlgorithm<T>&);
+	~ParallelSearchAlgorithm();
+
+	/**
+	 * @brief run_thread
+	 * @param tid
+	 */
+	virtual void run_thread(size_t tid);
+	/**
+	 * @brief run
+	 * @param fun
+	 * @return
+	 */
+	virtual std::tuple<double, std::vector<T>> run(BoundedObjectiveFunction<T>* fun) override;
+	/**
+	 * @brief setParameters
+	 * @param params
+	 */
+	virtual void setParameters(AlgParams* params) override;
+
+protected:
+	size_t no_thr;
+	Barrier* sync;
 };
 
 #endif

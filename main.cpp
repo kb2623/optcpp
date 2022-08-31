@@ -27,7 +27,7 @@
 #include "gdg.hpp"
 #include "gdgv1.hpp"
 #include "gdgv2.hpp"
-#include "fii.hpp"
+//#include "fii.hpp"
 
 void runAnal(AnalizeAlgorithm<double>* algo, BoundedObjectiveFunction<double>* func) {
 	algo->setParameters(nullptr);
@@ -51,12 +51,12 @@ void runAlgo(SearchAlgorithm<double>* algo, BoundedObjectiveFunction<double>* fu
 	cout << algo->sinfo() << " : ";
 	auto r = algo->run(func);
 	for (auto e : get<1>(r)) cout << e << ' ';
-	auto val = algo->eval(get<1>(r).data());
+	auto val = (*func)(get<1>(r).data());
 	cout << ": ";
 	cout << get<0>(r) << " : ";
 	if (val == get<0>(r)) cout << "OK";
 	else cout << "ERROR >> " << val;
-	cout << " : " << algo->get_nfes() - 1;
+	cout << " : " << func->no_fes() - 1;
 }
 
 void runCEC(vector<SearchAlgorithm<double>*>& algs) {
@@ -66,7 +66,7 @@ void runCEC(vector<SearchAlgorithm<double>*>& algs) {
 	for (int j = 0; j < no_runs; j++) {
 		size_t g_max_num_evaluations = g_problem_size * 10000;
 		for (int i = 0; i < 30; i++) try {
-			auto func = CEC17(g_problem_size, i, g_max_num_evaluations);
+			auto func = CEC17(g_problem_size, i);
 			for (auto a : algs) {
 				a->setParameters(nullptr);
 				cout << "F" << i + 1 << " : ";
@@ -85,7 +85,7 @@ void runSphere(vector<SearchAlgorithm<double>*>& algs) {
 	size_t g_problem_size = 10;
 	size_t g_max_num_evaluations = g_problem_size * 10000;
 	for (int i = 0; i < no_runs; i++) for (auto a : algs) {
-		auto func = Sphere(g_problem_size, g_max_num_evaluations);
+		auto func = Sphere(g_problem_size);
 		runAlgo(a, &func);
 		cout << endl;
 	}
@@ -98,7 +98,7 @@ void runCEC(vector<AnalizeAlgorithm<double>*>& algo) {
 	for (auto it : problem_size) {
 		auto no_evals = it * 10000;
 		for (int i = 0; i < 30; i++) try {
-			auto func = CEC17(it, i, no_evals);
+			auto func = CEC17(it, i);
 			for (auto e : algo) for (int j = 0; j < num_runs; j++) {
 				cout << "Function = " << std::setw(2) << i + 1 << ", Dimension size = " << std::setw(3) << it << " > " << "Algorithm " << e->info() << endl;
 				runAnal(e, &func);

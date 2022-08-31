@@ -20,6 +20,7 @@ template <typename T>
 class AnalizeAlgorithm {
 public:
 	AnalizeAlgorithm();
+	AnalizeAlgorithm(const AnalizeAlgorithm&);
 	~AnalizeAlgorithm();
 
 	/**
@@ -42,16 +43,6 @@ public:
 	 * @return
 	 */
 	virtual tuple<vector<unsigned int>, vector<vector<unsigned int>>> run(BoundedObjectiveFunction<T>* func) = 0;
-	/**
-	 * @brief rand
-	 * @return
-	 */
-	size_t rand();
-	/**
-	 * @brief randDouble
-	 * @return
-	 */
-	double randDouble();
 
 protected:
 	/**
@@ -64,14 +55,6 @@ protected:
 	 * @brief fitf
 	 */
 	BoundedObjectiveFunction<T>& fitf;
-	/**
-	 * @brief prand
-	 */
-	vector<std::default_random_engine> prand;
-	/**
-	 * @brief dists
-	 */
-	vector<std::uniform_int_distribution<size_t>> dists;
 };
 
 #endif

@@ -12,6 +12,10 @@ void AlgParams::setParamVal(string k, any v) {
 	params[k] = v;
 }
 
+void AlgParams::setParamVal(string k, any* v) {
+	params[k] = v;
+}
+
 map<string, any>& AlgParams::getParamsVals() {
 	return params;
 }
@@ -28,6 +32,21 @@ any& AlgParams::operator[](string key) {
 any AlgParams::operator()(string key) {
 	if (params.find(key) != params.end()) return params[key];
 	else return any();
+}
+
+template <typename T>
+T& AlgParams::operator[](string key) {
+	return std::any_cast<T>(operator[](key));
+}
+
+template <typename T>
+T AlgParams::operator()(string key) {
+	return std::any_cast<T>(operator()(key));
+}
+
+template <typename T>
+T AlgParams::at(string key) {
+	return std::any_cast<T>(operator()(key));
 }
 
 template <typename T>

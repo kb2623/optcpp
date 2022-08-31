@@ -1,17 +1,19 @@
-#ifndef _TESTFUNC_H_
-#define _TESTFUNC_H_
+#ifndef _OBJECTIVE_FUNCTION_H_
+#define _OBJECTIVE_FUNCTION_H_
 
 #include <cstddef>
 #include <atomic>
 
 #include "repair_solution.hpp"
 
+// ------------------------ ObjectiveFunction ------------------------
+
 template <typename T>
-class ObjectiveFunction : public RepairSolution<T> {
+class ObjectiveFunction {
 public:
 	ObjectiveFunction();
-	ObjectiveFunction(const ObjectiveFunction<T>&);
 	ObjectiveFunction(size_t);
+	ObjectiveFunction(const ObjectiveFunction<T>&);
 	~ObjectiveFunction();
 
 	/**
@@ -30,12 +32,12 @@ public:
 	 * @brief no_fes
 	 * @return
 	 */
-	inline unsigned long long int no_fes() const;
+	unsigned long long int no_fes() const;
 	/**
 	 * @brief dim
 	 * @return
 	 */
-	inline size_t dim() const;
+	size_t dim() const;
 	/**
 	 * @brief eval
 	 * @param x
@@ -76,26 +78,27 @@ protected:
 	std::atomic<unsigned long long int> _no_fes;
 };
 
+// ------------------------ BoundedObjectiveFunction ------------------------
+
 template <typename T>
-class BoundedObjectiveFunction: public ObjectiveFunction<T> {
+class BoundedObjectiveFunction: public ObjectiveFunction<T>, public RepairSolution<T> {
 public:
 	BoundedObjectiveFunction();
-	BoundedObjectiveFunction(const BoundedObjectiveFunction<T>&);
 	BoundedObjectiveFunction(size_t);
-	BoundedObjectiveFunction(size_t, size_t);
+	BoundedObjectiveFunction(const BoundedObjectiveFunction<T>&);
 	~BoundedObjectiveFunction();
 
 	/**
 	 * @brief x_bound_min
 	 * @return
 	 */
-	inline T* x_bound_min() const;
+	T* x_bound_min() const;
 	/**
 	 * @brief x_bound_min
 	 * @param index
 	 * @return
 	 */
-	inline T x_bound_min(size_t index) const;
+	T x_bound_min(size_t index) const;
 	/**
 	 * @brief x_bound_min
 	 * @param low_lim
@@ -106,13 +109,13 @@ public:
 	 * @brief x_bound_max
 	 * @return
 	 */
-	inline T* x_bound_max() const;
+	T* x_bound_max() const;
 	/**
 	 * @brief x_bound_max
 	 * @param index
 	 * @return
 	 */
-	inline T x_bound_max(size_t index) const;
+	T x_bound_max(size_t index) const;
 	/**
 	 * @brief x_bound_max
 	 * @param up_lim
@@ -129,10 +132,32 @@ protected:
 	 * @brief _x_bound_max Upper limit of the problem search space.
 	 */
 	T* _x_bound_max;
-	/**
-	 * @brief max_num_evaluations Maximum number of evaluations.
-	 */
-	size_t max_num_evaluations;
+};
+
+// ------------------------ ContiniousObjectiveFunction ------------------------
+
+class ContiniousObjectiveFunciton : public BoundedObjectiveFunction<double> {
+public:
+	ContiniousObjectiveFunciton();
+	ContiniousObjectiveFunciton(size_t);
+	ContiniousObjectiveFunciton(const ContiniousObjectiveFunciton&);
+	~ContiniousObjectiveFunciton();
+
+	virtual double* fix_max(double* x) override;
+	virtual double* fix_min(double* x) override;
+	virtual double* fix_lim(double* x) override;
+	virtual double* fix_mod(double* x) override;
+	virtual double* fix_rnd(double* x) override;
+	virtual vector<double> fix_max(vector<double> x) override;
+	virtual vector<double> fix_min(vector<double> x) override;
+	virtual vector<double> fix_lim(vector<double> x) override;
+	virtual vector<double> fix_mod(vector<double> x) override;
+	virtual vector<double> fix_rnd(vector<double> x) override;
+	virtual double operator[](size_t index) override;
+
+private:
+	double dmod(double x, double y);
+
 };
 
 #endif

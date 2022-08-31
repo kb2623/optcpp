@@ -1,7 +1,7 @@
 #ifndef _EXAMPLE_H_
 #define _EXAMPLE_H_
 
-#include "parallel_search_algorithm.hpp"
+#include "search_algorithm.hpp"
 
 class Bar : public ParallelSearchAlgorithm<double> {
 public:

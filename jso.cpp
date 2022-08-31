@@ -2,7 +2,7 @@
 
 #include "common_funcs.hpp"
 
-jSO::jSO() : SearchAlgorithm<double>() {}
+jSO::jSO() : SearchAlgorithm() {}
 
 jSO::~jSO() {}
 

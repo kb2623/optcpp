@@ -1,6 +1,7 @@
 #include "rdg.hpp"
 
 #include "common_funcs.hpp"
+#include "thread_data.hpp"
 
 using std::abs;
 using std::make_tuple;
@@ -25,7 +26,7 @@ void RDG::setParameters(AlgParams *params) {
 double RDG::calc_epsilon(BoundedObjectiveFunction<double>* func) {
 	auto x = vector<vector<double>>(np, vector<double>(fitf.dim()));
 	auto xf = vector<double>(np);
-	for (int i = 0; i < np; i++) for (int j = 0; j < fitf.dim(); j++) x[i][j] = fitf.x_bound_max(j) - fitf.x_bound_min(j) * randDouble() + fitf.x_bound_min(j);
+	for (int i = 0; i < np; i++) for (int j = 0; j < fitf.dim(); j++) x[i][j] = fitf.x_bound_max(j) - fitf.x_bound_min(j) * thread_td->randDouble() + fitf.x_bound_min(j);
 	for (int i = 0; i < np; i++) xf[i] = fitf(x[i].data());
 	auto minf = abs(xf[0]);
 	for (int i = 1; i < np; i++) if (minf > abs(xf[i])) minf = abs(xf[i]);

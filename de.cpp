@@ -1,5 +1,7 @@
 #include"de.hpp"
 
+#include "thread_data.hpp"
+
 #include <iostream>
 
 DE::DE() : ParallelSearchAlgorithm<double>(1), DeMutations(), CooperativeCoevolutionOptimizer() {}
@@ -51,7 +53,7 @@ tuple<double, vector<double>> DE::run(BoundedObjectiveFunction<double>* func) {
 void DE::run_iteration() {
 	auto s = ceil(np / double(no_thr));
 	auto y = new double[fitf.dim()];
-	for (int i = s * optcpp::tid; i < s * (optcpp::tid + 1); i++) if (i < np) {
+	for (int i = s * thread_td->tid; i < s * (thread_td->tid + 1); i++) if (i < np) {
 		auto f = opt(*this, i, y);
 		sync->arrive_and_wait();
 		if (f < popf[i]) {

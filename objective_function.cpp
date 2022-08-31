@@ -1,13 +1,18 @@
 #include "objective_function.hpp"
 
-template <typename T>
-ObjectiveFunction<T>::ObjectiveFunction() : RepairSolution<T>(), _dim(0), _no_fes(0) {}
+#include "common_funcs.hpp"
+#include "thread_data.hpp"
+
+// ------------------------ ObjectiveFunction ------------------------
 
 template <typename T>
-ObjectiveFunction<T>::ObjectiveFunction(const ObjectiveFunction<T>& o) : RepairSolution<T>(o), _dim(o.dim), _no_fes(o.no_fes) {}
+ObjectiveFunction<T>::ObjectiveFunction() : _dim(0), _no_fes(0) {}
 
 template <typename T>
-ObjectiveFunction<T>::ObjectiveFunction(size_t dim) : RepairSolution<T>(), _dim(dim), _no_fes(0) {}
+ObjectiveFunction<T>::ObjectiveFunction(const ObjectiveFunction<T>& o) : _dim(o._dim), _no_fes(o._no_fes.load()) {}
+
+template <typename T>
+ObjectiveFunction<T>::ObjectiveFunction(size_t dim) : _dim(dim), _no_fes(0) {}
 
 template <typename T>
 ObjectiveFunction<T>::~ObjectiveFunction() {}
@@ -48,19 +53,21 @@ void ObjectiveFunction<T>::reset() {
 	_no_fes = 0;
 }
 
-template <typename T>
-BoundedObjectiveFunction<T>::BoundedObjectiveFunction() : ObjectiveFunction<T>(), _x_bound_min(nullptr), _x_bound_max(nullptr), max_num_evaluations(0) {}
+// ------------------------ BoundedObjectiveFunction ------------------------
 
 template <typename T>
-BoundedObjectiveFunction<T>::BoundedObjectiveFunction(const BoundedObjectiveFunction<T>& o) : ObjectiveFunction<T>(o), max_num_evaluations(o.max_num_evaluations) {
-	_x_bound_min = copy_vector(o.x_bound_min, o.dim);
-	_x_bound_max = copy_vector(o.x_bound_max, o.dim);
+BoundedObjectiveFunction<T>::BoundedObjectiveFunction() : ObjectiveFunction<T>(), RepairSolution<T>(), _x_bound_min(nullptr), _x_bound_max(nullptr) {}
+
+template <typename T>
+BoundedObjectiveFunction<T>::BoundedObjectiveFunction(size_t dim) : ObjectiveFunction<T>(dim), RepairSolution<T>() {
+	_x_bound_min = new double[dim];
+	_x_bound_max = new double[dim];
 }
 
 template <typename T>
-BoundedObjectiveFunction<T>::BoundedObjectiveFunction(size_t dim, size_t g_max_num_evaluations) : ObjectiveFunction<T>(dim), max_num_evaluations(g_max_num_evaluations) {
-	_x_bound_min = new double[dim];
-	_x_bound_max = new double[dim];
+BoundedObjectiveFunction<T>::BoundedObjectiveFunction(const BoundedObjectiveFunction<T>& o) : ObjectiveFunction<T>(o), RepairSolution<T>(o) {
+	_x_bound_min = copy_vector(o._x_bound_min, o._dim);
+	_x_bound_max = copy_vector(o._x_bound_max, o._dim);
 }
 
 template <typename T>
@@ -105,4 +112,70 @@ inline T BoundedObjectiveFunction<T>::x_bound_max(size_t index) const {
 template <typename T>
 void BoundedObjectiveFunction<T>::x_bound_max(T* up_lim) {
 	_x_bound_max = copy_vector(up_lim, _x_bound_max, this->dim);
+}
+
+// ------------------------ ContiniousObjectiveFunction ------------------------
+
+ContiniousObjectiveFunciton::ContiniousObjectiveFunciton() : BoundedObjectiveFunction() {}
+
+ContiniousObjectiveFunciton::ContiniousObjectiveFunciton(size_t dim) : BoundedObjectiveFunction(dim) {}
+
+ContiniousObjectiveFunciton::ContiniousObjectiveFunciton(const ContiniousObjectiveFunciton& o) : BoundedObjectiveFunction(o) {}
+
+ContiniousObjectiveFunciton::~ContiniousObjectiveFunciton() {}
+
+double* ContiniousObjectiveFunciton ::fix_max(double* x) {
+	for (size_t i = 0; i < this->_dim; i++)  if (x[i] >= _x_bound_max[i] || x[i] <= _x_bound_min[i]) x[i] = _x_bound_max[i];
+	return x;
+}
+
+double* ContiniousObjectiveFunciton::fix_min(double* x) {
+	for (size_t i = 0; i < this->_dim; i++)  if (x[i] >= _x_bound_max[i] || x[i] <= _x_bound_min[i]) x[i] = _x_bound_min[i];
+	return x;
+}
+
+double* ContiniousObjectiveFunciton::fix_lim(double* x) {
+	for (size_t i = 0; i < this->_dim; i++)  if (x[i] >= _x_bound_max[i]) x[i] = _x_bound_max[i]; else if (x[i] <= _x_bound_min[i]) x[i] = _x_bound_min[i];
+	return x;
+}
+
+double* ContiniousObjectiveFunciton::fix_mod(double* x) {
+	for (size_t i = 0; i < this->_dim; i++)  if (x[i] >= _x_bound_max[i] || x[i] <= _x_bound_min[i]) x[i] = _x_bound_min[i] + dmod(x[i], _x_bound_max[i] - _x_bound_min[i]);
+	return x;
+}
+
+double* ContiniousObjectiveFunciton::fix_rnd(double* x) {
+	return x;
+}
+
+vector<double> ContiniousObjectiveFunciton ::fix_max(vector<double> x) {
+	for (size_t i = 0; i < this->_dim; i++)  if (x[i] >= _x_bound_max[i] || x[i] <= _x_bound_min[i]) x[i] = _x_bound_max[i];
+	return x;
+}
+
+vector<double> ContiniousObjectiveFunciton::fix_min(vector<double> x) {
+	for (size_t i = 0; i < this->_dim; i++)  if (x[i] >= _x_bound_max[i] || x[i] <= _x_bound_min[i]) x[i] = _x_bound_min[i];
+	return x;
+}
+
+vector<double> ContiniousObjectiveFunciton::fix_lim(vector<double> x) {
+	for (size_t i = 0; i < this->_dim; i++)  if (x[i] >= _x_bound_max[i]) x[i] = _x_bound_max[i]; else if (x[i] <= _x_bound_min[i]) x[i] = _x_bound_min[i];
+	return x;
+}
+
+vector<double> ContiniousObjectiveFunciton::fix_mod(vector<double> x) {
+	for (size_t i = 0; i < this->_dim; i++)  if (x[i] >= _x_bound_max[i] || x[i] <= _x_bound_min[i]) x[i] = _x_bound_min[i] + dmod(x[i], _x_bound_max[i] - _x_bound_min[i]);
+	return x;
+}
+
+vector<double> ContiniousObjectiveFunciton::fix_rnd(vector<double> x) {
+	return x;
+}
+
+double ContiniousObjectiveFunciton::operator[](size_t i) {
+	return _x_bound_min[i] + thread_td->randDouble() * (_x_bound_max[i] - _x_bound_min[i]);
+}
+
+double ContiniousObjectiveFunciton::dmod(double x, double y) {
+	return x - int(x / y) * y;
 }

@@ -5,7 +5,7 @@
 
 #include <vector>
 
-class CEC17: public BoundedObjectiveFunction<double> {
+class CEC17: public ContiniousObjectiveFunciton {
 private:
 	double *OShift = nullptr, *M = nullptr;
 	int *SS = nullptr;
@@ -63,7 +63,7 @@ private:
 	void cf_cal (double *, double *, double *,int, double *,double *,double *,double *,int);
 
 public:
-	CEC17(int, int, int);
+	CEC17(int, int);
 	~CEC17();
 
 	virtual double func (double*, int) override;

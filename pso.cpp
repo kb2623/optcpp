@@ -1,5 +1,7 @@
 #include "pso.hpp"
 
+#include "thread_data.hpp"
+
 PSO::PSO() : ParallelSearchAlgorithm(1), CooperativeCoevolutionOptimizer() {}
 
 PSO::PSO(size_t no_thr) : ParallelSearchAlgorithm(no_thr), CooperativeCoevolutionOptimizer() {}
@@ -61,7 +63,7 @@ tuple<double, vector<double>> PSO::run(BoundedObjectiveFunction<double>* func) {
 void PSO::run_iteration() {
 	auto s = ceil(np / double(no_thr));
 	auto v = new double[fitf.dim()];
-	for (int i = s * optcpp::tid; i < s * (optcpp::tid + 1); i++) if (i < np) {
+	for (int i = s * thread_td->tid; i < s * (thread_td->tid + 1); i++) if (i < np) {
 		for (int j = 0; j < fitf.dim(); j++) V[i][j] = W[j] * V[i][j] + C1 * rand() * (lpop[i][j] - pop[i][j]) + C2 * rand() * (x_best[j] - pop[i][j]);
 		// TODO fix V to vMin and vMax
 		for (int j = 0; j < fitf.dim(); j++) pop[i][j] = pop[i][j] + V[i][j];

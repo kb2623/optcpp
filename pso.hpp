@@ -1,7 +1,7 @@
 #ifndef _PSO_H_
 #define _PSO_H_
 
-#include "parallel_search_algorithm.hpp"
+#include "search_algorithm.hpp"
 #include "cc_optimizer.hpp"
 
 using namespace std;

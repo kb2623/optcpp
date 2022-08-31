@@ -1,7 +1,7 @@
 #ifndef _JSOP_H_
 #define _JSOP_H_
 
-#include "parallel_search_algorithm.hpp"
+#include "search_algorithm.hpp"
 
 using namespace std;
 
@@ -18,7 +18,7 @@ public:
 	virtual tuple<double, vector<double>> run(BoundedObjectiveFunction<double>*) override;
 	virtual void run_iteration() override;
 	virtual void initRun(BoundedObjectiveFunction<double>*) override;
-	virtual void run_thread() override;
+	virtual void run_thread(size_t) override;
 
 protected:
 	void modifySolutionWithParentMedium(double*, const double*);

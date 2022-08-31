@@ -18,13 +18,13 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/input_data DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 # Common target
-set(COMMON_SRC barrier.cpp common_funcs.cpp)
-set(COMMON_HDR barrier.hpp common_funcs.hpp)
+set(COMMON_SRC barrier.cpp common_funcs.cpp thread_data.cpp)
+set(COMMON_HDR barrier.hpp common_funcs.hpp thread_data.hpp)
 add_library(Common ${COMMON_SRC} ${COMMON_HDR})
 
 # Interfaces
-set(INTERFACES_SRC objective_function.cpp algorithm_parameters.cpp analize_algorithm.cpp search_algorithm.cpp parallel_search_algorithm.cpp stopping_condition.cpp cc_optimizer.cpp cc_search_algorithm.cpp parallel_cc_search_algorithm.cpp repair_solution.cpp)
-set(INTERFACES_HDR objective_function.hpp algorithm_parameters.hpp analize_algorithm.hpp search_algorithm.hpp parallel_search_algorithm.hpp stopping_condition.hpp cc_optimizer.hpp cc_search_algorithm.hpp parallel_cc_search_algorithm.hpp repair_solution.hpp)
+set(INTERFACES_SRC objective_function.cpp algorithm_parameters.cpp analize_algorithm.cpp search_algorithm.cpp stopping_condition.cpp cc_optimizer.cpp cc_search_algorithm.cpp repair_solution.cpp)
+set(INTERFACES_HDR objective_function.hpp algorithm_parameters.hpp analize_algorithm.hpp search_algorithm.hpp stopping_condition.hpp cc_optimizer.hpp cc_search_algorithm.hpp repair_solution.hpp)
 add_library(Interfaces ${INTERFACES_HDR} ${INTERFACES_SRC})
 target_link_libraries(Interfaces PUBLIC Common)
 

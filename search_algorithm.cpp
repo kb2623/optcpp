@@ -1,15 +1,21 @@
 #include "search_algorithm.hpp"
 
+#include "thread_data.hpp"
+
 #include <limits>
 #include <cstdlib>
 
+// ----------------------- SearchAlgorithm -----------------------
+
 template <typename T>
-SearchAlgorithm<T>::SearchAlgorithm() : StoppingCondition(), prand(), dists(), _no_gen(0) {
+SearchAlgorithm<T>::SearchAlgorithm() : StoppingCondition(), _no_gen(0) {
 	f_best = std::numeric_limits<double>::max();
 	x_best = std::vector<double>();
-	prand.push_back(std::default_random_engine());
-	dists.push_back(std::uniform_int_distribution<size_t>(0, std::numeric_limits<size_t>::max()));
+	thread_td = new thread_data();
 }
+
+template <typename T>
+SearchAlgorithm<T>::SearchAlgorithm(const SearchAlgorithm<T>& o) {}
 
 template <typename T>
 SearchAlgorithm<T>::~SearchAlgorithm() {}
@@ -64,14 +70,14 @@ void SearchAlgorithm<T>::setParameters(AlgParams* params) {}
 
 template <typename T>
 size_t SearchAlgorithm<T>::rand() {
-	return dists[0](prand[0]);
+	return thread_td->dist(thread_td->prand);
 }
 
 template <typename T>
 double SearchAlgorithm<T>::randDouble() {
 	double r = rand();
 	if (r == 0) return 0;
-	else return rand() / std::numeric_limits<size_t>::max();
+	else return r / double(std::numeric_limits<size_t>::max());
 }
 
 template <typename T>
@@ -92,4 +98,54 @@ bool SearchAlgorithm<T>::max_no_gen() {
 template <typename T>
 bool SearchAlgorithm<T>::target_value() {
 	return f_best <= fitness_target_value;
+}
+
+// ----------------------- ParallelSearchAlgorithm -----------------------
+
+template <typename T>
+ParallelSearchAlgorithm<T>::ParallelSearchAlgorithm() : ParallelSearchAlgorithm(1, std::rand() % RAND_MAX) {}
+
+template <typename T>
+ParallelSearchAlgorithm<T>::ParallelSearchAlgorithm(size_t no_thr) : ParallelSearchAlgorithm(no_thr, std::rand() % RAND_MAX) {}
+
+template <typename T>
+ParallelSearchAlgorithm<T>::ParallelSearchAlgorithm(size_t no_thr, size_t seed) : SearchAlgorithm<T>() {
+	this->no_thr = no_thr;
+}
+
+template <typename T>
+ParallelSearchAlgorithm<T>::ParallelSearchAlgorithm(const ParallelSearchAlgorithm<T>& o) {}
+
+template <typename T>
+ParallelSearchAlgorithm<T>::~ParallelSearchAlgorithm() {
+	if (sync != nullptr) delete sync;
+}
+
+template <typename T>
+void ParallelSearchAlgorithm<T>::setParameters(AlgParams* params) {
+	SearchAlgorithm<T>::setParameters(params);
+	this->no_thr = getParam(params, "no_thr", 1);
+}
+
+template <typename T>
+tuple<double, vector<T>> ParallelSearchAlgorithm<T>::run(BoundedObjectiveFunction<T>* func) {
+	initRun(func);
+	sync = new Barrier(no_thr);
+	auto workers = vector<std::thread>();
+	for (int i = 1; i < no_thr; i++) workers.emplace_back(std::thread(&ParallelSearchAlgorithm::run_thread, this, i));
+	run_thread(0);
+	for (int i = 0; i < workers.size(); i++) workers[i].join();
+	delete sync;
+	sync = nullptr;
+	return make_tuple(this->f_best, this->x_best);
+}
+
+template<typename T>
+void ParallelSearchAlgorithm<T>::run_thread(size_t tid) {
+	if (tid != 0) thread_td = new thread_data(tid);
+	while (!stop_cond(*this)) {
+		SearchAlgorithm<T>::run_iteration();
+		if (thread_td->tid == 0) this->_no_gen++;
+	}
+	if (tid != 0) delete thread_td;
 }

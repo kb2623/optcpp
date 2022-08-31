@@ -38,7 +38,7 @@ CEC17::~CEC17() {
 	}
 }
 
-CEC17::CEC17(int nx, int func_num, int g_max_eval): BoundedObjectiveFunction(nx, g_max_eval) {
+CEC17::CEC17(int nx, int func_num): ContiniousObjectiveFunciton(nx) {
 	int cf_num = 10, i, j;
 	FILE *fpt;
 	char FileName[256];

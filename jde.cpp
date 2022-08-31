@@ -1,4 +1,6 @@
-#include"jde.hpp"
+#include "jde.hpp"
+
+#include "thread_data.hpp"
 
 jDE::jDE() : DE() {}
 
@@ -49,7 +51,7 @@ tuple<double, vector<double>> jDE::run(BoundedObjectiveFunction<double> *func) {
 void jDE::run_iteration() {
 	auto s = ceil(np / double(no_thr));
 	auto y = new double[fitf.dim()];
-	for (int i = s * optcpp::tid; i < s * (optcpp::tid + 1); i++) if (i < np) {
+	for (int i = s * thread_td->tid; i < s * (thread_td->tid + 1); i++) if (i < np) {
 		double F_n = F_l + rand() * F_u;
 		Fs[i] = (rand() < tao_1) ? F_n : Fs[i];
 		double CR_n = rand();

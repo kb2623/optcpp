@@ -1,5 +1,7 @@
 #include "example.hpp"
 
+#include "thread_data.hpp"
+
 Bar::Bar() : ParallelSearchAlgorithm() {}
 
 Bar::Bar(size_t no_thr) : ParallelSearchAlgorithm(no_thr) {}
@@ -17,7 +19,7 @@ string Bar::sinfo() {
 }
 
 void Bar::initRun(BoundedObjectiveFunction<double>* func) {
-	SearchAlgorithm::initRun(func);
+	ParallelSearchAlgorithm::initRun(func);
 	x = std::vector<std::vector<double>>(np, std::vector<double>(fitf.dim()));
 	xf = std::vector<double>(np);
 	for (int i = 0; i < np; i++) x[i] = makeNewVectorIndividual();
@@ -38,7 +40,7 @@ tuple<double, vector<double>> Bar::run(BoundedObjectiveFunction<double>* func) {
 
 void Bar::run_iteration() {
 	int s = ceil(np / double(no_thr));
-	for (int i = s * optcpp::tid; i < np && i < (optcpp::tid + 1) * s; i++) {
+	for (int i = s * thread_td->tid; i < np && i < (thread_td->tid + 1) * s; i++) {
 		for (int j = 0; j < fitf.dim(); j++) x[i][j] = fitf.x_bound_max(j) - fitf.x_bound_min(j) * randDouble() + fitf.x_bound_min(j);
 		xf[i] = fitf(x[i].data());
 		if (f_best > xf[i]) {

@@ -17,27 +17,69 @@ public:
 	AlgParams();
 	~AlgParams();
 
+	/**
+	 * @brief getParamsVals
+	 * @return
+	 */
 	map<string, any>& getParamsVals();
-	void setParamsVals(map<string, any>);
-	void setParamVal(string, any*);
-	void setParamVal(string, any);
+	/**
+	 * @brief setParamsVals
+	 * @param params
+	 */
+	void setParamsVals(map<string, any> params);
+	/**
+	 * @brief setParamVal
+	 * @param key
+	 * @param value
+	 */
+	void setParamVal(string key, any value);
+	/**
+	 * @brief setParamVal
+	 * @param key
+	 * @param pvalue
+	 */
+	void setParamVal(string key, any* pvalue);
+	/**
+	 * @brief has
+	 * @param key
+	 * @return
+	 */
 	bool has(string key);
+	/**
+	 * @brief operator []
+	 * @param key
+	 * @return
+	 */
 	any& operator[](string key);
-	template<typename T> T& operator[](string key) {
-		if (params.find(key) != params.end()) return std::any_cast<T>(params[key]);
-		else throw std::invalid_argument("Bad key '" + key + "'.");
-	}
+	/**
+	 * @brief operator ()
+	 * @param key
+	 * @return
+	 */
 	any operator()(string key);
-	template<typename T> T operator()(string key) {
-		if (params.find(key) != params.end()) return std::any_cast<T>(params[key]);
-		else throw std::invalid_argument("Bad key '" + key + "'.");
-	}
-	template<typename T> T at(string key) {
-		if (params.find(key) != params.end()) return std::any_cast<T>(params[key]);
-		else throw std::invalid_argument("Bad key '" + key + "'.");
-	}
+	/**
+	 * @brief operator []
+	 * @param key
+	 * @return
+	 */
+	template <typename T> T& operator[](string key);
+	/**
+	 * @brief operator ()
+	 * @param key
+	 * @return
+	 */
+	template <typename T> T operator()(string key);
+	/**
+	 * @brief at
+	 * @param key
+	 * @return
+	 */
+	template <typename T> T at(string key);
 
 protected:
+	/**
+	 * @brief params
+	 */
 	map<string, any> params;
 };
 
