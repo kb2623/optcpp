@@ -33,3 +33,7 @@
 
 # QtCreator
 CMakeLists.txt.user
+
+# Kdevelop
+**/.kdev4
+**/*.kdev4
