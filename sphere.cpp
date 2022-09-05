@@ -8,7 +8,7 @@ Sphere::Sphere(size_t dim, double min_lim, double max_lim) : ContiniousObjective
 
 Sphere::~Sphere() { }
 
-double Sphere::calc (double *x) {
+double Sphere::calc(double *x) {
 	double s = 0;
 	for (int i = 0; i < _dim; i++) s += x[i] * x[i];
 	return s;

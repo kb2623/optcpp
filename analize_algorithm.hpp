@@ -36,25 +36,27 @@ public:
 	/**
 	 * @brief setParameters
 	 */
-	virtual void setParameters(AlgParams* params) = 0;
+	virtual void setParameters(AlgParams& params) = 0;
 	/**
 	 * @brief run
 	 * @param func
 	 * @return
 	 */
-	virtual tuple<vector<unsigned int>, vector<vector<unsigned int>>> run(BoundedObjectiveFunction<T>* func) = 0;
+	virtual tuple<vector<size_t>, vector<vector<size_t>>> run(BoundedObjectiveFunction<T>& func) = 0;
 
 protected:
 	/**
 	 * @brief initRun
 	 * @param func
 	 */
-	void initRun(BoundedObjectiveFunction<T>* func);
-
+	virtual RunAlgParams<T>& initRun(thread_data& tdata, BoundedObjectiveFunction<T>& func);
 	/**
-	 * @brief fitf
+	 * @brief run_iteration
+	 * @param tdata
+	 * @param params
 	 */
-	BoundedObjectiveFunction<T>& fitf;
+	virtual void run_iteration(thread_data& tdata, RunAlgParams<T>& params);
+
 };
 
 #endif

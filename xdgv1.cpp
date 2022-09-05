@@ -1,7 +1,5 @@
 #include"xdgv1.hpp"
 
-#include "thread_data.hpp"
-
 using std::abs;
 
 XDGv1::XDGv1() {}

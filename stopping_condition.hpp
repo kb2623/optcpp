@@ -1,9 +1,9 @@
 #ifndef _STOPPING_CONDITION_H_
 #define _STOPPING_CONDITION_H_
 
-#include <functional>
 #include <chrono>
 #include <limits>
+#include <functional>
 
 class StoppingCondition {
 public:

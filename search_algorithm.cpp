@@ -5,74 +5,10 @@
 #include <limits>
 #include <cstdlib>
 
-// -------------------- AlgParams --------------------
-
-AlgParams::AlgParams() {}
-
-AlgParams::~AlgParams() {}
-
-void AlgParams::setParamsVals(map<string, any> params) {
-	for (auto [k, v] : params) this->params[k] = v;
-}
-
-void AlgParams::setParamVal(string k, any v) {
-	params[k] = v;
-}
-
-void AlgParams::setParamVal(string k, any* v) {
-	params[k] = v;
-}
-
-map<string, any>& AlgParams::getParamsVals() {
-	return params;
-}
-
-bool AlgParams::has(string key) {
-	return params.find(key) != params.end();
-}
-
-any& AlgParams::operator[](string key) {
-	if (params.find(key) != params.end()) return params[key];
-	else throw std::invalid_argument("Bad key '" + key + "'.");
-}
-
-any AlgParams::operator()(string key) {
-	if (params.find(key) != params.end()) return params[key];
-	else return any();
-}
-
-template <typename T>
-T& AlgParams::operator[](string key) {
-	return std::any_cast<T>(operator[](key));
-}
-
-template <typename T>
-T AlgParams::operator()(string key) {
-	return std::any_cast<T>(operator()(key));
-}
-
-template <typename T>
-T AlgParams::at(string key) {
-	return std::any_cast<T>(operator()(key));
-}
-
-template <typename T>
-T getParam(AlgParams* params, string key, T dval) {
-	if (params != nullptr && params->has(key)) {
-		return params->at<T>(key);
-	} else {
-		return dval;
-	}
-}
-
 // ----------------------- SearchAlgorithm -----------------------
 
 template <typename T>
-SearchAlgorithm<T>::SearchAlgorithm() : StoppingCondition(), _no_gen(0) {
-	f_best = std::numeric_limits<double>::max();
-	x_best = std::vector<double>();
-	thread_td = new thread_data();
-}
+SearchAlgorithm<T>::SearchAlgorithm() {}
 
 template <typename T>
 SearchAlgorithm<T>::SearchAlgorithm(const SearchAlgorithm<T>& o) {}
@@ -81,84 +17,27 @@ template <typename T>
 SearchAlgorithm<T>::~SearchAlgorithm() {}
 
 template <typename T>
-T* SearchAlgorithm<T>::makeNewArrayIndividual() {
-	double* x = new T[fitf->dim];
-	for (int i = 0; i < fitf->dim; i++) x[i] = (*fitf)[i];
-	return x;
-}
-
-template <typename T>
-vector<T> SearchAlgorithm<T>::makeNewVectorIndividual() {
-	vector<T> x;
-	for (int i = 0; i < fitf->dim; i++) x.push_back((*fitf)[i]);
-	return x;
-}
-
-template <typename T>
-void SearchAlgorithm<T>::setBestSolution(T* x, double f) {
-	best_lock.lock();
-	if (f_best > f) {
-		f_best = f;
-		for (int i = 0; i < fitf->dim; i++) x_best[i] = x[i];
-	}
-	best_lock.unlock();
-}
-
-template <typename T>
-void SearchAlgorithm<T>::initRun(BoundedObjectiveFunction<T>* func) {
-	this->fitf = func;
-	this->_no_gen = 0;
-	x_best = std::vector<double>(fitf->dim);
-	f_best = std::numeric_limits<double>::max();
+RunAlgParams<T>& SearchAlgorithm<T>::initRun(thread_data& tdata, BoundedObjectiveFunction<T>& func) {
+	RunAlgParams<T> run_params;
 	// One of the stopping conditinos predondition
-	start_timer();
+	run_params.start_timer();
+	return run_params;
 }
 
 template <typename T>
-tuple<double, vector<T>> SearchAlgorithm<T>::run(BoundedObjectiveFunction<T>* func) {
-	initRun(func);
+tuple<double, vector<T>> SearchAlgorithm<T>::run(BoundedObjectiveFunction<T>& func) {
+	RunAlgParams<T> params = initRun(func);
+	thread_data tdata = thread_data();
 	while (!stop_cond(*this)) {
-		run_iteration();
-		// One of the stopping conditions precondition of counting
-		_no_gen++;
+		run_iteration(tdata, params);
+		// Increment an algorithm generation
+		params++;
 	}
-	return std::make_tuple(f_best, x_best);
+	return params.getBestSolution();
 }
 
 template <typename T>
-void SearchAlgorithm<T>::setParameters(AlgParams* params) {}
-
-template <typename T>
-size_t SearchAlgorithm<T>::rand() {
-	return thread_td->dist(thread_td->prand);
-}
-
-template <typename T>
-double SearchAlgorithm<T>::randDouble() {
-	double r = rand();
-	if (r == 0) return 0;
-	else return r / double(std::numeric_limits<size_t>::max());
-}
-
-template <typename T>
-inline unsigned long long int SearchAlgorithm<T>::no_gen() const {
-	return _no_gen;
-}
-
-template <typename T>
-bool SearchAlgorithm<T>::max_no_fes() {
-	return fitf.no_fes() >= lim_no_fes;
-}
-
-template <typename T>
-bool SearchAlgorithm<T>::max_no_gen() {
-	return _no_gen >= lim_no_gen;
-}
-
-template <typename T>
-bool SearchAlgorithm<T>::target_value() {
-	return f_best <= fitness_target_value;
-}
+void SearchAlgorithm<T>::setParameters(AlgParams& params) {}
 
 // ----------------------- ParallelSearchAlgorithm -----------------------
 
@@ -169,43 +48,48 @@ template <typename T>
 ParallelSearchAlgorithm<T>::ParallelSearchAlgorithm(size_t no_thr) : ParallelSearchAlgorithm(no_thr, std::rand() % RAND_MAX) {}
 
 template <typename T>
-ParallelSearchAlgorithm<T>::ParallelSearchAlgorithm(size_t no_thr, size_t seed) : SearchAlgorithm<T>() {
-	this->no_thr = no_thr;
-}
+ParallelSearchAlgorithm<T>::ParallelSearchAlgorithm(size_t no_thr, size_t seed) : SearchAlgorithm<T>(), no_thr(no_thr) {}
 
 template <typename T>
 ParallelSearchAlgorithm<T>::ParallelSearchAlgorithm(const ParallelSearchAlgorithm<T>& o) {}
 
 template <typename T>
-ParallelSearchAlgorithm<T>::~ParallelSearchAlgorithm() {
-	if (sync != nullptr) delete sync;
-}
+ParallelSearchAlgorithm<T>::~ParallelSearchAlgorithm() {}
 
 template <typename T>
-void ParallelSearchAlgorithm<T>::setParameters(AlgParams* params) {
+void ParallelSearchAlgorithm<T>::setParameters(AlgParams& params) {
 	SearchAlgorithm<T>::setParameters(params);
 	this->no_thr = getParam(params, "no_thr", 1);
 }
 
 template <typename T>
-tuple<double, vector<T>> ParallelSearchAlgorithm<T>::run(BoundedObjectiveFunction<T>* func) {
-	initRun(func);
-	sync = new Barrier(no_thr);
-	auto workers = vector<std::thread>();
-	for (int i = 1; i < no_thr; i++) workers.emplace_back(std::thread(&ParallelSearchAlgorithm::run_thread, this, i));
-	run_thread(0);
-	for (int i = 0; i < workers.size(); i++) workers[i].join();
-	delete sync;
-	sync = nullptr;
-	return make_tuple(this->f_best, this->x_best);
+RunParallelAlgParams<T>& ParallelSearchAlgorithm<T>::initRun(thread_data& tdata, BoundedObjectiveFunction<T>& func) {
+	auto tbarrier = Barrier(no_thr);
+	auto params = RunParallelAlgParams<T>(tbarrier);
+	// TODO start timer
+	return params;
 }
 
-template<typename T>
-void ParallelSearchAlgorithm<T>::run_thread(size_t tid) {
-	if (tid != 0) thread_td = new thread_data(tid);
-	while (!stop_cond(*this)) {
-		SearchAlgorithm<T>::run_iteration();
-		if (thread_td->tid == 0) this->_no_gen++;
+template <typename T>
+tuple<double, vector<T>> ParallelSearchAlgorithm<T>::run(BoundedObjectiveFunction<T>& func) {
+	auto tdata_main = thread_data(0);
+	auto params = initRun(tdata_main, func);
+	auto workers = vector<std::thread>();
+	for (int i = 1; i < no_thr; i++) {
+		thread_data tdata = thread_data(i);
+		workers.emplace_back(std::thread(&ParallelSearchAlgorithm::run_thread, this, tdata, params));
 	}
-	if (tid != 0) delete thread_td;
+	run_thread(tdata_main, params);
+	for (int i = 0; i < workers.size(); i++) workers[i].join();
+	return params.getBestSolution();
+}
+
+template <typename T>
+void ParallelSearchAlgorithm<T>::run_thread(thread_data& tdata, RunParallelAlgParams<T>& params) {
+	while (!stop_cond(*this)) {
+		run_iteration(tdata, params);
+		// Increment an algorithm generation if main thread
+		params.arrive_and_wait();
+		if (tdata.tid == 0) params++;
+	}
 }

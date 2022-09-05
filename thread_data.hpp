@@ -11,7 +11,7 @@ public:
 	thread_data(size_t tid, size_t seed);
 	thread_data(size_t tid, std::default_random_engine prand, std::uniform_int_distribution<size_t> dist);
 	thread_data(const thread_data& o);
-	~thread_data() = default;
+	~thread_data();
 
 	size_t rand();
 	double randDouble();
@@ -20,8 +20,5 @@ public:
 	std::default_random_engine prand;
 	std::uniform_int_distribution<size_t> dist;
 };
-
-thread_local thread_data* thread_td = nullptr;
-
 
 #endif

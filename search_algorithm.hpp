@@ -1,111 +1,17 @@
 #ifndef _SEARCH_ALGORITHM_H_
 #define _SEARCH_ALGORITHM_H_
 
-#include "objective_function.hpp"
-#include "stopping_condition.hpp"
-#include "barrier.hpp"
+#include "algorithm_parameters.hpp"
+#include "thread_data.hpp"
 
-#include <cmath>
 #include <tuple>
-#include <string>
-#include <atomic>
-#include <mutex>
-#include <random>
 
-#include <map>
-#include <any>
 #include <vector>
 #include <string>
 #include <stdexcept>
 
-using std::any;
-using std::map;
 using std::string;
 using std::vector;
-
-// -------------------- AlgParams --------------------
-
-class AlgParams {
-public:
-	AlgParams();
-	~AlgParams();
-
-	/**
-	 * @brief getParamsVals
-	 * @return
-	 */
-	map<string, any>& getParamsVals();
-	/**
-	 * @brief setParamsVals
-	 * @param params
-	 */
-	void setParamsVals(map<string, any> params);
-	/**
-	 * @brief setParamVal
-	 * @param key
-	 * @param value
-	 */
-	void setParamVal(string key, any value);
-	/**
-	 * @brief setParamVal
-	 * @param key
-	 * @param pvalue
-	 */
-	void setParamVal(string key, any* pvalue);
-	/**
-	 * @brief has
-	 * @param key
-	 * @return
-	 */
-	bool has(string key);
-	/**
-	 * @brief operator []
-	 * @param key
-	 * @return
-	 */
-	any& operator[](string key);
-	/**
-	 * @brief operator ()
-	 * @param key
-	 * @return
-	 */
-	any operator()(string key);
-	/**
-	 * @brief operator []
-	 * @param key
-	 * @return
-	 */
-	template <typename T> T& operator[](string key);
-	/**
-	 * @brief operator ()
-	 * @param key
-	 * @return
-	 */
-	template <typename T> T operator()(string key);
-	/**
-	 * @brief at
-	 * @param key
-	 * @return
-	 */
-	template <typename T> T at(string key);
-
-protected:
-	/**
-	 * @brief params
-	 */
-	map<string, any> params;
-};
-
-/**
- * @brief getParam
- * @param params
- * @param key
- * @param dval
- * @return
- */
-template <typename T>
-T getParam(AlgParams* params, string key, T dval);
-
 
 // -------------------- SearchAlgorithm --------------------
 
@@ -113,7 +19,7 @@ using std::tuple;
 using std::string;
 
 template<typename T>
-class SearchAlgorithm : public StoppingCondition {
+class SearchAlgorithm {
 public:
 	SearchAlgorithm();
 	SearchAlgorithm(const SearchAlgorithm<T>&);
@@ -130,91 +36,37 @@ public:
 	 */
 	virtual string sinfo() = 0;
 	/**
-	 * @brief run_iteration Execute one iteration of an search algorithm.
+	 * @brief run_iteration
+	 * @param tdata
+	 * @param params
 	 */
-	virtual void run_iteration() = 0;
+	virtual void run_iteration(thread_data& tdata, RunAlgParams<T>& params) = 0;
 	/**
 	 * @brief setParameters
 	 * @param params
 	 */
-	virtual void setParameters(AlgParams* params);
+	virtual void setParameters(AlgParams& params);
 	/**
 	 * @brief run
 	 * @param fit_fun
 	 * @return
 	 */
-	virtual tuple<double, vector<T>> run(BoundedObjectiveFunction<T>* fit_fun);
-	/**
-	 * @brief no_gen
-	 * @return
-	 */
-	inline unsigned long long int no_gen() const;
-
-public:
-	/**
-	 * @brief x_best Best solution's components value.
-	 */
-	vector<T> x_best;
-	/**
-	 * @brief f_best Best solution's fitness value.
-	 */
-	double f_best;
-
-protected:
-	virtual void initRun(BoundedObjectiveFunction<T>* func);
-	/**
-	 * @brief makeNewArrayIndividual
-	 * @return
-	 */
-	T* makeNewArrayIndividual();
-	/**
-	 * @brief makeNewVectorIndividual
-	 * @return
-	 */
-	vector<T> makeNewVectorIndividual();
-	/**
-	 * @brief setBestSolution
-	 * @param x
-	 * @param fitness
-	 */
-	void setBestSolution(T* x, double fitness);
-	/**
-	 * @brief rand Generate a pseudo-random integral number in [0, RAND_MAX].
-	 * @return Pseudo-random intergral value.
-	 */
-	virtual size_t rand();
-	/**
-	 * @brief randDouble Generate a pseudo-random floating point number in [0, 1]
-	 * @return Pseudo-random floating point value.
-	 */
-	double randDouble();
-
-protected:
-	virtual bool max_no_fes() override;
-	virtual bool max_no_gen() override;
-	virtual bool target_value() override;
+	virtual tuple<double, vector<T>> run(BoundedObjectiveFunction<T>& fit_fun);
 
 protected:
 	/**
-	 * @brief no_gen
+	 * @brief initRun
+	 * @param tdata
+	 * @param func
+	 * @return
 	 */
-	std::atomic<unsigned long long int> _no_gen;
+	virtual RunAlgParams<T>& initRun(thread_data& tdata, BoundedObjectiveFunction<T>& func);
+
+protected:
 	/**
 	 * @brief params Parameters for running the algorithm.
 	 */
 	AlgParams params;
-	/**
-	 * @brief fitf
-	 */
-	BoundedObjectiveFunction<T>& fitf;
-	/**
-	 * @brief stop_cond
-	 */
-	std::function<bool(SearchAlgorithm&)> stop_cond;
-	/**
-	 * @brief best_lock Lock for updating global best.
-	 */
-	std::mutex best_lock;
 
 };
 
@@ -230,25 +82,47 @@ public:
 	~ParallelSearchAlgorithm();
 
 	/**
-	 * @brief run_thread
-	 * @param tid
-	 */
-	virtual void run_thread(size_t tid);
-	/**
-	 * @brief run
-	 * @param fun
-	 * @return
-	 */
-	virtual std::tuple<double, std::vector<T>> run(BoundedObjectiveFunction<T>* fun) override;
-	/**
 	 * @brief setParameters
 	 * @param params
 	 */
-	virtual void setParameters(AlgParams* params) override;
+	virtual void setParameters(AlgParams& params) override;
+	/**
+	 * @brief run
+	 * @param fitf
+	 * @return
+	 */
+	virtual std::tuple<double, std::vector<T>> run(BoundedObjectiveFunction<T>& fitf) override;
+	/**
+	 * @brief initRun
+	 * @param tdata
+	 * @param func
+	 * @return
+	 */
+	virtual RunParallelAlgParams<T>& initRun(thread_data& tdata, BoundedObjectiveFunction<T>& func) override;
+	/**
+	 * @brief run_thread
+	 * @param tdata
+	 * @param params
+	 */
+	void run_thread(thread_data& tdata, RunParallelAlgParams<T>& params);
+	/**
+	 * @brief run_iteration
+	 * @param tdata
+	 * @param params
+	 */
+	virtual void run_iteration(thread_data& tdata, RunAlgParams<T>& params) final;
+	/**
+	 * @brief run_iteration
+	 * @param tdata
+	 * @param params
+	 */
+	virtual void run_iteration(thread_data& tdata, RunParallelAlgParams<T>& params) = 0;
 
 protected:
-	size_t no_thr;
-	Barrier* sync;
+	/**
+	 * @brief no_thr
+	 */
+	ulongint no_thr;
 };
 
 #endif

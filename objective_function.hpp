@@ -5,6 +5,7 @@
 #include <atomic>
 
 #include "repair_solution.hpp"
+#include "thread_data.hpp"
 
 // ------------------------ ObjectiveFunction ------------------------
 
@@ -25,9 +26,10 @@ public:
 	/**
 	 * @brief operator []
 	 * @param index
+	 * @param tdata
 	 * @return
 	 */
-	virtual T operator[](size_t index) = 0;
+	virtual T gen(size_t index, thread_data& tdata) = 0;
 	/**
 	 * @brief no_fes
 	 * @return
@@ -153,7 +155,7 @@ public:
 	virtual vector<double> fix_lim(vector<double> x) override;
 	virtual vector<double> fix_mod(vector<double> x) override;
 	virtual vector<double> fix_rnd(vector<double> x) override;
-	virtual double operator[](size_t index) override;
+	virtual double gen(size_t index, thread_data& tdata) override;
 
 private:
 	double dmod(double x, double y);

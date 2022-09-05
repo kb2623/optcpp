@@ -10,9 +10,12 @@ template <typename T>
 AnalizeAlgorithm<T>::~AnalizeAlgorithm() {}
 
 template <typename T>
-void AnalizeAlgorithm<T>::initRun(BoundedObjectiveFunction<T>* func) {
-	this->func = func;
+void AnalizeAlgorithm<T>::setParameters(AlgParams& params) {}
+
+template <typename T>
+RunAlgParams<T>& AnalizeAlgorithm<T>::initRun(thread_data& tdata, BoundedObjectiveFunction<T>& fitf) {
+	return RunAlgParams(fitf);
 }
 
 template <typename T>
-void AnalizeAlgorithm<T>::setParameters(AlgParams *params) {}
+void AnalizeAlgorithm<T>::run_iteration(thread_data& tdata, RunAlgParams<T>& params) {}

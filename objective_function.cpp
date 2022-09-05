@@ -1,7 +1,6 @@
 #include "objective_function.hpp"
 
 #include "common_funcs.hpp"
-#include "thread_data.hpp"
 
 // ------------------------ ObjectiveFunction ------------------------
 
@@ -172,8 +171,8 @@ vector<double> ContiniousObjectiveFunciton::fix_rnd(vector<double> x) {
 	return x;
 }
 
-double ContiniousObjectiveFunciton::operator[](size_t i) {
-	return _x_bound_min[i] + thread_td->randDouble() * (_x_bound_max[i] - _x_bound_min[i]);
+double ContiniousObjectiveFunciton::gen(size_t i, thread_data& tdata) {
+	return _x_bound_min[i] + tdata.randDouble() * (_x_bound_max[i] - _x_bound_min[i]);
 }
 
 double ContiniousObjectiveFunciton::dmod(double x, double y) {

@@ -10,6 +10,8 @@ thread_data::thread_data(size_t tid, size_t seed) : tid(tid), prand(std::default
 
 thread_data::thread_data(const thread_data& o) : tid(o.tid), prand(o.prand), dist(o.dist) {}
 
+thread_data::~thread_data() {}
+
 size_t thread_data::rand() {
 	return dist(prand);
 }

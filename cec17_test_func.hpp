@@ -67,7 +67,6 @@ public:
 	~CEC17();
 
 	virtual double func (double*, int) override;
-	virtual double operator[] (size_t i) override;
 };
 
 void shiftfunc (double *, double *, int, double *);

@@ -11,8 +11,7 @@ public:
 	Sphere(size_t dim, double min_lim = -100, double max_lim = 100);
 	~Sphere();
 
-	virtual double func (double* x, int dim) override;
-	virtual double operator[] (size_t i) override;
+	virtual double func(double*, int) override;
 
 private:
 	/**

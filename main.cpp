@@ -9,10 +9,10 @@
 #include "sphere.hpp"
 
 #include "example.hpp"
-#include "de.hpp"
-#include "jde.hpp"
-#include "jso.hpp"
-#include "jsop.hpp"
+//#include "de.hpp"
+//#include "jde.hpp"
+//#include "jso.hpp"
+//#include "jsop.hpp"
 
 #include "xdg.hpp"
 #include "xdgv1.hpp"
