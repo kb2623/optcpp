@@ -8,12 +8,6 @@
 #include "cec17_test_func.hpp"
 #include "sphere.hpp"
 
-#include "example.hpp"
-//#include "de.hpp"
-//#include "jde.hpp"
-//#include "jso.hpp"
-//#include "jsop.hpp"
-
 #include "xdg.hpp"
 #include "xdgv1.hpp"
 #include "xdgv2.hpp"
@@ -27,11 +21,13 @@
 #include "gdg.hpp"
 #include "gdgv1.hpp"
 #include "gdgv2.hpp"
-//#include "fii.hpp"
+#include "fii.hpp"
 
-void runAnal(AnalizeAlgorithm<double>* algo, BoundedObjectiveFunction<double>* func) {
-	algo->setParameters(nullptr);
-	auto ret = algo->run(func);
+using std::cout, std::endl;
+
+
+void runAnal(AnalAlgorithm<double>& algo, BoundedObjectiveFunction<double>& func) {
+	auto ret = algo.run(func);
 	auto gs = get<0>(ret);
 	cout << "------------------------Seps-------------------------" << endl;
 	cout << '(' << std::setw(3) << gs.size() << "): ";
@@ -47,61 +43,16 @@ void runAnal(AnalizeAlgorithm<double>* algo, BoundedObjectiveFunction<double>* f
 	cout << "-----------------------------------------------------" << endl;
 }
 
-void runAlgo(SearchAlgorithm<double>* algo, BoundedObjectiveFunction<double>* func) {
-	cout << algo->sinfo() << " : ";
-	auto r = algo->run(func);
-	for (auto e : get<1>(r)) cout << e << ' ';
-	auto val = (*func)(get<1>(r).data());
-	cout << ": ";
-	cout << get<0>(r) << " : ";
-	if (val == get<0>(r)) cout << "OK";
-	else cout << "ERROR >> " << val;
-	cout << " : " << func->no_fes() - 1;
-}
-
-void runCEC(vector<SearchAlgorithm<double>*>& algs) {
-	size_t no_runs = 100;
-	size_t g_problem_size = 50;
-	cout << "Function" << " : " << "Algorithm" << " : " << "Solution" << " : " << "Fitness" << " : " << "Status" << " : " << "No. Evals" << " : " << "No. Run" << endl;
-	for (int j = 0; j < no_runs; j++) {
-		size_t g_max_num_evaluations = g_problem_size * 10000;
-		for (int i = 0; i < 30; i++) try {
-			auto func = CEC17(g_problem_size, i);
-			for (auto a : algs) {
-				a->setParameters(nullptr);
-				cout << "F" << i + 1 << " : ";
-				runAlgo(a, &func);
-				cout << " : " << j << endl;
-			}
-		} catch (const char* msg) {
-			cerr << msg << endl;
-			cout << endl;
-		}
-	}
-}
-
-void runSphere(vector<SearchAlgorithm<double>*>& algs) {
-	size_t no_runs = 10;
-	size_t g_problem_size = 10;
-	size_t g_max_num_evaluations = g_problem_size * 10000;
-	for (int i = 0; i < no_runs; i++) for (auto a : algs) {
-		auto func = Sphere(g_problem_size);
-		runAlgo(a, &func);
-		cout << endl;
-	}
-	cout << endl;
-}
-
-void runCEC(vector<AnalizeAlgorithm<double>*>& algo) {
+void runCEC(vector<AnalAlgorithm<double>*>& algo) {
 	int num_runs = 1;
 	vector<int> problem_size = {10, 20, 30, 50, 100};
 	for (auto it : problem_size) {
 		auto no_evals = it * 10000;
 		for (int i = 0; i < 30; i++) try {
 			auto func = CEC17(it, i);
-			for (auto e : algo) for (int j = 0; j < num_runs; j++) {
-				cout << "Function = " << std::setw(2) << i + 1 << ", Dimension size = " << std::setw(3) << it << " > " << "Algorithm " << e->info() << endl;
-				runAnal(e, &func);
+			for (auto a : algo) for (int j = 0; j < num_runs; j++) {
+				cout << "Function = " << std::setw(2) << i + 1 << ", Dimension size = " << std::setw(3) << it << " > " << "Algorithm " << a->info() << endl;
+				runAnal(*a, func);
 				cout << endl;
 			}
 		} catch (const char* msg) {
@@ -110,21 +61,21 @@ void runCEC(vector<AnalizeAlgorithm<double>*>& algo) {
 	}
 }
 
-void runSphere(vector<AnalizeAlgorithm<double>*> &algs) {
+void runSphere(vector<AnalAlgorithm<double>*>& algs) {
 	size_t no_runs = 1;
 	size_t g_problem_size = 10;
 	size_t g_max_num_evaluations = g_problem_size * 10000;
 	for (auto a : algs) for (int i = 0; i < no_runs; i++) {
 		auto func = Sphere(g_problem_size, g_max_num_evaluations);
 		cout << "Dimension size = " << std::setw(3) << g_problem_size << ", run: " << i << " > " << a->info() << endl;
-		runAnal(a, &func);
+		runAnal(*a, func);
 		cout << endl;
 	}
 	cout << endl;
 }
 
 int main() {
-	vector<AnalizeAlgorithm<double>*> anals = {
+	vector<AnalAlgorithm<double>*> anals = {
 		new XDG(),
 		new XDGv1(),
 		new XDGv2(),
@@ -138,21 +89,9 @@ int main() {
 		new GDG(),
 		new GDGv1(),
 		new GDGv2(),
-		//new FII(),
+		new FII(),
 	};
-	//runCEC(anals);
+	runCEC(anals);
 	//runSphere(anals);
-	const auto no_workers = 20;
-	vector<SearchAlgorithm<double>*> algs = {
-		new DE(),
-		new DE(no_workers),
-		new jDE(),
-		new jDE(no_workers),
-		new jSO(),
-		new jSOp(no_workers),
-		new Bar(no_workers),
-	};
-	runCEC(algs);
-	//runSphere(algs);
 	return 0;
 }

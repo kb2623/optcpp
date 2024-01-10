@@ -23,6 +23,8 @@ void asyfunc (double *x, double *xasy, int nx, double beta);
 
 int result;
 
+CEC17::CEC17(const CEC17& o) : BoundedObjectiveFunction(o) {}
+
 CEC17::~CEC17() {
 	if (M != nullptr) {
 		delete[] M;
@@ -38,7 +40,7 @@ CEC17::~CEC17() {
 	}
 }
 
-CEC17::CEC17(int nx, int func_num): ContiniousObjectiveFunciton(nx) {
+CEC17::CEC17(int nx, int func_num): BoundedObjectiveFunction(nx) {
 	int cf_num = 10, i, j;
 	FILE *fpt;
 	char FileName[256];
@@ -113,7 +115,7 @@ CEC17::CEC17(int nx, int func_num): ContiniousObjectiveFunciton(nx) {
 	func_flag = func_num;
 }
 
-double CEC17::func(double *x, int dim) {
+double CEC17::func(double *x, size_t dim) {
 	int i;
 	double f;
 	switch(func_flag) {

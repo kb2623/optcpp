@@ -8,14 +8,15 @@ public:
 	double eps = 2.2204e-16;
 
 	RDGv2();
+	RDGv2(const RDGv2&);
 	~RDGv2();
 
 	virtual string info() override;
 	virtual string sinfo() override;
-	virtual tuple<vector<unsigned int>, vector<vector<unsigned int>>> run(BoundedObjectiveFunction<double>*) override;
+	virtual tuple<vector<size_t>, vector<vector<size_t>>> run(BoundedObjectiveFunction<double>&) override;
 
 protected:
-	vector<unsigned int> interact(double*, double, vector<unsigned int>, vector<unsigned int>, vector<unsigned int>&);
+	vector<size_t> interact(double*, double, vector<size_t>, vector<size_t>, vector<size_t>&, BoundedObjectiveFunction<double>&);
 	double gamma(double);
 };
 

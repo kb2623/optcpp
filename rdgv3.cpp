@@ -8,6 +8,8 @@ using std::make_tuple;
 
 RDGv3::RDGv3() {}
 
+RDGv3::RDGv3(const RDGv3& o) : RDGv2(o) {}
+
 RDGv3::~RDGv3() {}
 
 string RDGv3::info() {
@@ -18,20 +20,19 @@ string RDGv3::sinfo() {
 	return "RDG3";
 }
 
-tuple<vector<unsigned int>, vector<vector<unsigned int>>> RDGv3::run(BoundedObjectiveFunction<double>* ifunc) {
-	initRun(ifunc);
+tuple<vector<size_t>, vector<vector<size_t>>> RDGv3::run(BoundedObjectiveFunction<double>& fitf) {
 	auto x = new double[fitf.dim()];
 	for (int i = 0; i < fitf.dim(); i++) x[i] = fitf.x_bound_min(i);
 	auto xf = fitf(x);
-	auto sub1 = vector<unsigned int>(1, 0), sub2 = vector<unsigned int>(fitf.dim() - 1);
+	auto sub1 = vector<size_t>(1, 0), sub2 = vector<size_t>(fitf.dim() - 1);
 	for (int i = 0; i < sub2.size(); i++) sub2[i] = i + 1;
-	auto xremain = vector<unsigned int>(1, 0);
-	auto seps = vector<unsigned int>();
-	auto nongroups = vector<vector<unsigned int>>();
+	auto xremain = vector<size_t>(1, 0);
+	auto seps = vector<size_t>();
+	auto nongroups = vector<vector<size_t>>();
 	unsigned int tn = fitf.dim() * tnf;
 	while (xremain.size() > 0) {
-		xremain = vector<unsigned int>();
-		auto sub1_a = interact(x, xf, sub1, sub2, xremain);
+		xremain = vector<size_t>();
+		auto sub1_a = interact(x, xf, sub1, sub2, xremain, fitf);
 		if (sub1_a.size() != sub1.size() && sub1_a.size() < tn) {
 			sub1 = sub1_a;
 			sub2 = xremain;
@@ -46,7 +47,7 @@ tuple<vector<unsigned int>, vector<vector<unsigned int>>> RDGv3::run(BoundedObje
 				nongroups.push_back(sub1_a);
 			}
 			if (xremain.size() > 1) {
-				sub1 = vector<unsigned int>(1, xremain[0]);
+				sub1 = vector<size_t>(1, xremain[0]);
 				xremain.erase(xremain.begin());
 				sub2 = xremain;
 			} else if (xremain.size() == 1) {
@@ -59,7 +60,7 @@ tuple<vector<unsigned int>, vector<vector<unsigned int>>> RDGv3::run(BoundedObje
 	return make_tuple(seps, nongroups);
 }
 
-vector<unsigned int> RDGv3::interact(double *a, double af, vector<unsigned int> sub1, vector<unsigned int> sub2, vector<unsigned int> &xremain) {
+vector<size_t> RDGv3::interact(double *a, double af, vector<size_t> sub1, vector<size_t> sub2, vector<size_t> &xremain, BoundedObjectiveFunction<double>& fitf) {
 	auto b = new double[fitf.dim()], c = new double[fitf.dim()], d = new double[fitf.dim()];
 	for (int i = 0; i < fitf.dim(); i++) b[i] = c[i] = a[i];
 	for (int i = 0; i < sub1.size(); i++) b[sub1[i]] = fitf.x_bound_max(sub1[i]);
@@ -75,13 +76,13 @@ vector<unsigned int> RDGv3::interact(double *a, double af, vector<unsigned int> 
 		if (sub2.size() == 1) {
 			sub1 = vunion(sub1, sub2);
 		} else {
-			unsigned int k = floor(sub2.size() / 2);
-			auto sub2_1 = vector<unsigned int>();
+			size_t k = floor(sub2.size() / 2);
+			auto sub2_1 = vector<size_t>();
 			for (int i = 0; i < k; i++) sub2_1.push_back(sub2[i]);
-			auto sub2_2 = vector<unsigned int>();
+			auto sub2_2 = vector<size_t>();
 			for (int i = 0; i < sub2.size() - k; i++) sub2_2.push_back(sub2[k + i]);
-			auto sub1_1 = interact(a, af, sub1, sub2_1, xremain);
-			auto sub1_2 = interact(a, af, sub1, sub2_2, xremain);
+			auto sub1_1 = interact(a, af, sub1, sub2_1, xremain, fitf);
+			auto sub1_2 = interact(a, af, sub1, sub2_2, xremain, fitf);
 			sub1 = vunion(sub1_1, sub1_2);
 		}
 	} else {

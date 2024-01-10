@@ -6,13 +6,14 @@
 class DDGv2: public DDG {
 public:
 	DDGv2();
+	DDGv2(const DDGv2&);
 	~DDGv2();
 
 	virtual string info() override;
 	virtual string sinfo() override;
 
 protected:
-	double get_epsilon_addi(double, double, double, double);
+	double get_epsilon_addi(double, double, double, double, BoundedObjectiveFunction<double>&);
 	double gamma(double);
 
 	double eps = 10e-12;

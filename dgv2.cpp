@@ -8,7 +8,11 @@ using std::tuple;
 using std::vector;
 using std::make_tuple;
 
-typedef unsigned int uint;
+DGv2::DGv2() {}
+
+DGv2::DGv2(const DGv2& o) : DG(o) {}
+
+DGv2::~DGv2() {}
 
 std::string DGv2::info() {
    return "Differential Grouping version 2 (DGv2)";

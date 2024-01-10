@@ -9,15 +9,16 @@
 class XDGv1: public XDG {
 public:
 	XDGv1();
+	XDGv1(const XDGv1&);
 	~XDGv1();
 
 	virtual string info() override;
 	virtual string sinfo() override;
-	virtual tuple<vector<unsigned int>, vector<vector<unsigned int>>> run(BoundedObjectiveFunction<double>*) override;
+	virtual tuple<vector<size_t>, vector<vector<size_t>>> run(BoundedObjectiveFunction<double>&) override;
 
 protected:
-	double epsilon(double, double, double, double);
-	double calc_epsilon();
+	double epsilon(double, double, double, double, size_t) override;
+	double calc_epsilon(BoundedObjectiveFunction<double>&);
 
 	double alpha = 10e-12;
 	unsigned int np = 50;

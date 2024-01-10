@@ -3,23 +3,24 @@
 
 #include "objective_function.hpp"
 
-#include <vector>
-
-class Sphere: public ContiniousObjectiveFunciton {
+class Sphere: public BoundedObjectiveFunction<double> {
 public:
 	Sphere();
 	Sphere(size_t dim, double min_lim = -100, double max_lim = 100);
+	Sphere(const Sphere&);
 	~Sphere();
 
-	virtual double func(double*, int) override;
+	/**
+	 */
+	virtual double func(double*, size_t) override;
 
 private:
 	/**
-	 * @brief calc
-	 * @param x
-	 * @return
 	 */
-	double calc (double* x);
+	double* _x_bound_min;
+	/**
+	 */
+	double* _x_bound_max;
 
 };
 

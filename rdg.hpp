@@ -1,22 +1,22 @@
 #ifndef _RDG_H_
 #define _RDG_H_
 
-#include "analize_algorithm.hpp"
+#include "algorithm.hpp"
 
 
-class RDG: public AnalizeAlgorithm<double> {
+class RDG: public AnalAlgorithm<double> {
 public:
 	RDG();
+	RDG(const RDG&);
 	~RDG();
 
 	virtual string info() override;
 	virtual string sinfo() override;
-	virtual void setParameters(AlgParams*) override;
-	virtual tuple<vector<unsigned int>, vector<vector<unsigned int>>> run(BoundedObjectiveFunction<double>*) override;
+	virtual tuple<vector<size_t>, vector<vector<size_t>>> run(BoundedObjectiveFunction<double>&) override;
 
 protected:
-	virtual vector<unsigned int> interact(double*, double, double, vector<unsigned int>, vector<unsigned int>, vector<unsigned int>&);
-	double calc_epsilon(BoundedObjectiveFunction<double>* func);
+	virtual vector<size_t> interact(double*, double, double, vector<size_t>, vector<size_t>, vector<size_t>&, BoundedObjectiveFunction<double>&);
+	double calc_epsilon(BoundedObjectiveFunction<double>&);
 
 	size_t np;
 	double alpha;

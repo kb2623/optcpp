@@ -6,14 +6,15 @@
 class RDGv3: public RDGv2 {
 public:
 	RDGv3();
+	RDGv3(const RDGv3&);
 	~RDGv3();
 
 	virtual string info() override;
 	virtual string sinfo() override;
-	virtual tuple<vector<unsigned int>, vector<vector<unsigned int>>> run(BoundedObjectiveFunction<double>*) override;
+	virtual tuple<vector<size_t>, vector<vector<size_t>>> run(BoundedObjectiveFunction<double>&) override;
 
 protected:
-	vector<unsigned int> interact(double*, double, vector<unsigned int>, vector<unsigned int>, vector<unsigned int>&);
+	vector<size_t> interact(double*, double, vector<size_t>, vector<size_t>, vector<size_t>&, BoundedObjectiveFunction<double>&);
 
 	double tnf = 0.1;
 };

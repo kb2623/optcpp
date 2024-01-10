@@ -7,6 +7,8 @@ using std::make_tuple;
 
 GDGv1::GDGv1() : GDG() {}
 
+GDGv1::GDGv1(const GDGv1& o) : GDG(o) {}
+
 GDGv1::~GDGv1() {}
 
 string GDGv1::info() {

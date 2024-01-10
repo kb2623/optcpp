@@ -6,7 +6,9 @@ using std::abs;
 using std::find;
 using std::make_tuple;
 
-DG::DG() : AnalizeAlgorithm() {}
+DG::DG() : AnalAlgorithm() {}
+
+DG::DG(const DG& o) : AnalAlgorithm(o) {}
 
 DG::~DG() {}
 
@@ -18,18 +20,17 @@ string DG::sinfo() {
 	return "DG";
 }
 
-tuple<vector<unsigned int>, vector<vector<unsigned int>>> DG::run(BoundedObjectiveFunction<double>* ifunc) {
-	initRun(ifunc);
-	auto seps = vector<uint>();
-	auto allgroups = vector<vector<uint>>();
-	auto dims = vector<uint>(fitf.dim());
-	for (uint i = 0; i < fitf.dim(); i++) dims[i] = i;
+tuple<vector<size_t>, vector<vector<size_t>>> DG::run(BoundedObjectiveFunction<double>& fitf) {
+	auto seps = vector<size_t>();
+	auto allgroups = vector<vector<size_t>>();
+	auto dims = vector<size_t>(fitf.dim());
+	for (size_t i = 0; i < fitf.dim(); i++) dims[i] = i;
 	auto p1 = new double[fitf.dim()], p2 = new double[fitf.dim()];
 	while (dims.size() > 0) {
 		auto i = dims[0];
-		auto group = vector<uint>(1, i);
+		auto group = vector<size_t>(1, i);
 		for (auto j : dims) if (i != j) {
-			for (uint k = 0; k < fitf.dim(); k++) p1[k] = p2[k] = fitf.x_bound_min(k);
+			for (size_t k = 0; k < fitf.dim(); k++) p1[k] = p2[k] = fitf.x_bound_min(k);
 			p2[i] = fitf.x_bound_max(i);
 			auto y1 = fitf(p1), y2 = fitf(p2);
 			auto delta1 = y1 - y2;
@@ -56,6 +57,3 @@ double DG::epsilon(double a, double b, double c, double d) {
 	return 1e-12;
 }
 
-void DG::setParameters(AlgParams *params) {
-	// TODO implementation
-}

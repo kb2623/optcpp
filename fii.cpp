@@ -3,7 +3,9 @@
 using std::abs;
 using std::make_tuple;
 
-FII::FII() : AnalizeAlgorithm() {}
+FII::FII() : AnalAlgorithm() {}
+
+FII::FII(const FII& o) : AnalAlgorithm(o) {}
 
 FII::~FII() {}
 
@@ -15,10 +17,9 @@ string FII::sinfo() {
 	return "FII";
 }
 
-void FII::setParameters(AlgParams *params) {
+tuple<vector<size_t>, vector<vector<size_t>>> FII::run(BoundedObjectiveFunction<double>& ifunc) {
+	auto seps = vector<size_t>();
+	auto allgroups = vector<vector<size_t>>();
 	// TODO
-}
-
-tuple<vector<unsigned int>, vector<vector<unsigned int>>> FII::run(BoundedObjectiveFunction<double>* ifunc) {
-	// TODO
+	return make_tuple(seps, allgroups);
 }

@@ -2,6 +2,8 @@
 
 XDGv2::XDGv2() {}
 
+XDGv2::XDGv2(const XDGv2& o) : XDG(o) {}
+
 XDGv2::~XDGv2() {}
 
 string XDGv2::info() {
@@ -17,6 +19,6 @@ double XDGv2::gamma(double n) {
 	return mu / (1 - mu);
 }
 
-double XDGv2::epsilon(double y1, double y2, double y3, double y4) {
-	return gamma(pow(fitf.dim(), 0.5)) * (y1 + y2 + y3 + y4);
+double XDGv2::epsilon(double y1, double y2, double y3, double y4, size_t dim) {
+	return gamma(pow(dim, 0.5)) * (y1 + y2 + y3 + y4);
 }

@@ -7,6 +7,8 @@ using std::make_tuple;
 
 GDGv2::GDGv2() : GDG() {}
 
+GDGv2::GDGv2(const GDGv2& o) : GDG(o) {}
+
 GDGv2::~GDGv2() {}
 
 string GDGv2::info() {
@@ -17,7 +19,7 @@ string GDGv2::sinfo() {
 	return "GDGv2";
 }
 
-double GDGv2::calc_treshold(vector<vector<double>> &deltaMtx) {
+double GDGv2::calc_treshold(vector<vector<double>> &deltaMtx, BoundedObjectiveFunction<double>& fitf) {
 	auto min_e = std::numeric_limits<double>::max();
 	for (auto vv : deltaMtx) for (auto v : vv) min_e = std::min(min_e, v);
 	double mu = (pow(fitf.dim(), 0.5) * min_e) * epsilon;

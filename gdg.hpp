@@ -1,21 +1,21 @@
 #ifndef _GDG_H_
 #define _GDG_H_
 
-#include "analize_algorithm.hpp"
+#include "algorithm.hpp"
 
-class GDG: public AnalizeAlgorithm<double> {
+class GDG: public AnalAlgorithm<double> {
 public:
 	GDG();
+	GDG(const GDG&);
 	~GDG();
 
 	virtual string info() override;
 	virtual string sinfo() override;
-	virtual void setParameters(AlgParams*) override;
-	virtual tuple<vector<unsigned int>, vector<vector<unsigned int>>> run(BoundedObjectiveFunction<double>*) override;
+	virtual tuple<vector<size_t>, vector<vector<size_t>>> run(BoundedObjectiveFunction<double>&) override;
 
 protected:
-	tuple<vector<int>, vector<int>> graph_connected_components(vector<vector<double>>&, double);
-	double calc_treshold(vector<vector<double>>&);
+	tuple<vector<int>, vector<int>> graph_connected_components(vector<vector<double>>&, double, BoundedObjectiveFunction<double>&);
+	double calc_treshold(vector<vector<double>>&, BoundedObjectiveFunction<double>&);
 	vector<size_t> find_tresh(vector<double>&, double);
 
 	size_t np;

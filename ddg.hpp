@@ -1,23 +1,22 @@
 #ifndef _DDG_H_
 #define _DDG_H_
 
-#include "analize_algorithm.hpp"
-#include "objective_function.hpp"
+#include "algorithm.hpp"
 
 #include <algorithm>
 
-class DDG: public AnalizeAlgorithm<double> {
+class DDG: public AnalAlgorithm<double> {
 public:
 	DDG();
+	DDG(const DDG&);
 	~DDG();
 
 	virtual string info() override;
 	virtual string sinfo() override;
-	virtual void setParameters(AlgParams* params) override;
-	virtual tuple<vector<unsigned int>, vector<vector<unsigned int>>> run(BoundedObjectiveFunction<double>* fit_fun) override;
+	virtual tuple<vector<size_t>, vector<vector<size_t>>> run(BoundedObjectiveFunction<double>&) override;
 
 protected:
-	double get_epsilon_addi(double, double, double, double);
+	double get_epsilon_addi(double, double, double, double, BoundedObjectiveFunction<double>&);
 
 	double epsilon_multi;
 	double epsilon_addi;

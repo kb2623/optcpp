@@ -6,6 +6,7 @@
 class GDGv1: public GDG {
 public:
 	GDGv1();
+	GDGv1(const GDGv1&);
 	~GDGv1();
 
 	virtual string info() override;

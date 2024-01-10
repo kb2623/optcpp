@@ -5,7 +5,7 @@
 
 #include <vector>
 
-class CEC17: public ContiniousObjectiveFunciton {
+class CEC17: public BoundedObjectiveFunction<double> {
 private:
 	double *OShift = nullptr, *M = nullptr;
 	int *SS = nullptr;
@@ -64,9 +64,10 @@ private:
 
 public:
 	CEC17(int, int);
+	CEC17(const CEC17&);
 	~CEC17();
 
-	virtual double func (double*, int) override;
+	virtual double func (double*, size_t) override;
 };
 
 void shiftfunc (double *, double *, int, double *);

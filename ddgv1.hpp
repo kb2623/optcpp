@@ -6,16 +6,16 @@
 class DDGv1: public DDG {
 public:
 	DDGv1();
+	DDGv1(const DDGv1&);
 	~DDGv1();
 
 	virtual string info() override;
 	virtual string sinfo() override;
-	virtual void setParameters(AlgParams*) override;
-	virtual tuple<vector<unsigned int>, vector<vector<unsigned int>>> run(BoundedObjectiveFunction<double>*) override;
+	virtual tuple<vector<size_t>, vector<vector<size_t>>> run(BoundedObjectiveFunction<double>&) override;
 
 protected:
-	double get_epsilon_addi(double, double, double, double);
-	double calc_epsilon();
+	double get_epsilon_addi(double, double, double, double, BoundedObjectiveFunction<double>&);
+	double calc_epsilon(BoundedObjectiveFunction<double>&);
 
 	double alpha;
 	unsigned int np = 50;

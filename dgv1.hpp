@@ -11,10 +11,11 @@ public:
     unsigned int np = 50;
     double _epsilon = 0;
 
-    DGv1() {}
-    ~DGv1() {}
+    DGv1();
+    DGv1(const DGv1&);
+    ~DGv1();
 
-    virtual std::tuple<std::vector<unsigned int>, std::vector<std::vector<unsigned int>>> run(TestFuncBounds*);
+    virtual std::tuple<std::vector<size_t>, std::vector<std::vector<size_t>>> run(TestFuncBounds*);
     virtual std::string info();
 
 protected:

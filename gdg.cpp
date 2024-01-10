@@ -1,14 +1,15 @@
 #include "gdg.hpp"
 
 #include "common_funcs.hpp"
-#include "thread_data.hpp"
 
 #include <algorithm>
 
 using std::abs;
 using std::make_tuple;
 
-GDG::GDG() : AnalizeAlgorithm() {}
+GDG::GDG() : AnalAlgorithm(), np(50) {}
+
+GDG::GDG(const GDG& o) : AnalAlgorithm(o), np(o.np) {}
 
 GDG::~GDG() {}
 
@@ -20,8 +21,7 @@ string GDG::sinfo() {
 	return "GDG";
 }
 
-tuple<vector<unsigned int>, vector<vector<unsigned int>>> GDG::run(BoundedObjectiveFunction<double>* ifunc) {
-	initRun(ifunc);
+tuple<vector<size_t>, vector<vector<size_t>>> GDG::run(BoundedObjectiveFunction<double>& fitf) {
 	auto p1 = new double[fitf.dim()], p2 = new double[fitf.dim()], p3 = new double[fitf.dim()], p4 = new double[fitf.dim()];
 	for (int i = 0; i < fitf.dim(); i++) p1[i] = fitf.x_bound_min(i);
 	double p1f = fitf(p1);
@@ -51,8 +51,8 @@ tuple<vector<unsigned int>, vector<vector<unsigned int>>> GDG::run(BoundedObject
 		}
 	}
 	delete [] p1, delete [] p2, delete [] p3, delete [] p4;
-	auto tresh = calc_treshold(deltaMtx);
-	auto [labels, rst] = graph_connected_components(deltaMtx, tresh);
+	auto tresh = calc_treshold(deltaMtx, fitf);
+	auto [labels, rst] = graph_connected_components(deltaMtx, tresh, fitf);
 	auto group_idx = labels;
 	for (int i = -1; i <= *std::max_element(labels.begin(), labels.end()); i++) {
 		auto groupsize = std::count(labels.begin(), labels.end(), i);
@@ -61,17 +61,17 @@ tuple<vector<unsigned int>, vector<vector<unsigned int>>> GDG::run(BoundedObject
 			for (int j = 0; j < labels.size(); j++) if (labels[j] > i) group_idx[labels[j]] -= 1;
 		}
 	}
-	auto seps = find<int, unsigned int>(group_idx, -1);
+	auto seps = find<int, size_t>(group_idx, -1);
 	auto group_num = *std::max_element(group_idx.begin(), group_idx.end());
-	auto allgroups = vector<vector<unsigned int>>();
+	auto allgroups = vector<vector<size_t>>();
 	for (int i = 0; i <= group_num; i++) {
-		auto g = find<int, unsigned int>(group_idx, i);
+		auto g = find<int, size_t>(group_idx, i);
 		if (g.size() != 0) allgroups.push_back(g);
 	}
 	return make_tuple(seps, allgroups);
 }
 
-tuple<vector<int>, vector<int>> GDG::graph_connected_components(vector<vector<double>> &C, const double trash) {
+tuple<vector<int>, vector<int>> GDG::graph_connected_components(vector<vector<double>> &C, const double trash, BoundedObjectiveFunction<double>& fitf) {
 	auto labels = vector<int>(fitf.dim(), -1);
 	auto rts = vector<int>();
 	int ccc = -1;
@@ -101,10 +101,11 @@ tuple<vector<int>, vector<int>> GDG::graph_connected_components(vector<vector<do
 	}
 }
 
-double GDG::calc_treshold(vector<vector<double>> &deltaMtx) {
+double GDG::calc_treshold(vector<vector<double>> &deltaMtx, BoundedObjectiveFunction<double>& fitf) {
 	auto x = vector<vector<double>>(np, vector<double>(fitf.dim()));
 	auto xf = vector<double>(np);
-	for (int i = 0; i < np; i++) for (int j = 0; j < fitf.dim(); j++) x[i][j] = fitf.x_bound_max(j) - fitf.x_bound_min(j) * thread_td->randDouble() + fitf.x_bound_min(j);
+	std::uniform_real_distribution<double> dist(0.0,1.0);
+	for (int i = 0; i < np; i++) for (int j = 0; j < fitf.dim(); j++) x[i][j] = fitf.x_bound_max(j) - fitf.x_bound_min(j) * dist(rand_gen) + fitf.x_bound_min(j);
 	for (int i = 0; i < np; i++) xf[i] = fitf(x[i].data());
 	auto minf = abs(xf[0]);
 	for (int i = 1; i < np; i++) if (minf > abs(xf[i])) minf = abs(xf[i]);
@@ -117,8 +118,3 @@ vector<size_t> GDG::find_tresh(vector<double> &vec, double tresh) {
 	return r;
 }
 
-void GDG::setParameters(AlgParams* params) {
-	this->np      = getParam(params, "np", 10);
-	this->epsilon = getParam(params, "epsilon", 1e-7);
-	this->temp    = getParam(params, "temp", .5);
-}

@@ -1,11 +1,13 @@
 #ifndef _OBJECTIVE_FUNCTION_H_
 #define _OBJECTIVE_FUNCTION_H_
 
+#include "common_funcs.hpp"
+
 #include <cstddef>
 #include <atomic>
+#include <vector>
 
-#include "repair_solution.hpp"
-#include "thread_data.hpp"
+using std::vector;
 
 // ------------------------ ObjectiveFunction ------------------------
 
@@ -22,14 +24,7 @@ public:
 	 * @param x
 	 * @param dim
 	 */
-	virtual double func(T* x, int dim) = 0;
-	/**
-	 * @brief operator []
-	 * @param index
-	 * @param tdata
-	 * @return
-	 */
-	virtual T gen(size_t index, thread_data& tdata) = 0;
+	virtual double func(T*, size_t) = 0;
 	/**
 	 * @brief no_fes
 	 * @return
@@ -45,25 +40,25 @@ public:
 	 * @param x
 	 * @return
 	 */
-	double eval(T* x);
+	double eval(T*);
 	/**
 	 * @brief operator ()
 	 * @param x
 	 * @return
 	 */
-	double operator()(T* x);
+	double operator()(T*);
 	/**
 	 * @brief eval
 	 * @param x
 	 * @return
 	 */
-	double eval(vector<T> x);
+	double eval(vector<T>);
 	/**
 	 * @brief operator ()
 	 * @param x
 	 * @return
 	 */
-	double operator()(vector<T> x);
+	double operator()(vector<T>);
 	/**
 	 * @brief reset
 	 */
@@ -80,10 +75,58 @@ protected:
 	std::atomic<unsigned long long int> _no_fes;
 };
 
+template <typename T>
+ObjectiveFunction<T>::ObjectiveFunction() : _dim(0), _no_fes(0) {}
+
+template <typename T>
+ObjectiveFunction<T>::ObjectiveFunction(const ObjectiveFunction<T>& o) : _dim(o._dim), _no_fes(o._no_fes.load()) {}
+
+template <typename T>
+ObjectiveFunction<T>::ObjectiveFunction(size_t dim) : _dim(dim), _no_fes(0) {}
+
+template <typename T>
+ObjectiveFunction<T>::~ObjectiveFunction() {}
+
+template <typename T>
+inline unsigned long long int ObjectiveFunction<T>::no_fes() const {
+	return _no_fes;
+}
+
+template <typename T>
+inline size_t ObjectiveFunction<T>::dim() const {
+	return _dim;
+}
+
+template <typename T>
+double ObjectiveFunction<T>::eval(T* x) {
+	_no_fes++;
+	return func(x, _dim);
+}
+
+template <typename T>
+double ObjectiveFunction<T>::eval(vector<T> x) {
+	return eval(&x[0]);
+}
+
+template <typename T>
+double ObjectiveFunction<T>::operator()(T* x) {
+	return eval(x);
+}
+
+template <typename T>
+double ObjectiveFunction<T>::operator()(vector<T> x) {
+	return eval(x);
+}
+
+template <typename T>
+void ObjectiveFunction<T>::reset() {
+	_no_fes = 0;
+}
+
 // ------------------------ BoundedObjectiveFunction ------------------------
 
 template <typename T>
-class BoundedObjectiveFunction: public ObjectiveFunction<T>, public RepairSolution<T> {
+class BoundedObjectiveFunction: public ObjectiveFunction<T> {
 public:
 	BoundedObjectiveFunction();
 	BoundedObjectiveFunction(size_t);
@@ -136,30 +179,63 @@ protected:
 	T* _x_bound_max;
 };
 
-// ------------------------ ContiniousObjectiveFunction ------------------------
+template <typename T>
+BoundedObjectiveFunction<T>::BoundedObjectiveFunction() : ObjectiveFunction<T>(), _x_bound_min(nullptr), _x_bound_max(nullptr) {}
 
-class ContiniousObjectiveFunciton : public BoundedObjectiveFunction<double> {
-public:
-	ContiniousObjectiveFunciton();
-	ContiniousObjectiveFunciton(size_t);
-	ContiniousObjectiveFunciton(const ContiniousObjectiveFunciton&);
-	~ContiniousObjectiveFunciton();
+template <typename T>
+BoundedObjectiveFunction<T>::BoundedObjectiveFunction(size_t dim) : ObjectiveFunction<T>(dim) {
+	_x_bound_min = new double[dim];
+	_x_bound_max = new double[dim];
+}
 
-	virtual double* fix_max(double* x) override;
-	virtual double* fix_min(double* x) override;
-	virtual double* fix_lim(double* x) override;
-	virtual double* fix_mod(double* x) override;
-	virtual double* fix_rnd(double* x) override;
-	virtual vector<double> fix_max(vector<double> x) override;
-	virtual vector<double> fix_min(vector<double> x) override;
-	virtual vector<double> fix_lim(vector<double> x) override;
-	virtual vector<double> fix_mod(vector<double> x) override;
-	virtual vector<double> fix_rnd(vector<double> x) override;
-	virtual double gen(size_t index, thread_data& tdata) override;
+template <typename T>
+BoundedObjectiveFunction<T>::BoundedObjectiveFunction(const BoundedObjectiveFunction<T>& o) : ObjectiveFunction<T>(o) {
+	_x_bound_min = copy_vector<T>(o._x_bound_min, o._dim);
+	_x_bound_max = copy_vector<T>(o._x_bound_max, o._dim);
+}
 
-private:
-	double dmod(double x, double y);
+template <typename T>
+BoundedObjectiveFunction<T>::~BoundedObjectiveFunction() {
+	if (_x_bound_max != nullptr) {
+		delete [] _x_bound_max;
+		_x_bound_max = nullptr;
+	}
+	if (_x_bound_min != nullptr) {
+		delete [] _x_bound_min;
+		_x_bound_min = nullptr;
+	}
+}
 
-};
+template <typename T>
+inline T* BoundedObjectiveFunction<T>::x_bound_min() const {
+	return _x_bound_min;
+}
+
+template <typename T>
+inline T BoundedObjectiveFunction<T>::x_bound_min(size_t index) const {
+	if (index < this->dim()) return _x_bound_min[index];
+	else return _x_bound_min[0];
+}
+
+template <typename T>
+void BoundedObjectiveFunction<T>::x_bound_min(T* low_lim) {
+	_x_bound_min = copy_vector<T>(low_lim, _x_bound_min, this->dim);
+}
+
+template <typename T>
+inline T* BoundedObjectiveFunction<T>::x_bound_max() const {
+	return _x_bound_max;
+}
+
+template <typename T>
+inline T BoundedObjectiveFunction<T>::x_bound_max(size_t index) const {
+	if (index < this->dim()) return _x_bound_max[index];
+	return _x_bound_max[0];
+}
+
+template <typename T>
+void BoundedObjectiveFunction<T>::x_bound_max(T* up_lim) {
+	_x_bound_max = copy_vector<T>(up_lim, _x_bound_max, this->dim);
+}
 
 #endif

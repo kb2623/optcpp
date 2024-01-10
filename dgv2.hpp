@@ -9,8 +9,9 @@ class DGv2: public DG {
 public:
     double eps = 10e-12;
 
-    DGv2() {}
-    ~DGv2() {}
+    DGv2();
+    DGv2(const DGv2&);
+    ~DGv2();
 
     virtual std::string info();
 
